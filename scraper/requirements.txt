@@ -1,0 +1,2 @@
+instaloader>=4.14
+openpyxl>=3.1
