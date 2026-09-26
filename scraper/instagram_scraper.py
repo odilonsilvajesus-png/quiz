@@ -6,6 +6,7 @@ Uso:
     python scraper/instagram_scraper.py https://www.instagram.com/fabianocarvalhojr/ --max-posts 100
     python scraper/instagram_scraper.py fabianocarvalhojr --login SEU_USUARIO   # mais posts, menos bloqueio
     python scraper/instagram_scraper.py fabianocarvalhojr --sem-midias
+    IG_SESSIONID=... python scraper/instagram_scraper.py fabianocarvalhojr  # usa o cookie sessionid de uma conta logada
 
 Saída em output/<usuario>/:
     perfil.json        dados do perfil
@@ -18,6 +19,7 @@ Saída em output/<usuario>/:
 import argparse
 import csv
 import json
+import os
 import re
 import sys
 import time
@@ -71,7 +73,13 @@ def collect(username: str, max_posts: int, download_media: bool, login: str | No
         compress_json=False,
         quiet=True,
     )
-    if login:
+    sessionid = os.environ.get("IG_SESSIONID")
+    if sessionid:
+        loader.context._session.cookies.set("sessionid", sessionid, domain=".instagram.com")
+        loader.context.username = loader.test_login()
+        if not loader.context.username:
+            sys.exit("IG_SESSIONID inválido ou expirado.")
+    elif login:
         try:
             loader.load_session_from_file(login)
         except FileNotFoundError:
