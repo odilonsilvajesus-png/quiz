@@ -6,6 +6,7 @@ Uso:
     python scraper/instagram_scraper.py https://www.instagram.com/fabianocarvalhojr/ --max-posts 100
     python scraper/instagram_scraper.py fabianocarvalhojr --login SEU_USUARIO   # mais posts, menos bloqueio
     python scraper/instagram_scraper.py fabianocarvalhojr --sem-midias
+    APIFY_TOKEN=... python scraper/instagram_scraper.py fabianocarvalhojr  # coleta via Apify (evita bloqueio do Instagram)
     IG_SESSIONID=... python scraper/instagram_scraper.py fabianocarvalhojr  # usa o cookie sessionid de uma conta logada
 
 Saída em output/<usuario>/:
@@ -23,6 +24,8 @@ import os
 import re
 import sys
 import time
+import urllib.parse
+import urllib.request
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -133,6 +136,74 @@ def collect(username: str, max_posts: int, download_media: bool, login: str | No
     print(file=sys.stderr)
     return profile_data, posts
 
+APIFY_ACTOR = "https://api.apify.com/v2/acts/apify~instagram-scraper/run-sync-get-dataset-items"
+APIFY_TYPES = {"Image": "foto", "Video": "reels/vídeo", "Sidecar": "carrossel"}
+
+
+def apify_run(token: str, payload: dict) -> list[dict]:
+    url = f"{APIFY_ACTOR}?token={urllib.parse.quote(token)}&timeout=600"
+    req = urllib.request.Request(url, json.dumps(payload).encode(), {"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=660) as resp:
+        return json.load(resp)
+
+
+def collect_apify(username: str, max_posts: int, download_media: bool, token: str, out_dir: Path):
+    profile_url = f"https://www.instagram.com/{username}/"
+    details = apify_run(token, {"directUrls": [profile_url], "resultsType": "details", "resultsLimit": 1})
+    if not details or "username" not in details[0]:
+        sys.exit(f"Apify não retornou o perfil: {details[:1]}")
+    d = details[0]
+    profile_data = {
+        "usuario": d.get("username"),
+        "nome": d.get("fullName"),
+        "bio": d.get("biography"),
+        "link_bio": d.get("externalUrl"),
+        "seguidores": d.get("followersCount"),
+        "seguindo": d.get("followsCount"),
+        "total_posts": d.get("postsCount"),
+        "verificado": d.get("verified"),
+        "conta_comercial": d.get("isBusinessAccount"),
+        "categoria": d.get("businessCategoryName"),
+        "privado": d.get("private"),
+        "coletado_em": datetime.now().isoformat(timespec="seconds"),
+    }
+    items = apify_run(token, {"directUrls": [profile_url], "resultsType": "posts", "resultsLimit": max_posts})
+    followers = profile_data["seguidores"] or 0
+    posts = []
+    for item in items:
+        if "shortCode" not in item:
+            continue
+        caption = item.get("caption") or ""
+        likes = max(item.get("likesCount") or 0, 0)  # -1 quando o autor oculta as curtidas
+        comments = item.get("commentsCount") or 0
+        date = datetime.fromisoformat(item["timestamp"].replace("Z", "+00:00")).astimezone()
+        posts.append({
+            "data": date.strftime("%Y-%m-%d %H:%M"),
+            "url": f"https://www.instagram.com/p/{item['shortCode']}/",
+            "tipo": APIFY_TYPES.get(item.get("type"), item.get("type")),
+            "curtidas": likes,
+            "comentarios": comments,
+            "visualizacoes": item.get("videoViewCount") or item.get("videoPlayCount"),
+            "engajamento_%": round((likes + comments) / followers * 100, 3) if followers else None,
+            "gancho": hook_of(caption),
+            "ctas": ", ".join(ctas_of(caption)),
+            "hashtags": " ".join(f"#{h}" for h in item.get("hashtags") or []),
+            "mencoes": " ".join(f"@{m}" for m in item.get("mentions") or []),
+            "tamanho_legenda": len(caption),
+            "legenda": caption,
+        })
+        if download_media:
+            media_dir = out_dir / "midias"
+            media_dir.mkdir(parents=True, exist_ok=True)
+            urls = [item["videoUrl"]] if item.get("videoUrl") else (item.get("images") or [item.get("displayUrl")])
+            for n, media_url in enumerate(u for u in urls if u):
+                ext = "mp4" if ".mp4" in media_url else "jpg"
+                try:
+                    urllib.request.urlretrieve(media_url, media_dir / f"{date:%Y-%m-%d}_{item['shortCode']}_{n}.{ext}")
+                except OSError as e:
+                    print(f"  falha ao baixar mídia de {item['shortCode']}: {e}", file=sys.stderr)
+    return profile_data, posts
+
 
 def write_outputs(profile_data: dict, posts: list[dict], out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -240,8 +311,12 @@ def main() -> None:
     username = parse_username(args.perfil)
     out_dir = Path(args.saida) / username
     print(f"Varrendo @{username}...", file=sys.stderr)
+    apify_token = os.environ.get("APIFY_TOKEN")
     try:
-        profile_data, posts = collect(username, args.max_posts, not args.sem_midias, args.login, out_dir)
+        if apify_token:
+            profile_data, posts = collect_apify(username, args.max_posts, not args.sem_midias, apify_token, out_dir)
+        else:
+            profile_data, posts = collect(username, args.max_posts, not args.sem_midias, args.login, out_dir)
     except instaloader.exceptions.ConnectionException as e:
         sys.exit(f"Instagram recusou a conexão ({e}). Tente de novo mais tarde ou use --login.")
     write_outputs(profile_data, posts, out_dir)
