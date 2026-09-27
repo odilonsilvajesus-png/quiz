@@ -1,7 +1,12 @@
 {
   "formato": "D",
-  "marca": {"handle": "seuperfil", "cor_destaque": "#E3262E"},
+  "marca": {
+    "arquivo": "../../marca-sic.json"
+  },
   "slides": [
-    {"texto": "Dono tem que estar **presente**. Mas se __tudo passa por você__, a empresa ((para)) quando você para.", "nota": "leia de novo"}
+    {
+      "texto": "Dono tem que estar **presente**. Mas se __tudo passa por você__, a empresa __para__ quando você para.",
+      "nota": "leia de novo"
+    }
   ]
 }

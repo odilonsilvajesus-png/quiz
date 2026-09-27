@@ -18,19 +18,17 @@ Você **não gera imagens com IA de pessoas** (nem de {{seu nome}}, nem de clien
 ```json
 {
   "formato": "A",
-  "marca": {
-    "nome": "{{seu nome}}",
-    "handle": "{{seu @ sem arroba}}",
-    "avatar": "{{caminho da foto de perfil}}",
-    "cor_destaque": "{{#HEX}}",
-    "contador": false
-  },
+  "marca": {"arquivo": "../../agents/marca-sic.json", "contador": false},
   "slides": [ ... ]
 }
 ```
+- **Sempre carregue a marca oficial** com `"arquivo"` (caminho relativo ao JSON). Não copie cores à mão. Sobrescreva só o necessário (`contador`, ou `fontes` para alternar tipografia: `{"titulo": "DM Serif Display", "texto": "Inter"}`).
+- Fontes disponíveis: títulos Source Serif 4 ou DM Serif Display; texto Poppins, Inter ou Montserrat.
 - Caminhos de foto são **relativos ao arquivo JSON** (ou absolutos).
-- Se a foto não existir, o renderizador mostra a caixa "📷 FOTO: …" com o texto de `foto_descricao`. Use isso para indicar a foto que falta.
+- Se a foto não existir, o renderizador mostra a caixa "FOTO: …" com o texto de `foto_descricao`. Use isso para indicar a foto que falta.
 - Marcações de texto: `**negrito**` · `__sublinhado à mão__` · `((círculo à mão))` · quebra de linha com `\n`.
+- **Regras da marca SIC que o renderizador já aplica:** blocos sólidos (sem degradê), cantos retos, sem sombra, selo "I A" no canto, **ponto final terracota** (substitui o "." final de títulos e frases do formato D; não aparece depois de "?", "!" ou ":").
+- **Regras que dependem de você:** `((círculo))` **só na palavra da CTA** (é terracota = ação); `__sublinhado__` para destaque decorativo; nenhum emoji nas artes; nenhuma imagem de robô, circuito ou rede neural.
 
 ### Tipos de slide por formato
 | Formato | `tipo` | Campos | Uso |

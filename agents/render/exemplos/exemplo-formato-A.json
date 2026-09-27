@@ -1,15 +1,36 @@
 {
   "formato": "A",
-  "marca": {"nome": "Seu Nome", "handle": "seuperfil", "avatar": "", "cor_destaque": "#E3262E"},
+  "marca": {
+    "arquivo": "../../marca-sic.json"
+  },
   "slides": [
-    {"tipo": "foto_texto", "foto": "", "foto_descricao": "você falando com as mãos, fundo escuro de escritório",
-     "texto": "Você acha que usa IA porque abre o ChatGPT. **Você está usando 5%** __dela.__"},
-    {"tipo": "foto_texto", "foto": "", "foto_descricao": "close no notebook com WhatsApp aberto",
-     "texto": "Perguntar coisa pro ChatGPT é usar um Google que escreve bonito. Usar IA é **colocar ela pra trabalhar** __sem você.__"},
-    {"tipo": "texto", "texto": "Quem responde cliente às 23h **não é dedicado.** É __refém.__"},
-    {"tipo": "foto_texto", "foto": "", "foto_descricao": "você em reunião com um cliente",
-     "texto": "Semana passada um cliente meu parou de responder 200 mensagens por dia. **Um agente de IA faz isso** agora, 24h."},
-    {"tipo": "cta", "foto": "", "foto_descricao": "você sorrindo, olhando para a câmera",
-     "texto": "Quer saber onde a IA dá lucro na sua empresa?\n**Comenta ((IA))** aqui embaixo que eu te mostro o caminho."}
+    {
+      "tipo": "foto_texto",
+      "foto": "",
+      "foto_descricao": "você falando com as mãos, fundo escuro de escritório",
+      "texto": "Você acha que usa IA porque abre o ChatGPT. **Você está usando 5%** __dela.__"
+    },
+    {
+      "tipo": "foto_texto",
+      "foto": "",
+      "foto_descricao": "close no notebook com WhatsApp aberto",
+      "texto": "Perguntar coisa pro ChatGPT é usar um Google que escreve bonito. Usar IA é **colocar ela pra trabalhar** __sem você.__"
+    },
+    {
+      "tipo": "texto",
+      "texto": "Quem responde cliente às 23h **não é dedicado.** É __refém.__"
+    },
+    {
+      "tipo": "foto_texto",
+      "foto": "",
+      "foto_descricao": "você em reunião com um cliente",
+      "texto": "Semana passada um cliente meu parou de responder 200 mensagens por dia. **Um agente de IA faz isso** agora, 24h."
+    },
+    {
+      "tipo": "cta",
+      "foto": "",
+      "foto_descricao": "você sorrindo, olhando para a câmera",
+      "texto": "Quer saber onde a IA dá lucro na sua empresa?\n**Comenta ((IA))** aqui embaixo que eu te mostro o caminho."
+    }
   ]
 }

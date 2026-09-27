@@ -2,7 +2,7 @@
 > Preencha tudo que está entre `{{ }}`. Os agentes **não podem inventar** o que estiver vazio: eles devem pedir.
 
 ## 1. Quem sou eu
-- **Nome:** {{seu nome}} · **@:** {{seu @}}
+- **Nome:** Simeão · **Marca:** SIC · Simeão IA Creator Digital · **Tagline:** "Domine com IA." · **@:** {{seu @}}
 - **O que eu faço:** ajudo empresários a lucrar mais e otimizar seus negócios com IA. Faço **implementação de IA nas empresas**.
 - **Posicionamento:** "Eu ajudo empresários a lucrar mais e trabalhar menos usando IA de verdade, com princípio, família e fé no centro."
 - **Minha história (para o post "Comece Aqui" e conteúdos pessoais):** {{sua trajetória em 5 a 10 linhas: de onde veio, virada, por que IA, por que fé}}
@@ -47,24 +47,28 @@
 
 ## 6. Tom de voz
 - Direto, de dono para dono. Frases curtas. Português do dia a dia, sem "tecniquês" de IA.
-- **Vocativo fixo:** {{ex.: "meu amigo empresário"}} · **Assinatura curta:** {{ex.: "Trabalha menos, lucra mais. 🙏🏻"}}
+- **Vocativo fixo:** {{ex.: "meu amigo empresário"}} · **Assinatura curta:** "Domine com IA." (tagline da marca; alternativa: {{outra}}). Nas legendas, no máximo 1 emoji; nas artes, nenhum.
 - Opinião firme, sem ficar em cima do muro, e sem agressividade ou humilhação.
 - **Fé:** vem da vida real (testemunho, família, decisão). Versículo só quando encaixa naturalmente e **sempre com a referência correta**. Nada de sermão, nada de "prosperidade garantida".
 - **Palavras proibidas ou evitadas:** "revolucionário", "hack", "segredo que ninguém conta" (em excesso), "fique rico", "garantido", jargão como "LLM", "prompt engineering", "RAG" (só se explicado).
 
 ## 7. Identidade visual
-- **Paleta da marca** (usar exatamente estes códigos no bloco `marca` do renderizador):
-  | Uso | Campo | Cor |
-  |---|---|---|
-  | Destaque (sublinhado, círculo, números, botão) | `cor_destaque` | {{#HEX}} |
-  | Secundária (anotação à mão, detalhes) | `cor_secundaria` | {{#HEX}} |
-  | Fundo escuro | `cor_fundo_escuro` | {{#HEX}} |
-  | Fundo claro | `cor_fundo_claro` | {{#HEX}} |
-  | Texto sobre fundo escuro | `cor_texto_escuro` | {{#HEX}} |
-  | Texto sobre fundo claro | `cor_texto_claro` | {{#HEX}} |
-  | Texto do botão | `cor_texto_botao` | {{#HEX}} |
-- **Fonte:** Inter (Regular no texto, ExtraBold no destaque) + Caveat nas anotações à mão
-- **Marcações do texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão))`
+- **Marca:** **SIC · Simeão IA Creator Digital** · tagline **"Domine com IA."**
+- **Arquivo da marca para o renderizador:** `agents/marca-sic.json` (em todo spec: `"marca": {"arquivo": "<caminho>/agents/marca-sic.json"}`). Não redefinir cores à mão.
+- **Paleta oficial:**
+  | Nome | Hex | Uso | Campo no renderizador |
+  |---|---|---|---|
+  | plum-900 | `#2E0F36` | Marca, fundos escuros, headers, blocos de autoridade, títulos em fundo claro | `cor_fundo_escuro`, `cor_titulo_claro`, `cor_selo_fundo` |
+  | plum-700 | `#4B1B57` | Elementos secundários: sublinhado e números em fundo claro | `cor_sublinhado_claro`, `cor_numeros_claro` |
+  | terracota | `#B84B26` | **Só ação:** CTA, botão, seta de "arrasta", círculo na palavra da CTA, ponto final e letras do selo IA | `cor_acao` |
+  | surface-200 | `#ECE3DA` | Fundo claro de cards e blocos; sublinhado, números e nota em fundo escuro | `cor_fundo_claro`, `cor_sublinhado`, `cor_numeros`, `cor_nota` |
+  | ink | `#1C1620` | Texto principal em fundo claro | `cor_texto_claro` |
+  | off-white | `#F5F0EB` | Texto sobre plum | `cor_texto_escuro`, `cor_texto_botao` |
+- **Tipografia (alternável):** títulos em **serifada de peso alto** (padrão: Source Serif 4 Bold; alternativa: DM Serif Display) · texto em **sans neutra** (padrão: Poppins; alternativas: Inter, Montserrat) · Caveat só nas anotações à mão.
+- **Elementos da marca:** **ponto final** (quadrado terracota que substitui o ponto final de títulos e frases de impacto) · **cantos retos** em cards, botões, avatar e imagens · **selo "I A"** discreto no canto superior direito, nunca disputando com o título.
+- **Fazer:** blocos de cor sólidos, sem degradê · cantos retos · terracota só em elemento de ação · muito espaço vazio entre elementos · fotografia real de operação e negócio.
+- **Evitar:** degradê (principalmente roxo para azul) · ícone de robô, circuito ou rede neural · cantos arredondados · terracota como cor decorativa (sublinhado, número, destaque de palavra) · emoji, brilho e sombra pesada nas artes.
+- **Marcações do texto:** `**negrito**` · `__sublinhado à mão__` (decorativo: surface/plum, nunca terracota) · `((círculo à mão))` (terracota, **só na palavra da CTA**).
 - **Formatos de carrossel:** A (post sobre foto real, o principal) · B (editorial com números) · C (photo dump) · D (frase com rabisco)
 - **Banco de fotos pessoais:** {{pasta/link}}. Cada foto com nome descritivo (ex.: `falando-palco-01.jpg`, `familia-almoco-03.jpg`, `notebook-whatsapp-02.jpg`).
 - **Avatar:** {{caminho da foto de perfil}}

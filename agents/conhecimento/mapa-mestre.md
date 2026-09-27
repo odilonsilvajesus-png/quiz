@@ -254,20 +254,22 @@ Posts em que o dono **lê e pensa "isso sou eu"**, e comenta para concordar, des
 
 ### 3.1 Identidade
 - **Tamanho:** 1080 × 1350 (4:5) para carrossel e estático; 1080 × 1920 para reels.
-- **Fonte:** Inter (Regular no texto, ExtraBold em títulos e destaques) + Caveat nas anotações à mão.
-- **Cores:** a paleta oficial da marca (base de conhecimento, seção 7): fundo escuro, fundo claro, texto e **cor de destaque** (sublinhados, números, botões, círculos) + secundária (anotações à mão).
-- **Assinatura visual:** **sublinhado e círculo feitos à mão** na cor de destaque (padrão do Ricardo).
-- **Marcações de texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão))`.
+- **Marca SIC** (Simeão IA Creator Digital, "Domine com IA."): paleta, fontes e regras completas na base de conhecimento, seção 7, e em `agents/marca-sic.json`.
+- **Cores:** plum-900 `#2E0F36` (fundo e autoridade) · plum-700 `#4B1B57` (secundário) · surface-200 `#ECE3DA` (fundo claro) · ink `#1C1620` (texto) · **terracota `#B84B26` só em ação** (CTA, botão, seta, círculo da CTA, ponto final).
+- **Fontes (alternáveis):** título em serifada de peso alto (Source Serif 4 / DM Serif Display) · texto em sans neutra (Poppins / Inter / Montserrat) · Caveat nas anotações.
+- **Assinatura visual:** blocos sólidos (sem degradê), cantos retos, **ponto final terracota** no fim de títulos e frases de impacto, selo "I A" no canto e **sublinhado à mão** em surface/plum. O **círculo à mão** fica reservado para a palavra da CTA.
+- **Marcações de texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão, só CTA))`.
+- **Nunca:** degradê, robô/circuito/rede neural, cantos arredondados, emoji, brilho, sombra pesada.
 - **Fotos:** sempre reais (suas, da operação, do cliente com autorização). **Sessão mensal de 60 a 100 fotos:** falando com cliente, notebook com automação, palestra, reunião, família (com consentimento), Bíblia/igreja, viagem, carro, mãos no teclado, café e agenda.
 - **Série numerada opcional** nos posts de IA (ex.: "IA NA EMPRESA #012") para gerar coleção.
 
 ### 3.2 Formatos visuais
 | Formato | Nome | Anatomia | Tamanho | Estrutura | Renderizador |
 |---|---|---|---|---|---|
-| **A** ⭐ | Post sobre foto real (Ricardo) | Foto no topo (~60%) com degradê para preto; cabeçalho de post (avatar, @, nome, ···); texto 3–5 linhas com negrito e sublinhado; seta no slide 1; slides só-texto intercalados; último slide com foto e CTA circulada | 5–7 | Narrativa | ✅ `A` |
-| **B** | Editorial com números (Ricardo/Valter/Rapha) | Capa com foto e manchete; slides alternando claro/escuro; números gigantes na cor de destaque; tabela ou ❌/✅; botão de CTA no final; contador "3/8" | 7–10 | Ensino | ✅ `B` |
-| **C** | Photo dump (Antônio) | Fotos reais escuras e cinematográficas; uma frase curta centralizada, branca, com sombra; assinatura no fim | 4–12 | Sequência | ✅ `C` |
-| **D** | Frase com rabisco (Ricardo) | Fundo preto, frase grande ExtraBold, sublinhado + círculo + anotação manuscrita | 1 | Frase | ✅ `D` |
+| **A** ⭐ | Post sobre foto real (Ricardo) | Foto no topo (~55%) com **corte seco** para bloco plum sólido; cabeçalho de post (avatar, @, nome, ···); texto 3–5 linhas com negrito e sublinhado; seta no slide 1; slides só-texto intercalados; último slide com foto e CTA circulada | 5–7 | Narrativa | ✅ `A` |
+| **B** | Editorial com números (Ricardo/Valter/Rapha) | Capa com foto e manchete; slides alternando claro/escuro; números gigantes em serifada (surface no escuro, plum-700 no claro); tabela ou ❌/✅; botão de CTA no final; contador "3/8" | 7–10 | Ensino | ✅ `B` |
+| **C** | Photo dump (Antônio) | Fotos reais escuras e cinematográficas; uma frase curta centralizada **dentro de um bloco plum sólido** (sem sombra); assinatura no fim | 4–12 | Sequência | ✅ `C` |
+| **D** | Frase com rabisco (Ricardo) | Fundo plum, frase grande em serifada, sublinhado à mão + anotação manuscrita + ponto final terracota | 1 | Frase | ✅ `D` |
 | **E** | Print de prova | Print do WhatsApp com o agente atendendo, resultado de cliente (autorizado, dados borrados) ou caixinha respondida | 1–5 | Prova | ⚠️ manual (usar B com print como foto) |
 | **F** | Ensaio (Rishi) | Fundo creme/preto alternado, serifa editorial no texto, título condensado com palavra em caixa colorida, contador e barra de progresso, "Nº 012" | 12–15 | Ensino longo | ⚠️ ainda não implementado |
 
@@ -276,6 +278,7 @@ Posts em que o dono **lê e pensa "isso sou eu"**, e comenta para concordar, des
 - **Um destaque por slide.** No máximo um círculo por post (geralmente a palavra da CTA).
 - Até **35 palavras por slide** (A, B, F) e **12 palavras** (C).
 - Capa: foto sua **em ação** e frase de 4 a 12 palavras. Nunca banco de imagem.
+- Terracota só em elemento de ação; círculo à mão só na palavra da CTA.
 - Nada de dado de cliente visível em print (nome, telefone, e-mail).
 
 ### 3.3 O que nunca fazer
@@ -333,7 +336,7 @@ Post (5 pilares)  →  "Comenta IA"  →  DM automática (ManyChat)
 
 Comenta IA aqui embaixo que eu te mostro o caminho.
 ```
-- **Vocativo fixo** (ex.: "meu amigo empresário") e **assinatura curta** (ex.: "Trabalha menos, lucra mais. 🙏🏻").
+- **Vocativo fixo** (ex.: "meu amigo empresário") e **assinatura curta**: "Domine com IA." (tagline da marca).
 - Sem hashtags.
 
 ---

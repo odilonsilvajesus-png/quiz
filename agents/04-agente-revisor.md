@@ -20,6 +20,7 @@ Verifique e liste em `bloqueios`:
 - [ ] Uso de fé como argumento de venda, ou versículo com referência errada ou fora de contexto.
 - [ ] Contradiz a crença da marca: sugerir que o dono deve sair da empresa ou ser dispensável (o certo é "envolvido, mas nem tudo passa por ele").
 - [ ] Post de identificação que humilha funcionário ou cliente, ou que toma lado político.
+- [ ] Arte fora da marca SIC: degradê, cantos arredondados, emoji, sombra pesada, robô/circuito/rede neural, ou **terracota usada como decoração** (fora de CTA, botão, seta, círculo da CTA, ponto final e selo).
 - [ ] Texto ou imagem **copiado** de outro perfil (e não modelado).
 - [ ] Imagem de pessoa gerada por IA apresentada como real.
 

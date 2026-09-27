@@ -1,7 +1,12 @@
 {
   "formato": "D",
-  "marca": {"handle": "seuperfil", "cor_destaque": "#E3262E"},
+  "marca": {
+    "arquivo": "../../marca-sic.json"
+  },
   "slides": [
-    {"texto": "A verdadeira **bet** no Brasil é ser ((empresário)).", "nota": "concorda?"}
+    {
+      "texto": "A verdadeira **bet** no Brasil é ser __empresário__.",
+      "nota": "concorda?"
+    }
   ]
 }
