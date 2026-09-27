@@ -20,12 +20,16 @@
 ### 1.1 Posicionamento
 > **"Eu ajudo empresários a lucrar mais e trabalhar menos usando IA de verdade, com princípio, família e fé no centro."**
 
-O dono de empresa não acorda pensando em IA; acorda pensando em **lucro, equipe, tempo, família, cansaço e propósito**. **IA é o meio, não o assunto.** O que te diferencia não é saber IA (isso tem no YouTube), é **sua experiência implementando em empresas reais**, somada a quem você é.
+O dono de empresa não acorda pensando em IA; acorda pensando em **lucro, equipe, tempo, família, cansaço e propósito**. **IA é o meio, não o assunto.**
+
+**Crença central sobre o dono:** *o dono precisa estar envolvido na empresa, mas nem tudo precisa passar por ele.* Presença na visão, na cultura, nas decisões e nas pessoas; o repetitivo e o operacional ficam com a equipe e a IA. Nunca pregar "saia da sua empresa" ou "seja dispensável".
+
+O que te diferencia não é saber IA (isso tem no YouTube), é **sua experiência implementando em empresas reais**, somada a quem você é.
 
 ### 1.2 Os 5 pilares × objetivo × funil
 | Pilar | % | Objetivo principal | Métrica que importa | Funil | CTA |
 |---|---|---|---|---|---|
-| **Mentalidade de dono** | 25% | Alcance | Compartilhamentos, alcance em não seguidores | Topo | Seguir / enviar |
+| **Mentalidade de dono** | 25% | Alcance + comentários | Compartilhamentos, comentários de identificação | Topo | Seguir / enviar / **pergunta de identificação** |
 | **Negócios e gestão** | 25% | Autoridade | Salvamentos | Meio | Salvar + comentar |
 | **IA de verdade** (o despertar) | 25% | Lead | Comentários com a palavra, DMs | Meio/fundo | **CTA duplo + PALAVRA** |
 | **Cristo e vida cristã** | 15% | Conexão | Comentários longos, envios, DMs espontâneas | Topo | Seguir / enviar para alguém |
@@ -37,7 +41,7 @@ O dono de empresa não acorda pensando em IA; acorda pensando em **lucro, equipe
 Nos posts de meio e fundo, **70% é o tema e 30% é a ponte**. Topo pode terminar só com "segue".
 | Tema | Ponte |
 |---|---|
-| Dono que faz tudo sozinho | "Metade do que você faz hoje, um agente de IA faz sem cansar." |
+| Dono sobrecarregado: tudo passa por ele | "Você continua presente no que importa. O repetitivo, a IA assume." |
 | Fiel no pouco / mordomia | "Mordomia também é não desperdiçar com tarefa repetitiva o tempo que Deus te deu." |
 | Vendedor que falta / empresa que depende de pessoa | "Processo que não depende de uma pessoa: a IA qualifica e responde lead 24h." |
 | Reclamar vs. resolver | "O problema que você reclama toda semana provavelmente é automação." |
@@ -63,10 +67,13 @@ Nos posts de meio e fundo, **70% é o tema e 30% é a ponte**. Topo pode termina
 | **Frase de efeito + lição** | "Direito de reclamar por 2 minutos" | Mentalidade, negócios | Narrativa | **A** ou **D** |
 | **História real** (sua ou de cliente) | "Esse empresário respondia 200 mensagens por dia" | Prova, negócios | Narrativa | **A** |
 | **Testemunho de fé / antes e depois de vida** | "Aqui eu orava para ter o primeiro cliente" | Fé | Sequência | **C** |
+| **Fé que toca a alma** (seção 2.4) | "Deus não te chamou pra carregar sozinho o que Ele prometeu sustentar." | Fé | Alma | **C**, **D** ou **A** |
+| **Identificação** (seção 2.5) | "A verdadeira bet no Brasil é ser empresário." | Mentalidade, negócios | Identificação | **D**, **A** ou **C** |
 | **Ensaio de opinião** (longo) | "Por que 90% das empresas vão implementar IA errado" | IA, mentalidade | Ensino (versão longa) | **F** |
 | **Comece Aqui** (fixado) | Sua trajetória, por que IA, por que fé | Prova, fé | Narrativa longa | **A** ou **F** |
 
-### 2.2 As 3 estruturas-mestre
+### 2.2 As estruturas-mestre
+São 5: **ENSINO**, **NARRATIVA** e **SEQUÊNCIA** (abaixo), mais **ALMA** (seção 2.4, fé) e **IDENTIFICAÇÃO** (seção 2.5, comentários).
 
 #### Estrutura ENSINO (listas, passo a passo, certo/errado, comparação, ensaio)
 *(Rishi + Valter)*
@@ -103,14 +110,14 @@ Frases curtas (máx. 12 palavras), **uma por foto** → contraste ou virada → 
 **Mentalidade**
 - "Empresário tem o direito de reclamar por 2 minutos. Depois disso, tem que achar uma solução."
 - "Ninguém bate palma quando você paga o salário em dia."
-- "O maior gargalo da sua empresa tem nome, CPF e senta na sua cadeira."
-- "Você não abriu uma empresa. Você comprou um emprego que não te deixa tirar férias."
+- "Dono presente é bênção. Dono que precisa aprovar até o papel higiênico é gargalo."
+- "Você não precisa sair da empresa. Precisa parar de ser a única pessoa que resolve tudo nela."
 - "Solidão de dono é quando todo mundo depende de você e ninguém pergunta como você está."
 
 **Negócios**
 - "Seu melhor vendedor falta muito e mesmo assim vende 700 mil. O que você faz?"
 - "Venda é tudo. Ela é capaz de demitir da faxineira ao dono."
-- "Empresa que depende do dono não é empresa. É autoemprego com CNPJ."
+- "Estar envolvido é diferente de tudo passar por você."
 - "Cortar preço quando o problema é recorrência é jogar dinheiro fora."
 - "Se eu tivesse uma empresa hoje e começasse do zero, faria isso."
 
@@ -139,12 +146,116 @@ Frases curtas (máx. 12 palavras), **uma por foto** → contraste ou virada → 
 
 ---
 
+### 2.4 Fé que toca a alma (pilar Cristo e vida cristã)
+O objetivo aqui **não é ensinar nem vender**. É fazer o dono **se sentir visto por Deus** no meio do peso de empreender. Quando ele se sente visto, ele volta, comenta, envia para a esposa e confia em você.
+
+**Princípios**
+1. **Comece na dor, não no versículo.** Primeiro a madrugada sem dormir, a folha que não fecha, a solidão; depois Deus nessa cena.
+2. **Vulnerabilidade real.** O que você viveu, sentiu, orou e errou. "Eu" antes de "você".
+3. **Graça, não cobrança.** Nada de "você está fraco porque não ora". A mensagem é "você não está sozinho", "você não precisa carregar tudo".
+4. **Deus não é ferramenta de lucro.** Proibido: "ore que você vai faturar", "Deus quer você rico". A prosperidade aparece como consequência de fidelidade e paz, nunca como promessa.
+5. **Um versículo por post, com referência e versão** (ex.: ARC, NVI). Copiar o texto **exato** da versão escolhida; na dúvida, não citar.
+6. **Silêncio e respiro:** menos palavras, mais espaço. Fundo escuro, foto real, frases curtas.
+7. **Final que abraça:** uma frase que a pessoa quer guardar ou enviar, sem CTA de venda. No máximo: "Se isso falou com você, manda pra alguém que precisa ler hoje."
+
+**Estrutura ALMA (para C, D ou A · 5 a 8 slides)**
+| Slide | Função | Exemplo |
+|---|---|---|
+| 1 | **A cena** (dor que ele vive em silêncio) | "3 da manhã. A folha vence sexta. E ninguém em casa sabe." |
+| 2 | **O peso nomeado** | "Você sorri pra equipe, pro cliente, pra família. E carrega sozinho." |
+| 3 | **Eu também** (sua vulnerabilidade real) | "Eu já orei com o extrato do banco aberto no celular." |
+| 4 | **Deus entra na cena** (versículo ou verdade) | "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei." Mateus 11:28 (ARC) |
+| 5 | **A virada** | "Você foi chamado pra ser fiel. Não pra ser Deus da sua empresa." |
+| 6 | **O abraço final** | "Entrega o que não cabe nas suas mãos. Ele cabe." |
+| (opc.) | Assinatura ou "manda pra quem precisa" | |
+
+**Temas que tocam o dono**
+- Solidão de quem lidera ("todo mundo depende de você, ninguém pergunta como você está").
+- A madrugada: ansiedade, contas, medo de não dar conta.
+- Culpa com a família (ausência, cansaço, promessa adiada).
+- Quando a empresa quase quebrou, e o que Deus fez ali.
+- Fidelidade no pouco: o começo pequeno que ninguém viu.
+- Descanso como confiança ("Ele dá aos seus amados o sono").
+- Quando o sócio, o funcionário ou o cliente te traiu.
+- Gratidão: o que hoje é normal e um dia foi oração.
+- Propósito: a empresa como lugar de servir pessoas, não só de lucrar.
+
+**Versículos-âncora** (confira o texto na versão escolhida antes de publicar)
+| Tema | Referência | Texto (ARC) quando cabe citar |
+|---|---|---|
+| Cansaço | Mateus 11:28 | "Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei." |
+| Ansiedade | 1 Pedro 5:7 | "…lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós." |
+| Solidão | Eclesiastes 4:10 | "…ai do que estiver só; pois, caindo, não haverá outro que o levante." |
+| Controle / entregar | Salmos 127:1 | "Se o Senhor não edificar a casa, em vão trabalham os que edificam…" |
+| Parar e confiar | Salmos 46:10 | "Aquietai-vos e sabei que eu sou Deus…" |
+| Descanso | Salmos 127:2 | (tema: Ele dá o sono aos seus amados) |
+| Planos | Provérbios 16:3 | (tema: entregar as obras ao Senhor) |
+| Fidelidade no pouco | Lucas 16:10 | (tema: fiel no pouco, fiel no muito) |
+| Trabalho com propósito | Colossenses 3:23 | (tema: trabalhar de coração, como para o Senhor) |
+| Força para prosperar | Deuteronômio 8:18 | (tema: é Ele quem dá força; não usar como promessa de riqueza) |
+
+**Ganchos que tocam a alma**
+- "Ninguém te pergunta como você está. Então eu vou perguntar: como você está?"
+- "3 da manhã, conta aberta no celular e uma oração que não sai."
+- "Você não foi chamado pra ser o Deus da sua empresa."
+- "Tem dono que sorri pra todo mundo e chora no carro antes de entrar em casa."
+- "Deus não te chamou pra carregar sozinho o que Ele prometeu sustentar."
+- "Seus filhos não vão lembrar do faturamento. Vão lembrar se você estava lá."
+- "O que hoje é normal pra você, um dia foi oração."
+- "Tem temporada em que a única coisa que você consegue fazer é não desistir. E tudo bem."
+
+**Formatos que funcionam para fé:** C (photo dump escuro), D (frase com rabisco em tom mais sereno: menos círculo, mais sublinhado), A (com foto sua orando, lendo, com a família) e reels 2 (casal), 8 (b-roll com reflexão) e 4 (testemunho).
+
+---
+
+### 2.5 Identificação: conteúdo que gera volume de comentários
+Posts em que o dono **lê e pensa "isso sou eu"**, e comenta para concordar, desabafar ou contar a própria história. É o conteúdo de **topo com mais comentários**: alimenta o algoritmo e mostra quem é o seu público.
+
+**Por que funciona:** afirma em voz alta algo que todo empresário sente e ninguém diz; dá a ele um lugar para desabafar; e ele comenta porque **se sente representado**, não porque pediram.
+
+**Estrutura IDENTIFICAÇÃO (D, A ou C · 1 a 8 slides)**
+| Slide | Função | Exemplo |
+|---|---|---|
+| 1 | **Afirmação que ele assina embaixo** (provocativa, verdade compartilhada) | "A verdadeira bet no Brasil é ser empresário." |
+| 2 | **Reforço com humor ou ironia** | "Você aposta tudo, sem odds, sem saque antecipado e sem bônus de boas-vindas." |
+| 3–6 | **Micro-dores reconhecíveis** (uma por slide, bem específicas) | "Paga imposto antes de receber." · "Funcionário falta na segunda." · "Cliente pede desconto no Pix." · "Férias? Só se levar o notebook." |
+| 7 | **Validação / virada** | "E mesmo assim você levanta todo dia e abre as portas. Isso não é aposta. É coragem." |
+| Último | **Pergunta que convida a contar** | "Qual foi a aposta mais alta que você já fez pela sua empresa?" / "Comenta **EU** se você se sentiu assim essa semana." |
+
+**Regras**
+- **Tema do momento + dor eterna:** aproveite o que está em alta (ex.: a discussão sobre bets no Brasil) para falar de algo que todo dono vive. Sem opinião partidária e sem acusar governo, partido ou pessoa.
+- **Micro-dores específicas ganham de frases genéricas:** "cliente que some depois do orçamento" > "clientes difíceis".
+- **Pergunta final fácil de responder:** uma palavra (EU), um número ("de 0 a 10…"), uma escolha ("A ou B?") ou uma história curta.
+- **Sem ponte forçada para IA.** Aqui a CTA é o comentário. No máximo 1 em cada 4 posts de identificação leva uma ponte leve no fim.
+- **Responda os primeiros 30 comentários** na primeira hora: é o que multiplica o alcance.
+- **Nunca humilhar o funcionário ou o cliente:** o tom é "a gente vive isso", não "funcionário é tudo preguiçoso".
+
+**Ganchos de identificação** (prontos para usar)
+- "A verdadeira bet no Brasil é ser empresário."
+- "Ser empresário no Brasil é solitário."
+- "Empresário no Brasil é sócio do governo no lucro e sozinho no prejuízo."
+- "Ninguém bate palma quando você paga a folha em dia."
+- "Todo empresário já pagou a folha antes de pagar a si mesmo."
+- "Empresário não tem feriado. Tem dia em que o WhatsApp toca menos."
+- "Você sabe que é empresário quando o domingo à noite já dá frio na barriga."
+- "Todo mundo quer ser dono até ver o boleto do dia 5."
+- "A família acha que você é rico. O extrato acha outra coisa."
+- "Ninguém imagina o que você carrega pra manter essa porta aberta."
+- "Empreender é a única profissão em que você paga pra trabalhar nos primeiros anos."
+- "O cliente pede desconto. O fornecedor pede reajuste. O funcionário pede aumento. E você pede a Deus."
+- "Empresário não fica doente. Ele trabalha com febre."
+- "Você já perdeu uma venda porque demorou pra responder? Eu também."
+
+**Formatos:** D (frase com rabisco: o mais rápido e com mais comentários), A (com foto real sua no escritório ou no carro), C (sequência de fotos do dia a dia de dono) e reels 5 (POV "o que você faria?") e 1 (caixinha no carro).
+
+---
+
 ## PARTE 3: VISUAL (como deve parecer)
 
 ### 3.1 Identidade
 - **Tamanho:** 1080 × 1350 (4:5) para carrossel e estático; 1080 × 1920 para reels.
 - **Fonte:** Inter (Regular no texto, ExtraBold em títulos e destaques) + Caveat nas anotações à mão.
-- **Cores:** preto #000, branco #FFF e **uma cor de destaque** (sublinhados, números, botões, círculos).
+- **Cores:** a paleta oficial da marca (base de conhecimento, seção 7): fundo escuro, fundo claro, texto e **cor de destaque** (sublinhados, números, botões, círculos) + secundária (anotações à mão).
 - **Assinatura visual:** **sublinhado e círculo feitos à mão** na cor de destaque (padrão do Ricardo).
 - **Marcações de texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão))`.
 - **Fotos:** sempre reais (suas, da operação, do cliente com autorização). **Sessão mensal de 60 a 100 fotos:** falando com cliente, notebook com automação, palestra, reunião, família (com consentimento), Bíblia/igreja, viagem, carro, mãos no teclado, café e agenda.
@@ -265,8 +376,8 @@ Comenta IA aqui embaixo que eu te mostro o caminho.
 | Qua | Fé · testemunho · **C** | 2 · Casal / família |
 | Qui | Negócios · história real · **A** | 5 · POV "O que você faria?" |
 | Sex | IA · certo vs. errado · **B** | 6 · Talking head com print (CTA IA) |
-| Sáb | Mentalidade · frase · **D** | 3 · Post-moldura com vídeo |
-| Dom | Fé e família · **C** | 8 · B-roll com reflexão |
+| Sáb | Identificação · frase · **D** ("A verdadeira bet no Brasil é ser empresário") | 3 · Post-moldura com vídeo |
+| Dom | Fé que toca a alma · **C** (estrutura ALMA) | 8 · B-roll com reflexão |
 | Quinzenal | Prova · caso de cliente · **A** ou **E** | 4 · Documentário ("Comece Aqui", fixado) |
 
 ### 6.2 Processo
@@ -284,17 +395,19 @@ Tom: direto, de dono para dono, sem jargão técnico; fé vinda da vida real, nu
 
 Pilar: [mentalidade | negócios | IA | fé | prova]
 Objetivo: [alcance | autoridade | lead | conexão]
-Tipo de conteúdo: [lista | certo vs errado | passo a passo | comparação | frase de efeito | história | testemunho | ensaio]
+Tipo de conteúdo: [lista | certo vs errado | passo a passo | comparação | frase de efeito | história | testemunho | fé que toca a alma | identificação | ensaio]
 Formato visual: [A | B | C | D | F]
 WHO: [para qual dono exatamente]
 Tema: [tema]
 Caso real / história (OBRIGATÓRIO para números): [cole aqui]
 Referência que viralizou (opcional): [texto/print]
 
-Use a estrutura [ENSINO | NARRATIVA | SEQUÊNCIA] do Mapa Mestre:
+Use a estrutura [ENSINO | NARRATIVA | SEQUÊNCIA | ALMA | IDENTIFICAÇÃO] do Mapa Mestre:
 - ENSINO: gancho (≤12 palavras) → segundo gancho que funcione sozinho → dor → benefício com prova real → passos (1 por slide) → CTA duplo
 - NARRATIVA: frase de efeito → tese → história real → lição → (slide só texto) → aplicação/ponte → CTA
 - SEQUÊNCIA: 1 frase curta por foto (≤12 palavras) → virada → frase final → assinatura
+- ALMA: a cena (dor em silêncio) → o peso nomeado → "eu também" → Deus entra na cena (1 versículo com referência e versão) → virada → abraço final (sem venda)
+- IDENTIFICAÇÃO: afirmação que ele assina embaixo → reforço com ironia → micro-dores específicas (1 por slide) → validação → pergunta fácil de responder
 
 Regras: máximo 35 palavras por slide (12 na SEQUÊNCIA); marque destaques com **negrito**, __sublinhado__ e ((círculo, só na palavra da CTA));
 nunca invente números, clientes ou histórias; CTA conforme o objetivo; palavra-chave {{IA}}.
@@ -315,7 +428,9 @@ Entregue: slides numerados, 5 ganchos alternativos, legenda no modelo do formato
 - [ ] Estrutura correta (Ensino / Narrativa / Sequência)
 - [ ] Prova real (número, print ou caso) quando houver promessa
 - [ ] **Algo seu** (experiência, opinião, história ou fé vivida)
-- [ ] Fé com referência bíblica correta, sem uso comercial de Deus
+- [ ] Fé com referência bíblica correta (versão indicada), sem uso comercial de Deus, começando na dor e terminando em graça
+- [ ] Identificação: micro-dores específicas, sem humilhar funcionário ou cliente, sem política, pergunta final fácil
+- [ ] Coerente com a crença: dono envolvido, mas nem tudo passa por ele
 
 **Visual**
 - [ ] Foto real e forte na capa

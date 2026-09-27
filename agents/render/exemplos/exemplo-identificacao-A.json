@@ -1,0 +1,18 @@
+{
+  "formato": "A",
+  "marca": {"nome": "Seu Nome", "handle": "seuperfil", "cor_destaque": "#E3262E"},
+  "slides": [
+    {"tipo": "foto_texto", "foto": "", "foto_descricao": "você no escritório à noite, olhando o notebook",
+     "texto": "Todo mundo falando de bet. Mas a **verdadeira bet** no Brasil é __ser empresário.__"},
+    {"tipo": "texto", "texto": "Você aposta tudo. **Sem odds, sem saque antecipado** e sem bônus de boas-vindas."},
+    {"tipo": "foto_texto", "foto": "", "foto_descricao": "boletos ou extrato na mesa",
+     "texto": "Paga imposto **antes de receber** do cliente."},
+    {"tipo": "foto_texto", "foto": "", "foto_descricao": "celular com muitas mensagens não lidas",
+     "texto": "Cliente pede desconto no Pix. Fornecedor pede reajuste. Funcionário pede aumento. **E você pede a Deus.**"},
+    {"tipo": "texto", "texto": "Férias? Só se levar o __notebook.__"},
+    {"tipo": "foto_texto", "foto": "", "foto_descricao": "você abrindo a porta da empresa de manhã",
+     "texto": "E mesmo assim você levanta todo dia e abre as portas. Isso não é aposta. **É coragem.**"},
+    {"tipo": "cta", "foto": "", "foto_descricao": "você olhando para a câmera, sério e sereno",
+     "texto": "Qual foi a aposta mais alta que você já fez pela sua empresa?\n**Me conta aqui embaixo.**"}
+  ]
+}

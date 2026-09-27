@@ -10,8 +10,9 @@
 
 ## 2. Público
 - **Quem é:** dono de pequena e média empresa ({{segmentos principais: ex. varejo, clínicas, serviços, indústria}}), faturamento de {{faixa}}.
-- **Como ele está hoje:** trabalha demais, é o gargalo da própria empresa, responde WhatsApp à noite e acha que "usar IA" é abrir o ChatGPT.
-- **O que ele quer:** mais lucro, mais tempo, equipe que funcione sem ele, paz com a família.
+- **Como ele está hoje:** trabalha demais, tudo passa por ele (do orçamento ao WhatsApp da noite) e acha que "usar IA" é abrir o ChatGPT.
+- **O que ele quer:** mais lucro, mais tempo, uma equipe que resolve o dia a dia sem ele, e paz com a família.
+- **Nossa crença sobre o dono:** **o dono precisa estar envolvido na empresa, mas nem tudo precisa passar por ele.** Ele fica com visão, cultura, decisões estratégicas e relacionamento; o operacional e o repetitivo são da equipe e da IA. **Nunca** dizer que o dono deve "sair da empresa", "ser dispensável" ou que "empresa que depende do dono não é empresa".
 - **O que ele teme:** perder dinheiro com tecnologia que não funciona, ficar para trás, ser enganado.
 - **Crenças:** muitos são cristãos e valorizam família, trabalho honesto e fé.
 
@@ -38,7 +39,7 @@
 | Prova e bastidor | 10% | Fundo (conversão) |
 
 **Pontes** (como cada tema leva à IA; usar em posts de meio e fundo):
-- Dono que faz tudo sozinho → "metade do que você faz, um agente de IA faz sem cansar".
+- Dono sobrecarregado (tudo passa por ele) → "você continua presente nas decisões que importam; o repetitivo, a IA assume".
 - Fidelidade e mordomia → "não desperdiçar o tempo que Deus te deu com tarefa repetitiva".
 - Vendedor que falta / depende de pessoa → "processo comercial que não depende de uma pessoa".
 - Reclamar vs. resolver → "o problema que você reclama toda semana provavelmente é automação".
@@ -52,7 +53,16 @@
 - **Palavras proibidas ou evitadas:** "revolucionário", "hack", "segredo que ninguém conta" (em excesso), "fique rico", "garantido", jargão como "LLM", "prompt engineering", "RAG" (só se explicado).
 
 ## 7. Identidade visual
-- **Cor de destaque:** {{#HEX}} (uma só) · **Fundo:** preto #000 e branco #FFF
+- **Paleta da marca** (usar exatamente estes códigos no bloco `marca` do renderizador):
+  | Uso | Campo | Cor |
+  |---|---|---|
+  | Destaque (sublinhado, círculo, números, botão) | `cor_destaque` | {{#HEX}} |
+  | Secundária (anotação à mão, detalhes) | `cor_secundaria` | {{#HEX}} |
+  | Fundo escuro | `cor_fundo_escuro` | {{#HEX}} |
+  | Fundo claro | `cor_fundo_claro` | {{#HEX}} |
+  | Texto sobre fundo escuro | `cor_texto_escuro` | {{#HEX}} |
+  | Texto sobre fundo claro | `cor_texto_claro` | {{#HEX}} |
+  | Texto do botão | `cor_texto_botao` | {{#HEX}} |
 - **Fonte:** Inter (Regular no texto, ExtraBold no destaque) + Caveat nas anotações à mão
 - **Marcações do texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão))`
 - **Formatos de carrossel:** A (post sobre foto real, o principal) · B (editorial com números) · C (photo dump) · D (frase com rabisco)

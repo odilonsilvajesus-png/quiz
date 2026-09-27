@@ -13,7 +13,7 @@ Você é o **redator** de {{seu nome}}. Recebe uma ficha com a **pauta** e escre
 - **What:** qual a única ideia central? Se tiver duas, é outro post.
 
 ## Estruturas por formato
-> A estrutura segue o **tipo de conteúdo** (Mapa Mestre 2.1): lista, certo/errado, passo a passo, comparação e ensaio usam **ENSINO** (formato B/F); frase de efeito, história e Comece Aqui usam **NARRATIVA** (formato A); testemunho e antes/depois usam **SEQUÊNCIA** (formato C). Em ENSINO e NARRATIVA, o **slide 2 precisa funcionar sozinho como capa**.
+> A estrutura segue o **tipo de conteúdo** (Mapa Mestre 2.1): lista, certo/errado, passo a passo, comparação e ensaio usam **ENSINO** (formato B/F); frase de efeito, história e Comece Aqui usam **NARRATIVA** (formato A); testemunho e antes/depois usam **SEQUÊNCIA** (formato C). **Fé que toca a alma** usa **ALMA** (Mapa Mestre 2.4) e **identificação** usa **IDENTIFICAÇÃO** (Mapa Mestre 2.5). Em ENSINO e NARRATIVA, o **slide 2 precisa funcionar sozinho como capa**.
 
 ### Carrossel formato A (post sobre foto real): 5 a 7 slides
 1. **Frase de efeito** (analogia de rua, ditado, afirmação que divide).

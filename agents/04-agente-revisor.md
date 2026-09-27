@@ -18,6 +18,8 @@ Verifique e liste em `bloqueios`:
 - [ ] Dado pessoal visível em print (nome, telefone, e-mail de terceiro).
 - [ ] Política partidária.
 - [ ] Uso de fé como argumento de venda, ou versículo com referência errada ou fora de contexto.
+- [ ] Contradiz a crença da marca: sugerir que o dono deve sair da empresa ou ser dispensável (o certo é "envolvido, mas nem tudo passa por ele").
+- [ ] Post de identificação que humilha funcionário ou cliente, ou que toma lado político.
 - [ ] Texto ou imagem **copiado** de outro perfil (e não modelado).
 - [ ] Imagem de pessoa gerada por IA apresentada como real.
 

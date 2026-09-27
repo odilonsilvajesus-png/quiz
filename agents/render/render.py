@@ -7,6 +7,8 @@ Uso:
 
 Formatos: A (post sobre foto real), B (editorial com números), C (photo dump), D (frase com rabisco).
 Marcações no texto: **negrito**  __sublinhado à mão__  ((círculo à mão))
+Cores da marca (bloco "marca"): cor_destaque, cor_secundaria, cor_fundo_escuro, cor_fundo_claro,
+  cor_texto_escuro, cor_texto_claro, cor_texto_botao (todas em #RRGGBB).
 Esquema completo da especificação: agents/03-agente-visual.md
 """
 
@@ -50,6 +52,12 @@ def placeholder(slide: dict, base: Path) -> str:
 
 def styles(brand: dict) -> str:
     accent = brand.get("cor_destaque", "#E3262E")
+    dark = brand.get("cor_fundo_escuro", "#000000")
+    light = brand.get("cor_fundo_claro", "#FFFFFF")
+    text_on_dark = brand.get("cor_texto_escuro", "#FFFFFF")
+    text_on_light = brand.get("cor_texto_claro", "#111111")
+    second = brand.get("cor_secundaria", accent)
+    on_accent = brand.get("cor_texto_botao", "#FFFFFF")
     enc = accent.replace("#", "%23")
     underline = (
         "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'>"
@@ -63,18 +71,19 @@ def styles(brand: dict) -> str:
 @font-face{{font-family:Inter;font-weight:100 900;src:url('{(FONTS/'Inter-variable.woff2').as_uri()}') format('woff2')}}
 @font-face{{font-family:Caveat;font-weight:600;src:url('{(FONTS/'Caveat-600.woff2').as_uri()}') format('woff2')}}
 *{{margin:0;padding:0;box-sizing:border-box}}
-body{{width:{W}px;height:{H}px;overflow:hidden;font-family:Inter,sans-serif;background:#000;color:#fff}}
-.s{{position:relative;width:{W}px;height:{H}px;overflow:hidden}}
+body{{width:{W}px;height:{H}px;overflow:hidden;font-family:Inter,sans-serif;background:{dark};color:{text_on_dark}}}
+.s{{position:relative;width:{W}px;height:{H}px;overflow:hidden;background:{dark}}}
 b{{font-weight:800}}
 .ul{{background:url("{underline}") no-repeat left 100%/100% 0.32em;padding-bottom:0.12em}}
 .circ{{position:relative;white-space:nowrap}}
 .circ::after{{content:"";position:absolute;left:-0.35em;right:-0.35em;top:-0.25em;bottom:-0.3em;background:url("{circle}") no-repeat center/100% 100%}}
 .accent{{color:{accent}}}
+.second{{color:{second}}}
 .ph{{position:absolute;top:24px;left:24px;right:24px;font:600 26px Inter;color:#ddd;background:rgba(0,0,0,.45);padding:14px 18px;border:2px dashed #aaa;border-radius:12px}}
 .photo{{position:absolute;inset:0;background-size:cover;background-position:center}}
 /* A */
 .a-photo{{position:absolute;left:0;right:0;top:0;height:800px;background-size:cover;background-position:center top}}
-.a-fade{{position:absolute;left:0;right:0;top:520px;height:300px;background:linear-gradient(transparent,#000)}}
+.a-fade{{position:absolute;left:0;right:0;top:520px;height:300px;background:linear-gradient(transparent,{dark})}}
 .a-box{{position:absolute;left:64px;right:64px;bottom:120px}}
 .a-head{{display:flex;align-items:center;gap:18px;margin-bottom:34px}}
 .a-av{{width:68px;height:68px;border-radius:50%;background:#444 center/cover;border:2px solid #222}}
@@ -85,9 +94,9 @@ b{{font-weight:800}}
 .arrow{{position:absolute;right:70px;bottom:70px;width:120px;height:3px;background:{accent}}}
 .arrow::after{{content:"";position:absolute;right:-2px;top:-9px;border-left:18px solid {accent};border-top:10px solid transparent;border-bottom:10px solid transparent}}
 .a-cta{{position:absolute;left:64px;right:64px;bottom:110px;font:400 56px/1.2 Inter;text-shadow:0 2px 18px rgba(0,0,0,.6)}}
-.shade{{position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(0,0,0,.85))}}
+.shade{{position:absolute;inset:0;background:linear-gradient(transparent 35%,{dark}d9)}}
 /* B */
-.b-white{{background:#fff;color:#111}}
+.b-white{{background:{light};color:{text_on_light}}}
 .b-cap-txt{{position:absolute;left:64px;right:64px;bottom:110px}}
 .b-title{{font:800 70px/1.08 Inter;letter-spacing:-1.5px;margin-bottom:26px}}
 .b-sub{{font:400 36px/1.3 Inter;opacity:.92}}
@@ -100,14 +109,14 @@ b{{font-weight:800}}
 .b-body p{{font:400 38px/1.35 Inter;margin-bottom:24px}}
 .b-cta{{position:absolute;left:90px;right:90px;top:50%;transform:translateY(-50%);text-align:center}}
 .b-cta h2{{font:800 60px/1.15 Inter;margin-bottom:50px}}
-.b-btn{{display:inline-block;background:{accent};color:#fff;font:600 38px/1.3 Inter;padding:30px 44px;border-radius:18px}}
+.b-btn{{display:inline-block;background:{accent};color:{on_accent};font:600 38px/1.3 Inter;padding:30px 44px;border-radius:18px}}
 /* C */
 .c-dark{{position:absolute;inset:0;background:rgba(0,0,0,.28)}}
 .c-txt{{position:absolute;left:90px;right:90px;top:50%;transform:translateY(-50%);text-align:center;font:700 46px/1.22 Inter;text-shadow:0 2px 10px rgba(0,0,0,.8)}}
 .c-txt.baixo{{top:auto;bottom:260px;transform:none}}
 /* D */
 .d-txt{{position:absolute;left:80px;right:80px;top:40%;transform:translateY(-50%);text-align:center;font:800 82px/1.15 Inter;letter-spacing:-1.5px}}
-.d-note{{position:absolute;right:90px;top:250px;font:600 44px/1 Caveat;color:{accent};transform:rotate(-12deg);text-align:center}}
+.d-note{{position:absolute;right:90px;top:250px;font:600 44px/1 Caveat;color:{second};transform:rotate(-12deg);text-align:center}}
 .d-handle{{position:absolute;left:0;right:0;bottom:120px;text-align:center;font:400 26px Inter;color:#666}}
 .count{{position:absolute;right:64px;top:52px;font:500 24px Inter;color:#888}}
 """

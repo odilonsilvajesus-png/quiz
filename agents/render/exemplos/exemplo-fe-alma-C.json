@@ -1,0 +1,12 @@
+{
+  "formato": "C",
+  "marca": {"handle": "seuperfil"},
+  "slides": [
+    {"foto": "", "foto_descricao": "celular aceso no escuro, madrugada", "texto": "3 da manhã. A folha vence sexta.\nE ninguém em casa sabe."},
+    {"foto": "", "foto_descricao": "você sorrindo numa reunião", "texto": "Você sorri pra equipe, pro cliente, pra família.\nE carrega sozinho."},
+    {"foto": "", "foto_descricao": "você no carro, parado, sem sorrir", "texto": "Eu já orei com o extrato do banco aberto no celular."},
+    {"foto": "", "foto_descricao": "Bíblia aberta numa mesa com luz de janela", "texto": "“Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.”\nMateus 11:28"},
+    {"foto": "", "foto_descricao": "estrada ou céu ao amanhecer", "texto": "Você foi chamado pra ser fiel.\nNão pra ser o Deus da sua empresa."},
+    {"foto": "", "foto_descricao": "você com a família, de costas, caminhando", "texto": "Entrega o que não cabe nas suas mãos.\nEle cabe."}
+  ]
+}
