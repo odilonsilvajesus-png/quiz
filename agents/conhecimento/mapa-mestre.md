@@ -419,6 +419,62 @@ Entregue: slides numerados, 5 ganchos alternativos, legenda no modelo do formato
 
 ---
 
+## PARTE 6B: PRODUÇÃO DIÁRIA (meta: 10 posts por dia = 7 carrosséis + 3 reels com IA)
+São **70 posts por semana**. O que sustenta esse volume sem cair a qualidade: **mistura de formatos** (nem todo post precisa de foto), **temas reaproveitados** (um tema gera carrossel + reel) e **aprovação em lote** (o Odilon aprova o dia inteiro de uma vez).
+
+### 6B.1 Distribuição dos 10 posts do dia
+| # | Horário (Brasília) | Tipo | Pilar | Formato sugerido | Fotos necessárias |
+|---|---|---|---|---|---|
+| 1 | 07:00 | Reel IA | Mentalidade ou fé | R3 (slides animados) ou R2 | 0–1 |
+| 2 | 08:30 | Carrossel | IA (o despertar) | B (lista, certo/errado, passo a passo) | 1 |
+| 3 | 10:00 | Carrossel | Mentalidade | D (frase) ou A | 0–3 |
+| 4 | 11:30 | Carrossel | Negócios | A (narrativa) | 3–5 |
+| 5 | 12:30 | Reel IA | IA ou negócios | R1 (avatar) ou R3 | 0–1 |
+| 6 | 14:00 | Carrossel | **Identificação** | D ou A | 0–3 |
+| 7 | 16:00 | Carrossel | IA | B (notícia ou dados) | 1–2 |
+| 8 | 18:00 | Reel IA | Identificação ou negócios | R1 ou R2 | 0 |
+| 9 | 19:30 | Carrossel | Fé que toca a alma **ou** prova (alternar por dia) | C (ALMA) ou A (caso) | 4–6 |
+| 10 | 21:00 | Carrossel | Mentalidade ou negócios | D (frase) | 0 |
+
+**Por pilar, no dia:** IA 3 · negócios 2 · mentalidade 2 · identificação 2 · fé ou prova 1 (≈ 25/25/25/15/10 ao longo da semana, com a identificação dentro de mentalidade e negócios).
+**Fotos por dia:** ~10 a 20, em vez de 35 a 50 se todos fossem formato A. Por isso os formatos D e B são a base do volume.
+
+### 6B.2 Reaproveitamento (1 ideia → 2 posts)
+- **Carrossel → reel R3:** todo dia, pelo menos 1 dos 3 reels é o carrossel de melhor texto do dia anterior animado (`agents/render/reel_de_slides.py`).
+- **Frase D → capa de reel:** a frase do formato D vira o título na tela de um reel R1/R2.
+- **Notícia → dois ângulos:** o mesmo tema quente em carrossel B (análise) e reel R1 (opinião).
+- **Nunca** repetir o mesmo post no mesmo dia, nem a mesma foto em 7 dias.
+
+### 6B.3 Os 3 tipos de reel com IA
+| Código | Tipo | Como é feito | Quem faz | Regras |
+|---|---|---|---|---|
+| **R1** | **Avatar do Odilon falando** | Roteiro do redator → voz do Odilon (clonada ou gravada) → avatar do Odilon com lip-sync (ex.: HeyGen, Hedra) → legenda palavra a palavra | Redator (roteiro), visual (plano e prompts), **ferramenta externa** gera | Só avatar **do próprio Odilon**; **rótulo de IA** obrigatório; nunca em testemunho ou prova; revisar pronúncia e boca antes de postar |
+| **R2** | **B-roll gerado por IA + narração** | Cenas curtas geradas por IA (ex.: Veo, Kling, Runway) sem pessoa real identificável + narração (voz do Odilon) + texto na tela | Redator (roteiro e texto na tela), visual (prompts das cenas e plano de edição), **ferramenta externa** gera | Mesmas regras da IA genérica (política de imagens): sem pessoa real, sem fingir notícia ou prova, sem robô ou circuito; rótulo de IA |
+| **R3** | **Slides animados** | PNGs do carrossel → vídeo 9:16 com fade e zoom lento + música sem direitos autorais | **Automático:** `python agents/render/reel_de_slides.py conteudo/render/<id> --zoom --audio <trilha>` | Usar o carrossel com melhor texto; 2,5 a 4s por slide; primeiro slide = gancho forte |
+
+**Alerta de qualidade (dados reais):** no perfil @fabianocarvalhojr, que posta de 8 a 10 vezes por dia, os reels de 8 segundos feitos 100% com IA ficaram com **15 a 30 curtidas**, e o maior viral era um vídeo **real**. Por isso:
+- R1 e R2 com **gancho falado forte nos 3 primeiros segundos** e duração de 30 a 60s;
+- pelo menos **1 reel real por semana** (gravado pelo Odilon, formatos 1–9 da Parte 5) para testar contra os de IA;
+- depois de **2 semanas**, comparar métricas por tipo (R1, R2, R3, real) e redistribuir.
+
+### 6B.4 Fluxo diário
+```
+Dia anterior, fim da tarde:  /dia <data>         → 10 fichas (pesquisador) + resumo
+                             /produzir-dia <data> → redator + visual + revisor em lote (subagentes em paralelo)
+                             Odilon aprova o lote (uma aprovação para o dia; pode vetar posts)
+                             Reels R1/R2: gerar nas ferramentas externas com os planos do visual
+Dia:                         /publicar <id> nos 10 horários (ou agendar tudo de uma vez)
+48h depois:                  /metricas
+```
+
+### 6B.5 Piso de qualidade (o volume nunca passa por cima disso)
+- Nenhum post com média do revisor abaixo de **7,5**. Se o dia não fechar 10 aprovados, **publique menos**.
+- No máximo **2 posts de formato D** seguidos na grade.
+- Pelo menos **3 dos 7 carrosséis** com o Odilon aparecendo (regra de marca pessoal).
+- Ler e responder os comentários da primeira hora de cada post: com 10 posts, reserve **2 blocos de 30 minutos** por dia.
+
+---
+
 ## PARTE 7: CHECKLIST ÚNICO
 **Direção**
 - [ ] Pilar e **um único objetivo** definidos

@@ -10,7 +10,9 @@
       "Edit(conteudo/**)",
       "Write(conteudo/**)",
       "Edit(fotos/indice.json)",
-      "Write(fotos/indice.json)"
+      "Write(fotos/indice.json)",
+      "Bash(python agents/render/reel_de_slides.py:*)",
+      "Bash(python3 agents/render/reel_de_slides.py:*)"
     ],
     "ask": [
       "Bash(python agents/publish/publicar_instagram.py:*)",

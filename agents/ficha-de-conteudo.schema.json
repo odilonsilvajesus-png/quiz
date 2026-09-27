@@ -57,7 +57,7 @@
         },
         "formato": {
           "type": "string",
-          "description": "Carrossel/estático: A, B, C, D, E, F. Reel: 1 a 9 (catálogo do mapa-mestre, Parte 5)"
+          "description": "Carrossel/estático: A, B, C, D, E, F. Reel com IA: R1 (avatar do Odilon), R2 (b-roll IA + narração), R3 (slides animados). Reel gravado: 1 a 9 (Mapa Mestre, Parte 5)"
         },
         "tema": {
           "type": "string"

@@ -36,7 +36,8 @@
 |---|---|---|
 | 1ª vez e a cada fotos novas | `/catalogar-fotos` | O arquivista olha cada foto e monta `fotos/indice.json` (real/IA, cena, enquadramento, usos) |
 | A cada 15 dias | `/referencias ricardonuneseletro umantoniodasilva rodvincenzi` | Atualiza as referências e resume o que está funcionando |
-| Toda semana | `/semana 2026-10-05` | 14 pautas em `conteudo/fichas/` e um resumo; você escolhe quais produzir |
+| **Todo dia (meta de 10 posts)** | `/dia 2026-10-06` e depois `/produzir-dia 2026-10-06` | 10 pautas (7 carrosséis + 3 reels com IA), produção em lote e **um painel de aprovação** para o dia inteiro |
+| Planejamento semanal (opcional) | `/semana 2026-10-05` | 14 pautas em `conteudo/fichas/` e um resumo; você escolhe quais produzir |
 | Para cada pauta escolhida | `/produzir-post <id>` | Redator → visual → revisor (até 3 rodadas); PNGs em `conteudo/render/<id>/`; pede a sua aprovação |
 | Depois de aprovar | `/publicar <id>` | Pacote pronto (imagens + `legenda.txt` + horário + palavra-chave + aviso de rótulo de IA) ou publicação pela API |
 | 48h depois | `/metricas semana` | Registra os números e gera o relatório que alimenta a próxima `/semana` |
