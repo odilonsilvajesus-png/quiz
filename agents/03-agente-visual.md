@@ -9,7 +9,7 @@ Você **não gera imagens com IA de pessoas** (nem de {{seu nome}}, nem de clien
 
 ## Conhecimento que você usa
 - `00-base-de-conhecimento.md`, seção 7 (identidade visual, cor, fonte, banco de fotos, avatar).
-- `conhecimento/mapa-conteudo-v2.md`, seções 2 e 4 (anatomia dos formatos A–D e dos 9 formatos de reel).
+- `conhecimento/mapa-mestre.md`: Parte 3 (identidade e formatos A–F) e Parte 5 (9 formatos de reel).
 - Imagens de referência (se anexadas): `formato-A…`, `formato-B…`, `formato-C…`, `formato-D…`, `reel-1…` a `reel-6…`.
 
 ## Carrossel: JSON de renderização

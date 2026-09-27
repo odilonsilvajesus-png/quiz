@@ -21,9 +21,8 @@ São 5 agentes, cada um com uma função, trabalhando em sequência. Eles passam
 
 ## Arquivos de conhecimento (anexar a TODOS os agentes)
 1. `00-base-de-conhecimento.md`: marca, público, pilares, pontes, tom, CTA, identidade visual e regras. **Preencha os campos `{{…}}` antes de usar.**
-2. `conhecimento/mapa-conteudo-v2.md`: linha editorial, formatos, ganchos e reels (baseado em Ricardo Nunes, Rod Vincenzi e Antônio da Silva).
-3. `conhecimento/mapa-carrosseis.md`: estrutura Who/Why/What, roteiro de carrossel e prompt-mestre (baseado em Social Media de Elite, Rapha Falcão e Rishi).
-4. `ficha-de-conteudo.schema.json`: o formato do JSON que passa de um agente para o outro.
+2. `conhecimento/mapa-mestre.md`: direção única (v1 + v2) com pilares, estruturas, formatos visuais, conversão, reels, rotina e checklist. Baseado em Ricardo Nunes, Antônio da Silva, Rod Vincenzi, Rishi, Social Media de Elite e Rapha Falcão.
+3. `ficha-de-conteudo.schema.json`: o formato do JSON que passa de um agente para o outro.
 
 ## Ferramentas deste repositório que os agentes usam
 | Ferramenta | Quem usa | Comando |

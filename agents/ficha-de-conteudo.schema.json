@@ -57,7 +57,7 @@
         },
         "formato": {
           "type": "string",
-          "description": "Carrossel/estático: A, B, C, D. Reel: 1 a 9 (catálogo do mapa-conteudo-v2)"
+          "description": "Carrossel/estático: A, B, C, D, E, F. Reel: 1 a 9 (catálogo do mapa-mestre, Parte 5)"
         },
         "tema": {
           "type": "string"

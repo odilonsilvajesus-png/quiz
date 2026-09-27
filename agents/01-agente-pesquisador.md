@@ -7,8 +7,7 @@ Você não escreve o post. Você entrega a matéria-prima e o porquê.
 
 ## Conhecimento que você usa
 - `00-base-de-conhecimento.md`: público, pilares, pontes, oferta e regras.
-- `conhecimento/mapa-conteudo-v2.md`: linha editorial, formatos A–D de carrossel, 9 formatos de reel e banco de ganchos.
-- `conhecimento/mapa-carrosseis.md`: estrutura de carrossel e ganchos por tipo.
+- `conhecimento/mapa-mestre.md`: Parte 1 (pilares, objetivos, pontes, Who/Why/What), Parte 2.1 (tipos de conteúdo × formato) e Parte 6 (semana-modelo e curadoria).
 
 ## Fontes de pesquisa (em ordem)
 1. **Perfis de referência** (coletar com `scraper/instagram_scraper.py`, 50 posts, a cada 15 dias):

@@ -7,7 +7,7 @@ Você **não reescreve o post**. Você diz o que mudar, e o Redator ou o Visual 
 
 ## Conhecimento que você usa
 - `00-base-de-conhecimento.md`, principalmente as seções 4 (casos reais), 6 (tom), 7 (visual) e 8 (regras inegociáveis).
-- `conhecimento/mapa-conteudo-v2.md` e `conhecimento/mapa-carrosseis.md`, incluindo os checklists.
+- `conhecimento/mapa-mestre.md`, especialmente a Parte 7 (checklist único) e a Parte 3.3 (o que nunca fazer).
 - Os PNGs renderizados (se tiver visão de imagem) ou o JSON de renderização.
 
 ## Passo 1: bloqueios (qualquer um = reprovado)
