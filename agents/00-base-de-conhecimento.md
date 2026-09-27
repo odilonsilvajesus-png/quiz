@@ -70,7 +70,7 @@
 - **Evitar:** degradê (principalmente roxo para azul) · ícone de robô, circuito ou rede neural · cantos arredondados · terracota como cor decorativa (sublinhado, número, destaque de palavra) · emoji, brilho e sombra pesada nas artes.
 - **Marcações do texto:** `**negrito**` · `__sublinhado à mão__` (decorativo: surface/plum, nunca terracota) · `((círculo à mão))` (terracota, **só na palavra da CTA**).
 - **Formatos de carrossel:** A (post sobre foto real, o principal) · B (editorial com números) · C (photo dump) · D (frase com rabisco)
-- **Banco de fotos pessoais:** Google Drive https://drive.google.com/drive/folders/1IEW4NYUmXdegsE0Xmg6vVXvSIYQuznqS → sincronizado em `fotos/originais/` → catálogo em `fotos/indice.json` (feito com `/catalogar-fotos`). Cada foto com nome descritivo (ex.: `falando-palco-01.jpg`, `familia-almoco-03.jpg`, `notebook-whatsapp-02.jpg`).
+- **Banco de fotos pessoais:** Google Drive https://drive.google.com/drive/folders/1IEW4NYUmXdegsE0Xmg6vVXvSIYQuznqS → sincronizado em `fotos/originais/` → catálogo em `fotos/indice.json` (feito com `/catalogar-fotos`). Outras fontes (IA genérica, banco, notícia, internet) seguem `conhecimento/politica-de-imagens.md`. Cada foto com nome descritivo (ex.: `falando-palco-01.jpg`, `familia-almoco-03.jpg`, `notebook-whatsapp-02.jpg`).
 - **Avatar:** {{caminho da foto de perfil}}
 
 ## 8. Regras inegociáveis

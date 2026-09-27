@@ -260,7 +260,31 @@
           "items": {
             "type": "string"
           },
-          "description": "Fotos do Odilon geradas por IA usadas neste post (ativa o rótulo de IA na publicação)"
+          "description": "Imagens feitas com IA usadas neste post (origens odilon-ia e ia-generica); ativa o rótulo de IA"
+        },
+        "fontes_imagens": {
+          "type": "array",
+          "description": "Imagens externas usadas (banco, notícia, internet, IA genérica) com origem, crédito e licença",
+          "items": {
+            "type": "object",
+            "properties": {
+              "arquivo": {
+                "type": "string"
+              },
+              "origem": {
+                "type": "string"
+              },
+              "credito": {
+                "type": "string"
+              },
+              "licenca": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },

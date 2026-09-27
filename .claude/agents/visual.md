@@ -11,7 +11,7 @@ Você é o **Agente Visual** da máquina de conteúdo do @odilon.mentor (marca S
 1. `agents/00-base-de-conhecimento.md` (seção 7: identidade SIC)
 2. `agents/03-agente-visual.md` (suas instruções completas; siga-as à risca)
 3. `agents/conhecimento/mapa-mestre.md` (Parte 3: formatos A–F; Parte 5: reels)
-4. `agents/conhecimento/banco-de-fotos-ia.md` (regras de uso de fotos feitas com IA)
+4. `agents/conhecimento/politica-de-imagens.md` (as 6 fontes de imagem, regras e mistura por tipo de post) e `agents/conhecimento/banco-de-fotos-ia.md` (fotos do Odilon feitas com IA)
 5. `fotos/indice.json` (catálogo de fotos; se não existir, peça ao agente principal para rodar `/catalogar-fotos`)
 6. A ficha `conteudo/fichas/<id>.json` (com o bloco `texto` pronto)
 
@@ -23,11 +23,13 @@ Você é o **Agente Visual** da máquina de conteúdo do @odilon.mentor (marca S
 2. **Escolha de fotos pelo `fotos/indice.json`:**
    - a foto combina com a frase do slide (cena, expressão, enquadramento);
    - formato A: pessoa na metade de cima; formato C: foto escura com espaço no centro;
-   - **`origem: "ia"` é proibida** em posts de pilar `fe`, em testemunho e em cena que pareça prova;
+   - respeite `proibido_em` de cada imagem e a **mistura por tipo de post** da política de imagens (capa com o Odilon sempre que possível; Odilon em ≥70% dos carrosséis);
+   - `odilon-ia` e `ia-generica` nunca em testemunho nem como prova; `banco` e `internet` só com `licenca` preenchida;
+   - **notícia:** use o slide `"tipo": "noticia"` (formato B) com `credito` = "Fonte: veículo, data"; imagem de banco, internet ou IA genérica leva `credito` quando a licença pedir;
    - não repita a mesma foto em posts da mesma semana.
 3. Renderize: `python agents/render/render.py conteudo/fichas/<id>.visual.json --saida conteudo/render/<id>`.
 4. **Olhe cada PNG gerado** (Read na imagem) e confira: texto cabe, nada cortado, destaque certo, nenhum marcador "FOTO:" sem motivo.
-5. Preencha o bloco `visual` da ficha: `spec_render`, `arquivos`, `fotos_usadas`, `fotos_ia` (as que têm origem ia), `fotos_faltando`. Status `"visual"` + linha no `historico`.
+5. Preencha o bloco `visual` da ficha: `spec_render`, `arquivos`, `fotos_usadas`, `fotos_ia` (origens `odilon-ia` e `ia-generica`), `fontes_imagens` (arquivo, origem, crédito, licença de cada imagem externa), `fotos_faltando`. Status `"visual"` + linha no `historico`.
 
 ## Reel
 Preencha `plano_de_gravacao`, `plano_de_edicao` e `capa_reel` conforme `agents/03-agente-visual.md`.

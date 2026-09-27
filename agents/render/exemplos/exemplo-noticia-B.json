@@ -1,0 +1,12 @@
+{
+  "formato": "B",
+  "marca": {"arquivo": "../../marca-sic.json", "contador": true},
+  "slides": [
+    {"tipo": "noticia", "titulo": "Todo mundo falando de bet.", "foto": "", "foto_descricao": "print real da manchete sobre bets e consumo (colocar em fotos/noticias/)",
+     "credito": "Fonte: [veículo], [data]", "texto": "Mas tem uma aposta que ninguém fala: **abrir empresa no Brasil.**"},
+    {"tipo": "texto", "fundo": "claro", "titulo": "Você aposta tudo.", "texto": "Sem odds, sem saque antecipado, sem bônus de boas-vindas.\n\nE mesmo assim abre a porta todo dia."},
+    {"tipo": "capa", "foto": "", "foto_descricao": "banco: boletos sobre a mesa ao lado de um celular", "credito": "Foto: [autor] / [banco de imagens]",
+     "titulo": "Paga imposto antes de receber.", "texto": "Segura a folha no aperto. Pede a Deus no fim do mês."},
+    {"tipo": "cta_botao", "titulo": "Qual foi a aposta mais alta que você já fez pela sua empresa?", "texto": "Me conta aqui embaixo"}
+  ]
+}

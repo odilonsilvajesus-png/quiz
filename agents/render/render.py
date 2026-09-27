@@ -7,6 +7,7 @@ Uso:
 
 Formatos: A (post sobre foto real), B (editorial com números), C (photo dump), D (frase com rabisco).
 Marcações no texto: **negrito**  __sublinhado à mão__  ((círculo à mão))
+Campo "credito" em slides com foto (fonte/licença da imagem). Formato B aceita tipo "noticia" (print de manchete + fonte).
 
 Bloco "marca" (tudo opcional; a marca oficial fica em agents/marca-sic.json e é carregada com
 "marca": {"arquivo": "caminho/para/marca-sic.json"}):
@@ -66,6 +67,11 @@ def with_pf(text: str, on: bool) -> str:
     if m and t[: m.start()].endswith("."):
         t = t[: m.start() - 1] + m.group(1)
     return markup(t) + '<span class="pf"></span>'
+
+
+def credit(slide: dict, cls: str = "") -> str:
+    c = slide.get("credito")
+    return f'<div class="cred {cls}">{html.escape(c)}</div>' if c else ""
 
 
 def photo_css(slide: dict, base: Path) -> str:
@@ -199,6 +205,16 @@ b{{font-weight:700}}
 .d-note{{position:absolute;right:90px;top:250px;font:600 44px/1 Caveat;color:{nota};transform:rotate(-12deg);text-align:center}}
 .d-handle{{position:absolute;left:0;right:0;bottom:120px;text-align:center;font:400 26px '{fx}';opacity:.55}}
 .count{{position:absolute;left:64px;bottom:44px;font:500 22px '{fx}';opacity:.55}}
+.cred{{position:absolute;left:24px;top:24px;font:500 18px '{fx}';color:{t_dark};background:{dark};padding:6px 10px;opacity:.9;z-index:3}}
+.cred.a{{top:auto;left:auto;right:24px;bottom:{H - a_photo_h + 12}px}}
+/* B · notícia */
+.n-wrap{{position:absolute;left:70px;right:70px;top:50%;transform:translateY(-50%)}}
+.n-wrap h2{{font-size:56px;line-height:1.1;margin-bottom:34px}}
+.n-card{{background:#fff;border:3px solid {sub};padding:0;overflow:hidden;border-radius:{r}px}}
+.n-card img{{display:block;width:100%;max-height:640px;object-fit:contain;background:#fff}}
+.n-card .n-ph{{height:420px;display:flex;align-items:center;justify-content:center;font:600 26px '{fx}';color:#555;background:#eee;padding:30px;text-align:center}}
+.n-src{{margin-top:16px;font:500 24px '{fx}';opacity:.75;letter-spacing:.5px}}
+.n-txt{{margin-top:30px;font:400 34px/1.4 '{fx}'}}
 """
 
 
@@ -221,17 +237,28 @@ def slide_html(fmt: str, s: dict, i: int, n: int, brand: dict, base: Path) -> st
             return f'<div class="s"><div class="a-only T">{txt}</div>{count}{selo}</div>'
         if t == "cta":
             return (f'<div class="s"><div class="fullph" style="{photo_css(s, base)}"></div><div class="shade"></div>'
-                    f'{placeholder(s, base)}<div class="a-cta">{txt}</div>{count}{selo}</div>')
+                    f'{placeholder(s, base)}{credit(s)}<div class="a-cta">{txt}</div>{count}{selo}</div>')
         return (f'<div class="s"><div class="a-photo" style="{photo_css(s, base)}"></div><div class="a-fade"></div>'
-                f'{placeholder(s, base)}<div class="a-box">{head}<div class="a-txt">{txt}</div></div>{arrow}{count}{selo}</div>')
+                f'{placeholder(s, base)}{credit(s, "a")}<div class="a-box">{head}<div class="a-txt">{txt}</div></div>{arrow}{count}{selo}</div>')
 
     if fmt == "B":
         claro = " b-white" if s.get("fundo") == "claro" else ""
         ps = "".join(f"<p>{markup(p)}</p>" for p in s.get("texto", "").split("\n\n"))
         if t == "capa":
-            return (f'<div class="s"><div class="fullph" style="{photo_css(s, base)}"></div><div class="shade"></div>{placeholder(s, base)}'
+            return (f'<div class="s"><div class="fullph" style="{photo_css(s, base)}"></div><div class="shade"></div>{placeholder(s, base)}{credit(s)}'
                     f'<div class="b-cap-txt"><div class="b-title T">{with_pf(s.get("titulo", ""), pf_on)}</div>'
                     f'<div class="b-sub">{txt}</div></div>{arrow}{count}{selo}</div>')
+        if t == "noticia":
+            foto = s.get("foto")
+            if foto and (base / foto).exists():
+                card = f'<img src="{(base / foto).resolve().as_uri()}">'
+            else:
+                card = f'<div class="n-ph">PRINT DA NOTÍCIA: {html.escape(s.get("foto_descricao") or "manchete")}</div>'
+            titulo = f'<h2 class="T">{with_pf(s.get("titulo", ""), pf_on)}</h2>' if s.get("titulo") else ""
+            fonte = f'<div class="n-src">{html.escape(s.get("credito", ""))}</div>' if s.get("credito") else ""
+            comentario = f'<div class="n-txt">{txt}</div>' if s.get("texto") else ""
+            return (f'<div class="s{claro}"><div class="n-wrap">{titulo}<div class="n-card">{card}</div>{fonte}{comentario}</div>'
+                    f'{arrow}{count}{selo}</div>')
         if t == "numero":
             return (f'<div class="s{claro}"><div class="b-num T">{html.escape(str(s.get("numero", i)))}</div>'
                     f'<div class="b-col"><h2 class="T">{markup(s.get("titulo", ""))}</h2>{ps}</div>{count}{selo}</div>')
@@ -244,7 +271,7 @@ def slide_html(fmt: str, s: dict, i: int, n: int, brand: dict, base: Path) -> st
     if fmt == "C":
         pos = " baixo" if s.get("posicao") == "baixo" else ""
         return (f'<div class="s"><div class="photo" style="{photo_css(s, base)}"></div><div class="c-dark"></div>'
-                f'{placeholder(s, base)}<div class="c-txt{pos}"><span class="blk">{txt}</span></div>{selo}</div>')
+                f'{placeholder(s, base)}{credit(s)}<div class="c-txt{pos}"><span class="blk">{txt}</span></div>{selo}</div>')
 
     if fmt == "D":
         nota = f'<div class="d-note">{html.escape(s.get("nota", ""))}</div>' if s.get("nota") else ""

@@ -25,6 +25,9 @@ Verifique e liste em `bloqueios`:
 - [ ] Imagem gerada por IA de **qualquer pessoa que não seja o Odilon** (cliente, família, equipe, famoso).
 - [ ] Foto do Odilon gerada por IA que **simula prova ou fato** (evento, palco, cliente, resultado, prêmio, viagem) ou usada em **conteúdo de fé/testemunho**.
 - [ ] Foto gerada por IA **sem registro** em `visual.fotos_ia` (o Publicador precisa saber para ativar o rótulo de IA).
+- [ ] Imagem de **banco** ou da **internet** sem licença registrada no índice, ou foto de pessoa famosa usada como se ela apoiasse o Odilon ou a oferta.
+- [ ] **Print de notícia** sem fonte e data visíveis, editado, antigo apresentado como novo, ou de veículo não confiável.
+- [ ] Imagem de **IA genérica** com pessoa real identificável ou fingindo ser notícia, evento ou prova.
 
 ## Passo 2: notas de 0 a 10
 | Critério | 10 é… | Perguntas |

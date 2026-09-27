@@ -260,7 +260,7 @@ Posts em que o dono **lê e pensa "isso sou eu"**, e comenta para concordar, des
 - **Assinatura visual:** blocos sólidos (sem degradê), cantos retos, **ponto final terracota** no fim de títulos e frases de impacto, selo "I A" no canto e **sublinhado à mão** em surface/plum. O **círculo à mão** fica reservado para a palavra da CTA.
 - **Marcações de texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão, só CTA))`.
 - **Nunca:** degradê, robô/circuito/rede neural, cantos arredondados, emoji, brilho, sombra pesada.
-- **Fotos:** reais ou **do Odilon geradas por IA** a partir das fotos originais (regras e biblioteca de cenas em `conhecimento/banco-de-fotos-ia.md`; fé e testemunho só com foto real). **Sessão de fotos reais** (para referências e bastidores): falando com cliente, notebook com automação, palestra, reunião, família (com consentimento), Bíblia/igreja, carro, mãos no teclado, café e agenda.
+- **Imagens:** 6 fontes permitidas (Odilon real, Odilon IA, IA genérica, banco, print de notícia e foto da internet com licença). Regras em `conhecimento/politica-de-imagens.md`. **Fotos do Odilon:** reais ou **geradas por IA** a partir das fotos originais (regras e biblioteca de cenas em `conhecimento/banco-de-fotos-ia.md`; fé e testemunho só com foto real). **Sessão de fotos reais** (para referências e bastidores): falando com cliente, notebook com automação, palestra, reunião, família (com consentimento), Bíblia/igreja, carro, mãos no teclado, café e agenda.
 - **Série numerada opcional** nos posts de IA (ex.: "IA NA EMPRESA #012") para gerar coleção.
 
 ### 3.2 Formatos visuais
@@ -277,7 +277,7 @@ Posts em que o dono **lê e pensa "isso sou eu"**, e comenta para concordar, des
 - Alterne ritmo: nunca 3 slides seguidos iguais (foto/texto ou claro/escuro).
 - **Um destaque por slide.** No máximo um círculo por post (geralmente a palavra da CTA).
 - Até **35 palavras por slide** (A, B, F) e **12 palavras** (C).
-- Capa: foto sua **em ação** e frase de 4 a 12 palavras. Nunca banco de imagem.
+- Capa: de preferência foto sua **em ação** e frase de 4 a 12 palavras. Imagens de banco, IA genérica, print de notícia e internet seguem `conhecimento/politica-de-imagens.md` (Odilon em ≥70% dos carrosséis).
 - Terracota só em elemento de ação; círculo à mão só na palavra da CTA.
 - Nada de dado de cliente visível em print (nome, telefone, e-mail).
 

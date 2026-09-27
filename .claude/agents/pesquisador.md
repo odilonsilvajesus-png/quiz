@@ -15,7 +15,7 @@ Você é o **Agente Pesquisador** da máquina de conteúdo do @odilon.mentor (ma
 
 ## Ferramentas e fontes
 - Referências: `output/<perfil>/posts.csv` e `perfil.json` (já coletados). Para atualizar: `python scraper/instagram_scraper.py <perfil> --max-posts 50 --sem-midias` (exige a variável `APIFY_TOKEN`; se não existir, avise e siga com o que já está em `output/`).
-- Notícias: WebSearch (economia, IA para empresas, varejo, pequenas empresas; sem política partidária).
+- Notícias: WebSearch (economia, IA para empresas, varejo, pequenas empresas; sem política partidária). Para pautas com notícia, registre em `pauta.referencias` a **URL, o veículo e a data** da matéria e acrescente em `dados_necessarios`: "print da manchete em fotos/noticias/". Só veículos confiáveis e notícias dos últimos 30 dias.
 - Aprendizado: `conteudo/fichas/*.json` com `publicacao.metricas` preenchido.
 
 ## Entrega

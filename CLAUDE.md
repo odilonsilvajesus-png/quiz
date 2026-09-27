@@ -21,7 +21,7 @@ scraper/instagram_scraper.py    coleta de perfis de referência (Apify)
 conteudo/fichas/                uma ficha JSON por post (versionada)
 conteudo/lotes/                 resumo de cada lote semanal de pautas (versionado)
 conteudo/render/                PNGs gerados (ignorado pelo git)
-fotos/                          fotos do Odilon (ignorado pelo git) + fotos/indice.json
+fotos/                          imagens (ignorado pelo git): originais/ (Odilon, com ia/), ia-generica/, banco/, noticias/, internet/ + indice.json
 output/                         coletas de referência e análises (ignorado pelo git)
 ```
 
@@ -49,7 +49,7 @@ Cada etapa é feita pelo **subagente certo** (ver `.claude/agents/`). O agente p
 2. **Nunca invente** número, cliente, depoimento ou história. Se faltar dado, registre em `pendencias` e pergunte.
 3. **Crença da marca:** o dono precisa estar envolvido na empresa, mas **nem tudo precisa passar por ele**.
 4. **Sem política partidária, sem promessa de resultado, sem usar Deus como argumento de venda.**
-5. **Fotos:** use só as catalogadas em `fotos/indice.json`. Foto com `origem: "ia"` nunca vai em conteúdo de **fé/testemunho** nem em cena que pareça **prova** (evento, cliente, resultado). **Não gere imagens.**
+5. **Imagens:** use só as catalogadas em `fotos/indice.json` e siga `agents/conhecimento/politica-de-imagens.md`. São 6 origens: `odilon-real`, `odilon-ia`, `ia-generica`, `banco`, `noticia` e `internet`. Resumo: foto feita com IA nunca em **fé/testemunho** nem como **prova**; banco só com licença registrada; notícia só com fonte e data visíveis; foto da internet só com licença; o Odilon aparece em ≥70% dos carrosséis. **Não gere imagens.**
 6. **Identidade SIC** em toda arte: carregue `agents/marca-sic.json`; blocos sólidos, cantos retos, terracota `#B84B26` só em ação, sem emoji, sem degradê.
 7. **Nada é publicado sem** `revisao.veredito` aprovado **e** `publicacao.aprovacao_humana: true`.
 8. **Ficha é o contrato:** cada agente edita só o seu bloco da ficha (`pauta`, `texto`, `visual`, `revisao`, `publicacao`) e acrescenta uma linha em `historico`. Valide contra `agents/ficha-de-conteudo.schema.json`.

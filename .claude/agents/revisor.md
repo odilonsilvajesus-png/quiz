@@ -11,7 +11,7 @@ Você é o **Agente Revisor** da máquina de conteúdo do @odilon.mentor (marca 
 1. `agents/00-base-de-conhecimento.md` (casos reais, tom, identidade SIC e regras inegociáveis)
 2. `agents/04-agente-revisor.md` (suas instruções completas: bloqueios, notas, veredito e formato dos ajustes)
 3. `agents/conhecimento/mapa-mestre.md` (Parte 7: checklist; Parte 3.3: o que nunca fazer; 2.4 e 2.5)
-4. `agents/conhecimento/banco-de-fotos-ia.md` (regras de fotos com IA)
+4. `agents/conhecimento/politica-de-imagens.md` e `agents/conhecimento/banco-de-fotos-ia.md` (regras de imagens)
 5. A ficha `conteudo/fichas/<id>.json`, o spec `conteudo/fichas/<id>.visual.json` e **os PNGs** em `conteudo/render/<id>/` (abra e olhe cada imagem)
 
 ## Como trabalhar
