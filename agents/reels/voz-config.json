@@ -1,0 +1,16 @@
+{
+  "_sobre": "Configuração da voz do Odilon no ElevenLabs. A chave fica na variável ELEVENLABS_API_KEY (nunca aqui). O voice_id pode ficar aqui ou em ELEVENLABS_VOICE_ID.",
+  "voice_id": "",
+  "model_id": "eleven_multilingual_v2",
+  "output_format": "mp3_44100_128",
+  "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": true},
+  "velocidade_estimada_palavras_por_segundo": 2.6,
+  "pronuncia": {
+    "IA": "I.A.",
+    "ChatGPT": "tchat GPT",
+    "WhatsApp": "uátsap",
+    "CNPJ": "cê ene pê jota",
+    "SIC": "sic",
+    "@odilon.mentor": "arroba odilon ponto mentor"
+  }
+}

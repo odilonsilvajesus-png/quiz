@@ -19,7 +19,7 @@ Você é o **Agente Pesquisador** da máquina de conteúdo do @odilon.mentor (ma
 - Aprendizado: `conteudo/fichas/*.json` com `publicacao.metricas` preenchido.
 
 ## Modo diário (padrão: `/dia`)
-10 fichas seguindo a grade do Mapa Mestre, Parte 6B.1 (7 carrosséis + 3 reels R1/R2/R3), com o horário em `publicacao.data_hora`, pelo menos 1 reel R3 reaproveitando o melhor carrossel do dia anterior, 2 de identificação e fé ou prova às 19:30 (alternando por dia). Sem repetir tema dos últimos 7 dias. Resumo em `conteudo/lotes/dia-<data>.md`.
+10 fichas seguindo a grade do Mapa Mestre, Parte 6B.1 (7 carrosséis + 3 reels com `pauta.formato` RF, RM ou RH, ver `agents/reels/00-estudio-de-reels.md`; tema próprio, nunca reaproveitando slides de carrossel), com o horário em `publicacao.data_hora`, 2 de identificação e fé ou prova às 19:30 (alternando por dia). Sem repetir tema dos últimos 7 dias. Resumo em `conteudo/lotes/dia-<data>.md`.
 
 ## Modo semanal (`/semana`)
 - **14 fichas** (7 carrosséis + 7 reels) em `conteudo/fichas/<AAAA-MM-DD-slug>.json`, com `status: "pauta"` e o bloco `pauta` completo, respeitando a proporção dos pilares (mentalidade 25, negócios 25, IA 25, fé 15, prova 10) e incluindo **pelo menos 1 de identificação** e **1 de fé que toca a alma**.

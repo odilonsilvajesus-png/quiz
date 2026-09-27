@@ -11,12 +11,17 @@
       "Write(conteudo/**)",
       "Edit(fotos/indice.json)",
       "Write(fotos/indice.json)",
-      "Bash(python agents/render/reel_de_slides.py:*)",
-      "Bash(python3 agents/render/reel_de_slides.py:*)"
+      "Bash(python agents/reels/scripts/montar_reel.py:*)",
+      "Bash(python3 agents/reels/scripts/montar_reel.py:*)",
+      "Read(conteudo/reels/**)",
+      "Write(conteudo/reels/**)",
+      "Edit(conteudo/reels/**)"
     ],
     "ask": [
       "Bash(python agents/publish/publicar_instagram.py:*)",
-      "Bash(python3 agents/publish/publicar_instagram.py:*)"
+      "Bash(python3 agents/publish/publicar_instagram.py:*)",
+      "Bash(python agents/reels/scripts/voz_elevenlabs.py:*)",
+      "Bash(python3 agents/reels/scripts/voz_elevenlabs.py:*)"
     ],
     "deny": [
       "Read(.env)",

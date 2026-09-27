@@ -28,7 +28,7 @@ Verifique e liste em `bloqueios`:
 - [ ] Imagem de **banco** ou da **internet** sem licença registrada no índice, ou foto de pessoa famosa usada como se ela apoiasse o Odilon ou a oferta.
 - [ ] **Print de notícia** sem fonte e data visíveis, editado, antigo apresentado como novo, ou de veículo não confiável.
 - [ ] Imagem de **IA genérica** com pessoa real identificável ou fingindo ser notícia, evento ou prova.
-- [ ] Reel **R1** com avatar de alguém que não seja o Odilon, ou reel R1/R2 sem marcação em `visual.fotos_ia` (o rótulo de IA é obrigatório).
+- (Reels são revisados pelo `reel-revisor` do Estúdio de Reels, com as regras de `agents/reels/05-revisor-de-reels.md`.)
 
 ## Passo 2: notas de 0 a 10
 | Critério | 10 é… | Perguntas |

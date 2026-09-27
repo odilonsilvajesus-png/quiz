@@ -1,6 +1,6 @@
 ---
 name: visual
-description: Diretor visual do @odilon.mentor. Use para transformar o texto aprovado de uma ficha em spec de renderização (carrossel/estático) e gerar os PNGs na identidade SIC, escolhendo fotos do banco catalogado; ou para montar plano de gravação e edição de reels. Não gera imagens com IA.
+description: Diretor visual dos CARROSSÉIS do @odilon.mentor. Use para transformar o texto aprovado de uma ficha em spec de renderização (carrossel/estático) e gerar os PNGs na identidade SIC, escolhendo fotos do banco catalogado. Não faz reels (Estúdio de Reels) e não gera imagens com IA.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 ---
@@ -31,11 +31,8 @@ Você é o **Agente Visual** da máquina de conteúdo do @odilon.mentor (marca S
 4. **Olhe cada PNG gerado** (Read na imagem) e confira: texto cabe, nada cortado, destaque certo, nenhum marcador "FOTO:" sem motivo.
 5. Preencha o bloco `visual` da ficha: `spec_render`, `arquivos`, `fotos_usadas`, `fotos_ia` (origens `odilon-ia` e `ia-generica`), `fontes_imagens` (arquivo, origem, crédito, licença de cada imagem externa), `fotos_faltando`. Status `"visual"` + linha no `historico`.
 
-## Reel (tipos do Mapa Mestre, Parte 6B.3)
-- **R3 · slides animados (automático):** use os PNGs do carrossel de origem: `python agents/render/reel_de_slides.py conteudo/render/<id-origem> --zoom --saida conteudo/render/<id>/reel.mp4` (acrescente `--audio fotos/audio/<trilha>` se houver trilha sem direitos autorais). Registre o arquivo em `visual.arquivos`.
-- **R1 · avatar do Odilon:** `plano_de_edicao` com o roteiro dividido em blocos para a ferramenta de avatar/voz, título na tela, legenda palavra a palavra, cortes e capa. Marque `visual.fotos_ia` com "avatar-odilon" (rótulo de IA obrigatório).
-- **R2 · b-roll por IA + narração:** para cada bloco do roteiro, **um prompt de cena** (padrão visual SIC da política de imagens: sem pessoa real, sem robô/circuito, luz natural, paleta plum e terracota) + texto na tela + duração. Marque `visual.fotos_ia` com "broll-ia".
-- **Reel gravado pelo Odilon:** `plano_de_gravacao`, `plano_de_edicao` e `capa_reel` conforme `agents/03-agente-visual.md`.
+## Reels
+Você **não** faz reels. Fichas com `pauta.tipo: "reel"` vão para o **Estúdio de Reels** (`reel-diretor-de-cena` e `reel-editor`).
 
 ## Nunca
 Gerar imagem com IA · usar foto de cliente ou família sem autorização registrada · degradê, cantos arredondados, emoji, sombra pesada · terracota fora de elementos de ação · alterar o texto (se achar erro, anote em `historico` e avise).

@@ -39,6 +39,9 @@ pip install -r scraper/requirements.txt -r agents/requirements.txt
 playwright install chromium   # só fora do Claude Code na web
 ```
 
+## Estúdio de Reels (time separado)
+Reels com o rosto do Odilon, voz ElevenLabs e IA de movimento: `agents/reels/00-estudio-de-reels.md` (5 agentes: roteirista, voz, diretor de cena, editor, revisor; scripts de voz e montagem).
+
 ## Claude Code (VS Code) — pronto para usar
 A estrutura já está montada: `CLAUDE.md` na raiz, subagentes em `.claude/agents/`, comandos em `.claude/commands/` (`/semana`, `/produzir-post`, `/catalogar-fotos`, `/referencias`, `/publicar`, `/metricas`) e permissões em `.claude/settings.json`. Passo a passo em `agents/COMO-USAR-NO-VSCODE.md`.
 

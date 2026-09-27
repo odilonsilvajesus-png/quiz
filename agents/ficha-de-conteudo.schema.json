@@ -15,15 +15,19 @@
     },
     "status": {
       "enum": [
-        "pauta",
-        "texto",
-        "visual",
-        "revisao",
+        "agendado",
         "ajustes",
         "aprovado",
-        "agendado",
+        "cenas",
+        "descartado",
+        "montado",
+        "pauta",
         "publicado",
-        "descartado"
+        "revisao",
+        "roteiro",
+        "texto",
+        "visual",
+        "voz"
       ]
     },
     "pauta": {
@@ -57,7 +61,7 @@
         },
         "formato": {
           "type": "string",
-          "description": "Carrossel/estático: A, B, C, D, E, F. Reel com IA: R1 (avatar do Odilon), R2 (b-roll IA + narração), R3 (slides animados). Reel gravado: 1 a 9 (Mapa Mestre, Parte 5)"
+          "description": "Carrossel/estático: A, B, C, D, E, F. Reel (Estúdio de Reels): RF (Odilon falando/avatar), RM (Odilon em movimento + narração), RH (híbrido). Reel gravado de verdade: 1 a 9 (Mapa Mestre, Parte 5)"
         },
         "tema": {
           "type": "string"
@@ -438,6 +442,123 @@
           },
           "acao": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "estudio_reel": {
+      "description": "Preenchido pelo Estúdio de Reels (agents/reels/)",
+      "type": "object",
+      "properties": {
+        "tipo_reel": {
+          "enum": [
+            "RF",
+            "RM",
+            "RH"
+          ]
+        },
+        "roteiro": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bloco": {
+                "type": "integer"
+              },
+              "fala": {
+                "type": "string"
+              },
+              "texto_na_tela": {
+                "type": "string"
+              },
+              "cena": {
+                "enum": [
+                  "avatar",
+                  "movimento",
+                  "broll",
+                  "foto"
+                ]
+              },
+              "enfase": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "titulo_na_tela": {
+          "type": "string"
+        },
+        "cta_na_tela": {
+          "type": "string"
+        },
+        "legenda": {
+          "type": "string"
+        },
+        "duracao_alvo_s": {
+          "type": "number"
+        },
+        "voz": {
+          "type": "object",
+          "properties": {
+            "arquivo": {
+              "type": "string"
+            },
+            "duracao_s": {
+              "type": "number"
+            },
+            "simulado": {
+              "type": "boolean"
+            },
+            "blocos": {
+              "type": "array"
+            }
+          }
+        },
+        "cenas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bloco": {
+                "type": "integer"
+              },
+              "tipo": {
+                "type": "string"
+              },
+              "foto_referencia": {
+                "type": "string"
+              },
+              "ferramenta": {
+                "type": "string"
+              },
+              "prompt": {
+                "type": "string"
+              },
+              "arquivo_esperado": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "pendente",
+                  "pronto",
+                  "refazer"
+                ]
+              }
+            }
+          }
+        },
+        "montagem": {
+          "type": "object",
+          "properties": {
+            "arquivo": {
+              "type": "string"
+            },
+            "capa": {
+              "type": "string"
+            },
+            "duracao_s": {
+              "type": "number"
+            }
           }
         }
       }

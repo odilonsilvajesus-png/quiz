@@ -14,10 +14,10 @@ agents/                         ← fonte da verdade (instruções e conheciment
   ficha-de-conteudo.schema.json      formato da ficha que passa de um agente para o outro
   marca-sic.json                paleta, fontes e estilo da marca (usado pelo renderizador)
   render/render.py              JSON → PNGs 1080×1350 (formatos A, B, C, D)
-  render/reel_de_slides.py      PNGs do carrossel → reel 9:16 (tipo R3)
+  reels/                        ESTÚDIO DE REELS (time separado): guia, 5 agentes, voz-config.json, scripts de voz e montagem
   publish/publicar_instagram.py publicação pela Graph API (simula por padrão)
-.claude/agents/                 subagentes do Claude Code (pesquisador, redator, visual, revisor, publicador, arquivista-de-fotos)
-.claude/commands/               comandos: /dia, /produzir-dia, /semana, /produzir-post, /catalogar-fotos, /referencias, /publicar, /metricas
+.claude/agents/                 subagentes: carrosséis (pesquisador, redator, visual, revisor, publicador, arquivista-de-fotos) e reels (reel-roteirista, reel-voz, reel-diretor-de-cena, reel-editor, reel-revisor)
+.claude/commands/               comandos: /dia, /produzir-dia, /produzir-reel, /montar-reel, /semana, /produzir-post, /catalogar-fotos, /referencias, /publicar, /metricas
 scraper/instagram_scraper.py    coleta de perfis de referência (Apify)
 conteudo/fichas/                uma ficha JSON por post (versionada)
 conteudo/lotes/                 resumo de cada lote semanal de pautas (versionado)
@@ -32,13 +32,15 @@ pip install -r scraper/requirements.txt -r agents/requirements.txt
 playwright install chromium
 ```
 - **Fotos:** sincronize a pasta do Google Drive do Odilon (https://drive.google.com/drive/folders/1IEW4NYUmXdegsE0Xmg6vVXvSIYQuznqS) para `fotos/originais/` (download manual ou Google Drive para computador). Depois rode `/catalogar-fotos`.
-- **Variáveis de ambiente** (nunca em arquivo versionado nem no chat): `APIFY_TOKEN` (coleta de referências) · `IG_USER_ID` e `IG_ACCESS_TOKEN` (publicação pela API, opcional).
+- **Variáveis de ambiente** (nunca em arquivo versionado nem no chat): `APIFY_TOKEN` (coleta de referências) · `IG_USER_ID` e `IG_ACCESS_TOKEN` (publicação pela API, opcional) · `ELEVENLABS_API_KEY` e `ELEVENLABS_VOICE_ID` (voz dos reels).
 
 ## Fluxo de trabalho
-**Meta: 10 posts por dia (7 carrosséis + 3 reels com IA).** Grade, distribuição e tipos de reel no Mapa Mestre, Parte 6B.
+**Meta: 10 posts por dia (7 carrosséis + 3 reels com IA).** Grade no Mapa Mestre, Parte 6B.
+**Dois times:** carrosséis (redator → visual → revisor) e **Estúdio de Reels** (`agents/reels/00-estudio-de-reels.md`: reel-roteirista → reel-voz → reel-diretor-de-cena → Odilon gera os clipes → reel-editor → reel-revisor). Reels usam o rosto do Odilon, a voz dele no ElevenLabs e IA de movimento; **nunca slides de carrossel**.
 ```
 /dia <data>           → pesquisador cria as 10 pautas do dia (grade de horários) + resumo
-/produzir-dia <data>  → redator + visual + revisor em lote (subagentes em paralelo) → painel de aprovação único
+/produzir-dia <data>  → carrosséis em lote + reels até os prompts (Estúdio de Reels) → painel de aprovação único
+/montar-reel <id>     → depois que o Odilon gerar os clipes: montagem + revisão do reel
 /semana               → (planejamento) pesquisador cria um lote de pautas da semana + resumo em conteudo/lotes/
 Odilon escolhe as pautas
 /produzir-post <id>   → redator → visual (render) → revisor (até 3 rodadas) → para e pede aprovação do Odilon
@@ -61,7 +63,8 @@ Cada etapa é feita pelo **subagente certo** (ver `.claude/agents/`). O agente p
 ## Comandos úteis
 ```bash
 python agents/render/render.py conteudo/fichas/<id>.visual.json --saida conteudo/render/<id>
-python agents/render/reel_de_slides.py conteudo/render/<id> --zoom --saida conteudo/render/<id>/reel.mp4   # reel R3
+python agents/reels/scripts/voz_elevenlabs.py conteudo/fichas/<id>.json [--simular]   # reel: narração ElevenLabs + tempos
+python agents/reels/scripts/montar_reel.py conteudo/reels/<id> [--rascunho]          # reel: montagem final
 python agents/publish/publicar_instagram.py conteudo/fichas/<id>.json            # simulação
 python scraper/instagram_scraper.py <perfil> --max-posts 50 --sem-midias          # precisa de APIFY_TOKEN
 ```

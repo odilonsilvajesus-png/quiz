@@ -1,0 +1,75 @@
+{
+  "id": "exemplo-2026-10-11-reel-chatgpt",
+  "status": "roteiro",
+  "pauta": {
+    "pilar": "ia",
+    "tipo": "reel",
+    "formato": "RH",
+    "tema": "Usar ChatGPT não é usar IA na empresa",
+    "gancho_sugerido": "Você acha que usa IA porque abre o ChatGPT?",
+    "funil": "meio",
+    "cta_nivel": "palavra_chave",
+    "dados_necessarios": []
+  },
+  "estudio_reel": {
+    "tipo_reel": "RH",
+    "roteiro": [
+      {
+        "bloco": 1,
+        "fala": "Você acha que usa IA porque abre o ChatGPT?",
+        "texto_na_tela": "Você acha que usa IA?",
+        "cena": "avatar",
+        "enfase": "ChatGPT"
+      },
+      {
+        "bloco": 2,
+        "fala": "Pois é. Você está usando uns cinco por cento dela.",
+        "texto_na_tela": "",
+        "cena": "avatar",
+        "enfase": "cinco"
+      },
+      {
+        "bloco": 3,
+        "fala": "Perguntar coisa pra IA é usar um Google que escreve bonito.",
+        "texto_na_tela": "",
+        "cena": "movimento",
+        "enfase": "Google"
+      },
+      {
+        "bloco": 4,
+        "fala": "Usar IA de verdade é colocar ela pra trabalhar num processo da sua empresa.",
+        "texto_na_tela": "",
+        "cena": "broll",
+        "enfase": "processo"
+      },
+      {
+        "bloco": 5,
+        "fala": "Responder cliente no WhatsApp, qualificar lead, montar orçamento. Sem depender de você pra tudo.",
+        "texto_na_tela": "",
+        "cena": "movimento",
+        "enfase": "tudo"
+      },
+      {
+        "bloco": 6,
+        "fala": "Comenta IA que eu te mostro por onde começar.",
+        "texto_na_tela": "",
+        "cena": "avatar",
+        "enfase": "IA"
+      }
+    ],
+    "titulo_na_tela": "Você acha que usa IA?",
+    "cta_na_tela": "Comenta IA",
+    "legenda": "Usar ChatGPT não é usar IA na empresa. Comenta IA que eu te mostro por onde começar.",
+    "duracao_alvo_s": 30
+  },
+  "publicacao": {
+    "aprovacao_humana": false
+  },
+  "historico": [
+    {
+      "agente": "exemplo",
+      "quando": "2026-09-27",
+      "acao": "ficha de exemplo de reel (Estúdio de Reels)"
+    }
+  ]
+}

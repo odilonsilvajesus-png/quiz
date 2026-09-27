@@ -17,6 +17,8 @@
 5. **Tokens** (no terminal, nunca em arquivo versionado):
    ```bash
    export APIFY_TOKEN=...          # para /referencias
+   export ELEVENLABS_API_KEY=...   # voz dos reels
+   export ELEVENLABS_VOICE_ID=...  # id da sua voz clonada no ElevenLabs
    export IG_USER_ID=...           # opcional, só para publicar pela API
    export IG_ACCESS_TOKEN=...
    ```
@@ -37,6 +39,8 @@
 | 1ª vez e a cada fotos novas | `/catalogar-fotos` | O arquivista olha cada foto e monta `fotos/indice.json` (real/IA, cena, enquadramento, usos) |
 | A cada 15 dias | `/referencias ricardonuneseletro umantoniodasilva rodvincenzi` | Atualiza as referências e resume o que está funcionando |
 | **Todo dia (meta de 10 posts)** | `/dia 2026-10-06` e depois `/produzir-dia 2026-10-06` | 10 pautas (7 carrosséis + 3 reels com IA), produção em lote e **um painel de aprovação** para o dia inteiro |
+| **Reels (depois do /produzir-dia)** | gere os clipes com os prompts de `conteudo/reels/<id>/prompts.md`, salve em `clipes/` e rode `/montar-reel <id>` | Estúdio de Reels: montagem automática (voz, legendas, título, CTA, selo) + revisão + aprovação |
+| Um reel avulso | `/produzir-reel <id>` e depois `/montar-reel <id>` | Roteiro → voz ElevenLabs → prompts de avatar e movimento → montagem |
 | Planejamento semanal (opcional) | `/semana 2026-10-05` | 14 pautas em `conteudo/fichas/` e um resumo; você escolhe quais produzir |
 | Para cada pauta escolhida | `/produzir-post <id>` | Redator → visual → revisor (até 3 rodadas); PNGs em `conteudo/render/<id>/`; pede a sua aprovação |
 | Depois de aprovar | `/publicar <id>` | Pacote pronto (imagens + `legenda.txt` + horário + palavra-chave + aviso de rótulo de IA) ou publicação pela API |

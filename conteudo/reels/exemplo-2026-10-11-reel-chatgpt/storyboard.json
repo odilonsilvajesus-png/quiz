@@ -1,0 +1,34 @@
+{
+  "titulo": "Você acha que usa IA?",
+  "titulo_segundos": 3,
+  "cta": "Comenta IA",
+  "cta_segundos": 2.5,
+  "legendas": true,
+  "cenas": [
+    {
+      "bloco": 1,
+      "arquivo": "clipes/01-avatar.mp4",
+      "tipo": "avatar"
+    },
+    {
+      "bloco": 3,
+      "arquivo": "clipes/03-movimento.mp4",
+      "tipo": "movimento"
+    },
+    {
+      "bloco": 4,
+      "arquivo": "clipes/04-broll.mp4",
+      "tipo": "broll"
+    },
+    {
+      "bloco": 5,
+      "arquivo": "clipes/05-movimento.mp4",
+      "tipo": "movimento"
+    },
+    {
+      "bloco": 6,
+      "arquivo": "clipes/06-avatar.mp4",
+      "tipo": "avatar"
+    }
+  ]
+}

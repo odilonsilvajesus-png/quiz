@@ -3,3 +3,10 @@ fotos/
 conteudo/render/
 .env
 .env.*
+conteudo/reels/**/*.mp3
+conteudo/reels/**/*.mp4
+conteudo/reels/**/*.jpg
+conteudo/reels/**/clipes/
+conteudo/reels/**/palavras.json
+conteudo/reels/**/blocos.json
+conteudo/reels/**/legendas.ass
