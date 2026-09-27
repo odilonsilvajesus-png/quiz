@@ -241,6 +241,13 @@ button { font: inherit; color: inherit; }
 .table th { background: var(--surface-2); font-weight: 650; font-size: 13px; }
 .prose li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.3em; display: flex; gap: 10px; align-items: flex-start; }
 .prose input[type="checkbox"] { width: 18px; height: 18px; margin: .35em 0 0; accent-color: var(--accent); flex: none; cursor: pointer; }
+.diagram {
+  margin: 0 0 .6em; padding: 18px 14px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--surface); overflow-x: auto; text-align: center;
+}
+.diagram svg { max-width: 100%; height: auto; }
+.diagram .fail { font-family: var(--f-display); font-size: 13px; color: var(--ink-3); text-align: left; white-space: pre-wrap; }
+.prose .diagram + p > em:only-child, .prose .diagram + p em:first-child:last-child { display: block; font-size: 14px; color: var(--ink-2); font-family: var(--f-display); font-style: normal; }
 .prose details {
   border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
   padding: 0 18px; margin-bottom: 1em;
@@ -326,6 +333,7 @@ button { font: inherit; color: inherit; }
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
 <script>
 const DATA = /*__DATA__*/null;
 const KEY = "formacao-ia:v1";
@@ -514,7 +522,64 @@ function fallbackCopy(text, ok) {
   t.remove();
 }
 
+/* ---------- Esquemas (Mermaid) ---------- */
+let diagramSeq = 0;
+function isDark() {
+  const t = document.documentElement.getAttribute("data-theme");
+  return t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+}
+async function renderDiagrams(root) {
+  if (!window.mermaid) return;
+  const cs = getComputedStyle(document.documentElement);
+  const v = n => cs.getPropertyValue(n).trim();
+  mermaid.initialize({
+    startOnLoad: false, securityLevel: "strict", theme: "base",
+    fontFamily: "Bricolage Grotesque, Segoe UI, system-ui, sans-serif",
+    themeVariables: {
+      darkMode: isDark(), fontSize: "15px",
+      background: v("--surface"), mainBkg: v("--accent-soft"),
+      primaryColor: v("--accent-soft"), primaryTextColor: v("--ink"), primaryBorderColor: v("--accent"),
+      secondaryColor: v("--surface-2"), secondaryTextColor: v("--ink"), secondaryBorderColor: v("--line"),
+      tertiaryColor: v("--surface-2"), tertiaryTextColor: v("--ink"), tertiaryBorderColor: v("--line"),
+      lineColor: v("--ink-2"), textColor: v("--ink"), nodeTextColor: v("--ink"),
+      clusterBkg: v("--surface-2"), clusterBorder: v("--line"), titleColor: v("--ink"),
+      edgeLabelBackground: v("--surface"), noteBkgColor: v("--mark"), noteTextColor: v("--mark-ink"),
+      quadrant1Fill: v("--accent-soft"), quadrant2Fill: v("--surface-2"), quadrant3Fill: v("--surface-2"), quadrant4Fill: v("--surface-2"),
+      quadrant1TextFill: v("--ink"), quadrant2TextFill: v("--ink"), quadrant3TextFill: v("--ink"), quadrant4TextFill: v("--ink"),
+      quadrantPointFill: v("--accent"), quadrantPointTextFill: v("--ink"), quadrantXAxisTextFill: v("--ink-2"),
+      quadrantYAxisTextFill: v("--ink-2"), quadrantTitleFill: v("--ink"), quadrantInternalBorderStrokeFill: v("--line"),
+      quadrantExternalBorderStrokeFill: v("--line"),
+      cScale0: v("--accent-soft"), cScale1: v("--surface-2"), cScale2: v("--accent-soft"), cScale3: v("--surface-2"),
+      cScale4: v("--accent-soft"), cScale5: v("--surface-2"), cScale6: v("--accent-soft"), cScale7: v("--surface-2"),
+      cScale8: v("--accent-soft"), cScale9: v("--surface-2"), cScale10: v("--accent-soft"), cScale11: v("--surface-2"),
+      cScaleLabel0: v("--ink"), cScaleLabel1: v("--ink"), cScaleLabel2: v("--ink"), cScaleLabel3: v("--ink"),
+      cScaleLabel4: v("--ink"), cScaleLabel5: v("--ink"), cScaleLabel6: v("--ink"), cScaleLabel7: v("--ink"),
+      cScaleLabel8: v("--ink"), cScaleLabel9: v("--ink"), cScaleLabel10: v("--ink"), cScaleLabel11: v("--ink"),
+      pie1: v("--accent"), pie2: v("--mark"), pie3: v("--ink-3"), pie4: v("--accent-soft"), pie5: v("--line"),
+      pieTitleTextColor: v("--ink"), pieSectionTextColor: v("--ink"), pieLegendTextColor: v("--ink"), pieStrokeColor: v("--surface")
+    }
+  });
+  for (const fig of root.querySelectorAll("figure.diagram")) {
+    const src = fig.dataset.src, out = fig.querySelector(".out");
+    try {
+      const { svg } = await mermaid.render("dg" + (++diagramSeq), src);
+      out.innerHTML = svg;
+    } catch (e) {
+      out.innerHTML = '<div class="fail">Não foi possível desenhar este esquema. Texto do esquema:\n\n</div>';
+      out.firstChild.append(src);
+    }
+  }
+}
+function rerenderDiagrams() { const p = document.getElementById("prose"); if (p) renderDiagrams(p); }
+
 function enhance(root, l) {
+  root.querySelectorAll("pre > code.language-mermaid").forEach(c => {
+    const fig = document.createElement("figure");
+    fig.className = "diagram"; fig.dataset.src = c.textContent;
+    fig.innerHTML = '<div class="out" role="img" aria-label="Esquema visual da aula"></div>';
+    c.parentNode.replaceWith(fig);
+  });
+  renderDiagrams(root);
   root.querySelectorAll("table").forEach(t => {
     const w = document.createElement("div"); w.className = "table";
     t.parentNode.insertBefore(w, t); w.appendChild(t);
@@ -570,6 +635,8 @@ document.getElementById("theme").addEventListener("click", () => {
     (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
   root.setAttribute("data-theme", current === "dark" ? "light" : "dark");
 });
+try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", rerenderDiagrams); } catch (e) {}
+new MutationObserver(rerenderDiagrams).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
 document.addEventListener("keydown", e => {
   if (e.target.closest("input, textarea")) return;
