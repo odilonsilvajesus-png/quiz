@@ -270,7 +270,8 @@ def load_brand(spec: dict, base: Path) -> dict:
 
 async def render(spec_path: Path, out_dir: Path) -> list[Path]:
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
-    base = spec_path.parent
+    base = spec_path.resolve().parent
+    out_dir = out_dir.resolve()
     fmt, slides = spec["formato"], spec["slides"]
     brand = load_brand(spec, base)
     out_dir.mkdir(parents=True, exist_ok=True)

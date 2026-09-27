@@ -38,7 +38,10 @@ pip install -r scraper/requirements.txt -r agents/requirements.txt
 playwright install chromium   # só fora do Claude Code na web
 ```
 
-## Como montar em cada plataforma
+## Claude Code (VS Code) — pronto para usar
+A estrutura já está montada: `CLAUDE.md` na raiz, subagentes em `.claude/agents/`, comandos em `.claude/commands/` (`/semana`, `/produzir-post`, `/catalogar-fotos`, `/referencias`, `/publicar`, `/metricas`) e permissões em `.claude/settings.json`. Passo a passo em `agents/COMO-USAR-NO-VSCODE.md`.
+
+## Como montar em outras plataformas
 - **Claude (Projetos):** crie 1 projeto por agente. Cole o conteúdo do arquivo `0X-agente-*.md` nas **instruções do projeto** e anexe os arquivos de conhecimento. Você passa a ficha JSON de um projeto para o outro.
 - **ChatGPT (GPTs personalizados):** mesmo esquema. Instruções = arquivo do agente; Knowledge = arquivos de conhecimento.
 - **Automação (n8n, Make, Claude Agent SDK / API):** cada agente vira uma chamada de modelo com o arquivo como *system prompt* e a ficha JSON como entrada. As ferramentas (scraper, render e publicação) viram nós ou ferramentas que o agente chama.

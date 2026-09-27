@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python agents/render/render.py:*)",
+      "Bash(python3 agents/render/render.py:*)",
+      "Bash(python scraper/instagram_scraper.py:*)",
+      "Bash(python3 scraper/instagram_scraper.py:*)",
+      "Read(fotos/**)",
+      "Read(conteudo/**)",
+      "Edit(conteudo/**)",
+      "Write(conteudo/**)",
+      "Edit(fotos/indice.json)",
+      "Write(fotos/indice.json)"
+    ],
+    "ask": [
+      "Bash(python agents/publish/publicar_instagram.py:*)",
+      "Bash(python3 agents/publish/publicar_instagram.py:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)"
+    ]
+  }
+}

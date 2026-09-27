@@ -1,0 +1,67 @@
+# CLAUDE.md
+
+Este repositório tem **dois projetos independentes**:
+1. **Quiz (app web):** `index.html`, `src/`, `public/`, `package.json` (Vite + React + Tailwind). Só mexa nele se o pedido for sobre o quiz.
+2. **Máquina de conteúdo do @odilon.mentor** (marca **SIC · Simeão IA Creator Digital**, "Domine com IA."): um time de agentes que pesquisa, escreve, monta o visual, revisa e publica conteúdo de Instagram para **donos de empresa**. Todo o resto deste arquivo é sobre ele.
+
+## Estrutura
+```
+agents/                         ← fonte da verdade (instruções e conhecimento)
+  00-base-de-conhecimento.md    marca, público, oferta, casos reais, tom, identidade SIC, regras
+  01…05-agente-*.md             instruções completas de cada agente
+  conhecimento/mapa-mestre.md   linha editorial, estruturas, formatos, ganchos, reels, checklist
+  conhecimento/banco-de-fotos-ia.md   regras de uso de fotos do Odilon feitas com IA
+  ficha-de-conteudo.schema.json      formato da ficha que passa de um agente para o outro
+  marca-sic.json                paleta, fontes e estilo da marca (usado pelo renderizador)
+  render/render.py              JSON → PNGs 1080×1350 (formatos A, B, C, D)
+  publish/publicar_instagram.py publicação pela Graph API (simula por padrão)
+.claude/agents/                 subagentes do Claude Code (pesquisador, redator, visual, revisor, publicador, arquivista-de-fotos)
+.claude/commands/               comandos: /semana, /produzir-post, /catalogar-fotos, /referencias, /publicar, /metricas
+scraper/instagram_scraper.py    coleta de perfis de referência (Apify)
+conteudo/fichas/                uma ficha JSON por post (versionada)
+conteudo/lotes/                 resumo de cada lote semanal de pautas (versionado)
+conteudo/render/                PNGs gerados (ignorado pelo git)
+fotos/                          fotos do Odilon (ignorado pelo git) + fotos/indice.json
+output/                         coletas de referência e análises (ignorado pelo git)
+```
+
+## Setup (uma vez)
+```bash
+pip install -r scraper/requirements.txt -r agents/requirements.txt
+playwright install chromium
+```
+- **Fotos:** sincronize a pasta do Google Drive do Odilon (https://drive.google.com/drive/folders/1IEW4NYUmXdegsE0Xmg6vVXvSIYQuznqS) para `fotos/originais/` (download manual ou Google Drive para computador). Depois rode `/catalogar-fotos`.
+- **Variáveis de ambiente** (nunca em arquivo versionado nem no chat): `APIFY_TOKEN` (coleta de referências) · `IG_USER_ID` e `IG_ACCESS_TOKEN` (publicação pela API, opcional).
+
+## Fluxo de trabalho
+```
+/semana               → pesquisador cria 14 pautas (conteudo/fichas/*.json, status "pauta") + resumo em conteudo/lotes/
+Odilon escolhe as pautas
+/produzir-post <id>   → redator → visual (render) → revisor (até 3 rodadas) → para e pede aprovação do Odilon
+Odilon aprova         → publicacao.aprovacao_humana = true na ficha
+/publicar <id>        → publicador agenda/publica e registra
+/metricas             → publicador coleta métricas 48h depois e alimenta o pesquisador
+```
+Cada etapa é feita pelo **subagente certo** (ver `.claude/agents/`). O agente principal **orquestra**: chama o subagente, lê a ficha que ele devolveu, decide o próximo passo e mostra ao Odilon um resumo curto.
+
+## Regras que valem para qualquer agente
+1. **Antes de trabalhar, leia** `agents/00-base-de-conhecimento.md` e o arquivo de instruções do seu papel em `agents/`. Eles mandam; este CLAUDE.md só resume.
+2. **Nunca invente** número, cliente, depoimento ou história. Se faltar dado, registre em `pendencias` e pergunte.
+3. **Crença da marca:** o dono precisa estar envolvido na empresa, mas **nem tudo precisa passar por ele**.
+4. **Sem política partidária, sem promessa de resultado, sem usar Deus como argumento de venda.**
+5. **Fotos:** use só as catalogadas em `fotos/indice.json`. Foto com `origem: "ia"` nunca vai em conteúdo de **fé/testemunho** nem em cena que pareça **prova** (evento, cliente, resultado). **Não gere imagens.**
+6. **Identidade SIC** em toda arte: carregue `agents/marca-sic.json`; blocos sólidos, cantos retos, terracota `#B84B26` só em ação, sem emoji, sem degradê.
+7. **Nada é publicado sem** `revisao.veredito` aprovado **e** `publicacao.aprovacao_humana: true`.
+8. **Ficha é o contrato:** cada agente edita só o seu bloco da ficha (`pauta`, `texto`, `visual`, `revisao`, `publicacao`) e acrescenta uma linha em `historico`. Valide contra `agents/ficha-de-conteudo.schema.json`.
+
+## Comandos úteis
+```bash
+python agents/render/render.py conteudo/fichas/<id>.visual.json --saida conteudo/render/<id>
+python agents/publish/publicar_instagram.py conteudo/fichas/<id>.json            # simulação
+python scraper/instagram_scraper.py <perfil> --max-posts 50 --sem-midias          # precisa de APIFY_TOKEN
+```
+
+## Convenções
+- Todo conteúdo em **português do Brasil**.
+- IDs de ficha: `AAAA-MM-DD-slug` (ex.: `2026-10-06-chatgpt-nao-e-ia`).
+- O spec de renderização de cada post fica ao lado da ficha: `conteudo/fichas/<id>.visual.json`.

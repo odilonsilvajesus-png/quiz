@@ -1,0 +1,124 @@
+{
+  "id": "exemplo-2026-10-11-bet-empresario",
+  "status": "aprovado",
+  "pauta": {
+    "pilar": "mentalidade",
+    "tipo": "carrossel",
+    "formato": "A",
+    "tema": "A verdadeira bet no Brasil é ser empresário",
+    "angulo": "Aproveitar a discussão sobre bets para validar o peso de empreender, sem opinião política",
+    "gancho_sugerido": "Todo mundo falando de bet. Mas a verdadeira bet no Brasil é ser empresário.",
+    "ganchos_alternativos": [
+      "A verdadeira bet no Brasil é ser empresário.",
+      "Empresário no Brasil aposta tudo sem saque antecipado."
+    ],
+    "ponte_ia": null,
+    "funil": "topo",
+    "cta_nivel": "salvar_compartilhar",
+    "referencias": [
+      {
+        "url": "https://www.instagram.com/p/DduZrhYk5pF/",
+        "perfil": "@ricardonuneseletro",
+        "metricas": "carrossel sobre bets e varejo",
+        "por_que_funcionou": "tema quente + dor do empresário"
+      }
+    ],
+    "dados_necessarios": [],
+    "prioridade": "alta"
+  },
+  "texto": {
+    "slides": [
+      {
+        "n": 1,
+        "funcao": "gancho",
+        "texto": "Todo mundo falando de bet. Mas a **verdadeira bet** no Brasil é __ser empresário.__",
+        "foto_sugerida": "você no escritório à noite, olhando o notebook"
+      },
+      {
+        "n": 2,
+        "funcao": "re-gancho",
+        "texto": "Você aposta tudo. **Sem odds, sem saque antecipado** e sem bônus de boas-vindas.",
+        "foto_sugerida": ""
+      },
+      {
+        "n": 3,
+        "funcao": "dor",
+        "texto": "Paga imposto **antes de receber** do cliente.",
+        "foto_sugerida": "boletos ou extrato na mesa"
+      },
+      {
+        "n": 4,
+        "funcao": "dor",
+        "texto": "Cliente pede desconto no Pix. Fornecedor pede reajuste. Funcionário pede aumento. **E você pede a Deus.**",
+        "foto_sugerida": "celular com muitas mensagens não lidas"
+      },
+      {
+        "n": 5,
+        "funcao": "dor",
+        "texto": "Férias? Só se levar o __notebook.__",
+        "foto_sugerida": ""
+      },
+      {
+        "n": 6,
+        "funcao": "validacao",
+        "texto": "E mesmo assim você levanta todo dia e abre as portas. Isso não é aposta. **É coragem.**",
+        "foto_sugerida": "você abrindo a porta da empresa de manhã"
+      },
+      {
+        "n": 7,
+        "funcao": "pergunta",
+        "texto": "Qual foi a aposta mais alta que você já fez pela sua empresa?\n**Me conta aqui embaixo.**",
+        "foto_sugerida": "você olhando para a câmera, sério e sereno"
+      }
+    ],
+    "titulo_na_tela": "",
+    "legenda": "A verdadeira bet no Brasil é ser empresário.\n\nVocê aposta tudo, sem odds e sem saque antecipado, meu amigo empresário. Paga imposto antes de receber, segura a folha no aperto e ainda abre a porta todo dia.\n\nIsso não é aposta. É coragem.\n\nQual foi a aposta mais alta que você já fez pela sua empresa? Me conta aqui embaixo.",
+    "cta": "Qual foi a aposta mais alta que você já fez pela sua empresa? Me conta aqui embaixo.",
+    "palavra_chave": null,
+    "pendencias": []
+  },
+  "visual": {
+    "spec_render": "conteudo/fichas/exemplo-2026-10-11-bet-empresario.visual.json",
+    "arquivos": [],
+    "fotos_usadas": [],
+    "fotos_ia": [],
+    "fotos_faltando": [
+      "você no escritório à noite, olhando o notebook",
+      "boletos ou extrato na mesa",
+      "celular com muitas mensagens não lidas",
+      "você abrindo a porta da empresa de manhã",
+      "você olhando para a câmera, sério e sereno"
+    ]
+  },
+  "revisao": {
+    "rodada": 1,
+    "notas": {
+      "gancho": 9,
+      "clareza": 9,
+      "tom_de_voz": 8,
+      "estrutura": 9,
+      "visual": 7,
+      "cta_funil": 9
+    },
+    "bloqueios": [],
+    "ajustes": [
+      {
+        "para": "humano",
+        "onde": "slides 1, 3, 4, 6, 7",
+        "problema": "Fotos ainda não escolhidas",
+        "sugestao": "Rodar /catalogar-fotos e escolher fotos reais para as cenas descritas"
+      }
+    ],
+    "veredito": "aprovado_com_ressalvas"
+  },
+  "publicacao": {
+    "aprovacao_humana": false
+  },
+  "historico": [
+    {
+      "agente": "exemplo",
+      "quando": "2026-09-27",
+      "acao": "ficha de exemplo criada para servir de modelo"
+    }
+  ]
+}
