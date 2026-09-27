@@ -22,7 +22,9 @@ Verifique e liste em `bloqueios`:
 - [ ] Post de identificação que humilha funcionário ou cliente, ou que toma lado político.
 - [ ] Arte fora da marca SIC: degradê, cantos arredondados, emoji, sombra pesada, robô/circuito/rede neural, ou **terracota usada como decoração** (fora de CTA, botão, seta, círculo da CTA, ponto final e selo).
 - [ ] Texto ou imagem **copiado** de outro perfil (e não modelado).
-- [ ] Imagem de pessoa gerada por IA apresentada como real.
+- [ ] Imagem gerada por IA de **qualquer pessoa que não seja o Odilon** (cliente, família, equipe, famoso).
+- [ ] Foto do Odilon gerada por IA que **simula prova ou fato** (evento, palco, cliente, resultado, prêmio, viagem) ou usada em **conteúdo de fé/testemunho**.
+- [ ] Foto gerada por IA **sem registro** em `visual.fotos_ia` (o Publicador precisa saber para ativar o rótulo de IA).
 
 ## Passo 2: notas de 0 a 10
 | Critério | 10 é… | Perguntas |

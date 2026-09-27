@@ -1,26 +1,32 @@
 {
   "_sobre": "Marca oficial SIC · Simeão IA Creator Digital · 'Domine com IA.' Carregue nos specs com \"marca\": {\"arquivo\": \"<caminho>/agents/marca-sic.json\"}",
-  "nome": "Simeão",
-  "handle": "seuperfil",
+  "nome": "Odilon",
+  "handle": "odilon.mentor",
   "avatar": "",
   "contador": false,
-
   "cor_fundo_escuro": "#2E0F36",
   "cor_fundo_claro": "#ECE3DA",
   "cor_texto_escuro": "#F5F0EB",
   "cor_texto_claro": "#1C1620",
   "cor_titulo_claro": "#2E0F36",
-
   "cor_acao": "#B84B26",
   "cor_texto_botao": "#F5F0EB",
   "cor_selo_fundo": "#2E0F36",
-
   "cor_sublinhado": "#ECE3DA",
   "cor_sublinhado_claro": "#4B1B57",
   "cor_numeros": "#ECE3DA",
   "cor_numeros_claro": "#4B1B57",
   "cor_nota": "#ECE3DA",
-
-  "fontes": {"titulo": "Source Serif 4", "texto": "Poppins", "peso_titulo": 700},
-  "estilo": {"degrade": false, "cantos_retos": true, "sombra_texto": false, "selo": "IA", "ponto_final": true}
+  "fontes": {
+    "titulo": "Source Serif 4",
+    "texto": "Poppins",
+    "peso_titulo": 700
+  },
+  "estilo": {
+    "degrade": false,
+    "cantos_retos": true,
+    "sombra_texto": false,
+    "selo": "IA",
+    "ponto_final": true
+  }
 }

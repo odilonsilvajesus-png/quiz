@@ -22,7 +22,8 @@ São 5 agentes, cada um com uma função, trabalhando em sequência. Eles passam
 ## Arquivos de conhecimento (anexar a TODOS os agentes)
 1. `00-base-de-conhecimento.md`: marca, público, pilares, pontes, tom, CTA, identidade visual e regras. **Preencha os campos `{{…}}` antes de usar.**
 2. `conhecimento/mapa-mestre.md`: direção única (v1 + v2) com pilares, estruturas, formatos visuais, conversão, reels, rotina e checklist. Baseado em Ricardo Nunes, Antônio da Silva, Rod Vincenzi, Rishi, Social Media de Elite e Rapha Falcão.
-3. `ficha-de-conteudo.schema.json`: o formato do JSON que passa de um agente para o outro.
+3. `conhecimento/banco-de-fotos-ia.md`: regras e biblioteca de cenas para gerar fotos do Odilon com IA.
+4. `ficha-de-conteudo.schema.json`: o formato do JSON que passa de um agente para o outro.
 
 ## Ferramentas deste repositório que os agentes usam
 | Ferramenta | Quem usa | Comando |

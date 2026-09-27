@@ -260,7 +260,7 @@ Posts em que o dono **lê e pensa "isso sou eu"**, e comenta para concordar, des
 - **Assinatura visual:** blocos sólidos (sem degradê), cantos retos, **ponto final terracota** no fim de títulos e frases de impacto, selo "I A" no canto e **sublinhado à mão** em surface/plum. O **círculo à mão** fica reservado para a palavra da CTA.
 - **Marcações de texto:** `**negrito**` · `__sublinhado à mão__` · `((círculo à mão, só CTA))`.
 - **Nunca:** degradê, robô/circuito/rede neural, cantos arredondados, emoji, brilho, sombra pesada.
-- **Fotos:** sempre reais (suas, da operação, do cliente com autorização). **Sessão mensal de 60 a 100 fotos:** falando com cliente, notebook com automação, palestra, reunião, família (com consentimento), Bíblia/igreja, viagem, carro, mãos no teclado, café e agenda.
+- **Fotos:** reais ou **do Odilon geradas por IA** a partir das fotos originais (regras e biblioteca de cenas em `conhecimento/banco-de-fotos-ia.md`; fé e testemunho só com foto real). **Sessão de fotos reais** (para referências e bastidores): falando com cliente, notebook com automação, palestra, reunião, família (com consentimento), Bíblia/igreja, carro, mãos no teclado, café e agenda.
 - **Série numerada opcional** nos posts de IA (ex.: "IA NA EMPRESA #012") para gerar coleção.
 
 ### 3.2 Formatos visuais

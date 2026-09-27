@@ -254,6 +254,13 @@
             "type": "string"
           },
           "description": "URLs públicas das mídias (exigido pela API do Instagram)"
+        },
+        "fotos_ia": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Fotos do Odilon geradas por IA usadas neste post (ativa o rótulo de IA na publicação)"
         }
       }
     },

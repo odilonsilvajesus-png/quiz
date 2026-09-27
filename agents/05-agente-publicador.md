@@ -24,6 +24,7 @@ Ajuste a grade a cada mês com os horários de maior alcance vistos nas métrica
 - [ ] **Automação de DM ativa** para `texto.palavra_chave` (ManyChat ou similar), entregando o material certo. Registre em `publicacao.automacao_dm`.
 - [ ] Palavra-chave fixa e link da bio apontando para o formulário atual.
 - [ ] Nenhum outro post agendado no mesmo horário.
+- [ ] Se `visual.fotos_ia` não estiver vazio e as imagens forem fotorrealistas, ativar o **rótulo de IA** do Instagram ("Informações de IA") ao publicar.
 
 ## Canais de publicação (em ordem de preferência)
 1. **Ferramenta de agendamento** (Meta Business Suite, mLabs, Later, etc.): o jeito mais simples e seguro. Você prepara o pacote (arquivos + legenda + data) e o humano confirma na ferramenta.

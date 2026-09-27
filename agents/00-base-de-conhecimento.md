@@ -2,7 +2,7 @@
 > Preencha tudo que está entre `{{ }}`. Os agentes **não podem inventar** o que estiver vazio: eles devem pedir.
 
 ## 1. Quem sou eu
-- **Nome:** Simeão · **Marca:** SIC · Simeão IA Creator Digital · **Tagline:** "Domine com IA." · **@:** {{seu @}}
+- **Nome:** Odilon ({{confirmar nome de exibição}}) · **Marca:** SIC · Simeão IA Creator Digital · **Tagline:** "Domine com IA." · **@:** {{seu @}}
 - **O que eu faço:** ajudo empresários a lucrar mais e otimizar seus negócios com IA. Faço **implementação de IA nas empresas**.
 - **Posicionamento:** "Eu ajudo empresários a lucrar mais e trabalhar menos usando IA de verdade, com princípio, família e fé no centro."
 - **Minha história (para o post "Comece Aqui" e conteúdos pessoais):** {{sua trajetória em 5 a 10 linhas: de onde veio, virada, por que IA, por que fé}}
@@ -66,7 +66,7 @@
   | off-white | `#F5F0EB` | Texto sobre plum | `cor_texto_escuro`, `cor_texto_botao` |
 - **Tipografia (alternável):** títulos em **serifada de peso alto** (padrão: Source Serif 4 Bold; alternativa: DM Serif Display) · texto em **sans neutra** (padrão: Poppins; alternativas: Inter, Montserrat) · Caveat só nas anotações à mão.
 - **Elementos da marca:** **ponto final** (quadrado terracota que substitui o ponto final de títulos e frases de impacto) · **cantos retos** em cards, botões, avatar e imagens · **selo "I A"** discreto no canto superior direito, nunca disputando com o título.
-- **Fazer:** blocos de cor sólidos, sem degradê · cantos retos · terracota só em elemento de ação · muito espaço vazio entre elementos · fotografia real de operação e negócio.
+- **Fazer:** blocos de cor sólidos, sem degradê · cantos retos · terracota só em elemento de ação · muito espaço vazio entre elementos · fotografia real (ou do Odilon gerada por IA, com aparência natural, conforme `conhecimento/banco-de-fotos-ia.md`) de operação e negócio.
 - **Evitar:** degradê (principalmente roxo para azul) · ícone de robô, circuito ou rede neural · cantos arredondados · terracota como cor decorativa (sublinhado, número, destaque de palavra) · emoji, brilho e sombra pesada nas artes.
 - **Marcações do texto:** `**negrito**` · `__sublinhado à mão__` (decorativo: surface/plum, nunca terracota) · `((círculo à mão))` (terracota, **só na palavra da CTA**).
 - **Formatos de carrossel:** A (post sobre foto real, o principal) · B (editorial com números) · C (photo dump) · D (frase com rabisco)
