@@ -18,6 +18,13 @@ LER (aulas)  →  FAZER (exercícios)  →  APLICAR (tarefa real)  →  ENTREGAR
 - **Entregável:** o produto que vai para o seu portfólio.
 - **Autoavaliação:** perguntas com gabarito. Siga para o próximo módulo só se acertar pelo menos 80%.
 
+### O que você encontra em cada aula
+- **Explicação completa**, com exemplos de pequenas e médias empresas brasileiras.
+- **Esquemas visuais** (fluxogramas, mapas, matrizes e linhas do tempo), cada um com uma legenda que diz o que ele mostra.
+- **Quadro "Em resumo"** no fim da aula, para revisar rapidamente.
+- **"Para ir além"**: links para fontes oficiais, cursos gratuitos e vídeos. A maioria está em inglês; ative as legendas traduzidas nos vídeos.
+- **Glossário**: se encontrar um termo que não lembra, consulte o [glossário](glossario.md), que indica a aula onde ele é explicado.
+
 ### Carga horária
 - **8 a 10 horas por semana**, cerca de 220 horas no total.
 - Distribuição sugerida por semana: 3h de estudo, 4h de prática, 2h de aplicação em campo e 1h de publicação e reflexão.
@@ -48,6 +55,7 @@ LER (aulas)  →  FAZER (exercícios)  →  APLICAR (tarefa real)  →  ENTREGAR
 | **5. Autoridade** | 23 | M10B · Governança, LGPD e gestão da mudança | [modulo-10-governanca-roi-e-mudanca.md](modulo-10-governanca-roi-e-mudanca.md) (Parte B) |
 | | 24 | Projeto final | [projeto-final.md](projeto-final.md) |
 | **Trilha contínua** | 1–24 | Palestras e autoridade | [trilha-palestras-e-autoridade.md](trilha-palestras-e-autoridade.md) |
+| **Consulta** | — | Glossário de termos | [glossario.md](glossario.md) |
 
 **Modelos prontos** (use nos entregáveis): pasta [`templates/`](templates/)
 

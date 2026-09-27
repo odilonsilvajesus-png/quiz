@@ -110,6 +110,7 @@ def single_entry(path, mid, group, short):
 def main():
     modules = [single_entry(ROOT / GUIDE, "guia", "Comece aqui", "Guia")]
     modules[0]["lessons"][0]["title"] = "Guia da formação e cronograma"
+    modules.append(single_entry(ROOT / "glossario.md", "glossario", "Comece aqui", "A–Z"))
     for group, files in GROUPS:
         for f in files:
             modules.append(module_entry(f, group))
