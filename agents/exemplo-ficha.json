@@ -1,0 +1,32 @@
+{
+  "id": "2026-10-01-chatgpt-nao-e-ia",
+  "status": "aprovado",
+  "pauta": {
+    "pilar": "ia",
+    "tipo": "carrossel",
+    "formato": "A",
+    "tema": "Empresário acha que usa IA porque abre o ChatGPT",
+    "gancho_sugerido": "Você acha que usa IA porque abre o ChatGPT. Você está usando 5% dela.",
+    "funil": "meio",
+    "cta_nivel": "palavra_chave"
+  },
+  "texto": {
+    "legenda": "Você acha que usa IA porque abre o ChatGPT.\n\nPerguntar coisa pra IA não é usar IA, meu amigo empresário. Usar IA é colocar ela pra trabalhar sem você.\n\nComenta IA aqui embaixo que eu te mostro o caminho.",
+    "palavra_chave": "IA"
+  },
+  "visual": {
+    "spec_render": "agents/render/exemplos/exemplo-formato-A.json",
+    "urls_publicas": [
+      "https://exemplo.com/01.png",
+      "https://exemplo.com/02.png"
+    ]
+  },
+  "revisao": {
+    "rodada": 1,
+    "veredito": "aprovado"
+  },
+  "publicacao": {
+    "aprovacao_humana": false
+  },
+  "historico": []
+}

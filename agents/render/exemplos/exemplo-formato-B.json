@@ -1,0 +1,13 @@
+{
+  "formato": "B",
+  "marca": {"nome": "Seu Nome", "handle": "seuperfil", "cor_destaque": "#E3262E", "contador": true},
+  "slides": [
+    {"tipo": "capa", "foto": "", "foto_descricao": "você com expressão séria segurando o celular",
+     "titulo": "A IA vai tirar cliente da sua empresa?", "texto": "Não a IA. **O concorrente que já usa.** Presta atenção no que está acontecendo."},
+    {"tipo": "texto", "fundo": "claro", "titulo": "O cliente mudou.", "texto": "Ele manda mensagem às 22h e espera resposta na hora.\n\nQuem responde primeiro, **vende primeiro.**"},
+    {"tipo": "numero", "numero": 1, "titulo": "Responda em segundos, não em horas.", "texto": "Um agente de IA no WhatsApp atende, qualifica e agenda.\n\nVocê só entra quando o cliente está pronto."},
+    {"tipo": "numero", "numero": 2, "fundo": "claro", "titulo": "Pare de digitar a mesma coisa.", "texto": "Orçamento, proposta, follow-up.\n\nTudo que se repete **tem que ser automático.**"},
+    {"tipo": "numero", "numero": 3, "titulo": "Olhe o número antes de decidir.", "texto": "IA lê venda, margem e estoque e te mostra o que ninguém te conta."},
+    {"tipo": "cta_botao", "titulo": "Quer saber qual desses 3 está travando a sua empresa?", "texto": "Comenta IA que eu te mostro o diagnóstico."}
+  ]
+}

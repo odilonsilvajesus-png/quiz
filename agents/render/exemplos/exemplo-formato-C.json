@@ -1,0 +1,11 @@
+{
+  "formato": "C",
+  "marca": {"handle": "seuperfil"},
+  "slides": [
+    {"foto": "", "foto_descricao": "você anos atrás, trabalhando até tarde", "texto": "Aqui eu orava pra ter o primeiro cliente."},
+    {"foto": "", "foto_descricao": "reunião com equipe hoje", "texto": "Hoje eu sento com donos de empresa toda semana."},
+    {"foto": "", "foto_descricao": "você com a família", "texto": "Aqui eu orava pra ter tempo com a minha família."},
+    {"foto": "", "foto_descricao": "almoço em família num domingo", "texto": "Hoje a IA trabalha enquanto eu estou aqui."},
+    {"foto": "", "foto_descricao": "céu, estrada ou paisagem", "texto": "Não normalize aquilo que um dia foi uma oração."}
+  ]
+}

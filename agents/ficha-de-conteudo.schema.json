@@ -1,0 +1,415 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ficha de conteúdo",
+  "description": "Documento único que passa entre os 5 agentes. Cada agente preenche só o seu bloco e acrescenta uma linha em historico.",
+  "type": "object",
+  "required": [
+    "id",
+    "status",
+    "pauta"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "AAAA-MM-DD-slug, ex.: 2026-10-01-chatgpt-nao-e-ia"
+    },
+    "status": {
+      "enum": [
+        "pauta",
+        "texto",
+        "visual",
+        "revisao",
+        "ajustes",
+        "aprovado",
+        "agendado",
+        "publicado",
+        "descartado"
+      ]
+    },
+    "pauta": {
+      "description": "Preenchido pelo Agente Pesquisador",
+      "type": "object",
+      "required": [
+        "pilar",
+        "tipo",
+        "formato",
+        "tema",
+        "gancho_sugerido",
+        "funil",
+        "cta_nivel"
+      ],
+      "properties": {
+        "pilar": {
+          "enum": [
+            "mentalidade",
+            "negocios",
+            "ia",
+            "fe",
+            "prova"
+          ]
+        },
+        "tipo": {
+          "enum": [
+            "carrossel",
+            "reel",
+            "estatico"
+          ]
+        },
+        "formato": {
+          "type": "string",
+          "description": "Carrossel/estático: A, B, C, D. Reel: 1 a 9 (catálogo do mapa-conteudo-v2)"
+        },
+        "tema": {
+          "type": "string"
+        },
+        "angulo": {
+          "type": "string",
+          "description": "O que torna este post diferente do que já existe"
+        },
+        "gancho_sugerido": {
+          "type": "string"
+        },
+        "ganchos_alternativos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ponte_ia": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Como o tema leva à IA; null em posts só de topo"
+        },
+        "funil": {
+          "enum": [
+            "topo",
+            "meio",
+            "fundo"
+          ]
+        },
+        "cta_nivel": {
+          "enum": [
+            "seguir",
+            "salvar_compartilhar",
+            "palavra_chave",
+            "formulario"
+          ]
+        },
+        "referencias": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "perfil": {
+                "type": "string"
+              },
+              "metricas": {
+                "type": "string",
+                "description": "ex.: 58 mil curtidas, 1,2 mi views"
+              },
+              "por_que_funcionou": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "dados_necessarios": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "O que o humano precisa fornecer (caso de cliente, foto, história)"
+        },
+        "prioridade": {
+          "enum": [
+            "alta",
+            "media",
+            "baixa"
+          ]
+        }
+      }
+    },
+    "texto": {
+      "description": "Preenchido pelo Agente Redator",
+      "type": "object",
+      "properties": {
+        "slides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "integer"
+              },
+              "funcao": {
+                "type": "string",
+                "description": "gancho, re-gancho, dor, historia, licao, passo, prova, cta"
+              },
+              "texto": {
+                "type": "string",
+                "description": "Com marcações **negrito**, __sublinhado__, ((círculo))"
+              },
+              "titulo": {
+                "type": "string"
+              },
+              "foto_sugerida": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "roteiro_reel": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tempo": {
+                "type": "string",
+                "description": "ex.: 0-3s"
+              },
+              "bloco": {
+                "type": "string"
+              },
+              "fala": {
+                "type": "string"
+              },
+              "texto_na_tela": {
+                "type": "string"
+              },
+              "visual": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "titulo_na_tela": {
+          "type": "string"
+        },
+        "legenda": {
+          "type": "string"
+        },
+        "cta": {
+          "type": "string"
+        },
+        "palavra_chave": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pendencias": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "visual": {
+      "description": "Preenchido pelo Agente Visual",
+      "type": "object",
+      "properties": {
+        "spec_render": {
+          "type": "string",
+          "description": "Caminho do JSON aceito por agents/render/render.py"
+        },
+        "arquivos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "PNGs gerados"
+        },
+        "fotos_usadas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fotos_faltando": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "plano_de_gravacao": {
+          "type": "string",
+          "description": "Reels: enquadramento, local, luz, figurino, takes"
+        },
+        "plano_de_edicao": {
+          "type": "string",
+          "description": "Reels: cortes, legendas, b-roll, música, caixa de título"
+        },
+        "capa_reel": {
+          "type": "string"
+        },
+        "urls_publicas": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "URLs públicas das mídias (exigido pela API do Instagram)"
+        }
+      }
+    },
+    "revisao": {
+      "description": "Preenchido pelo Agente Revisor",
+      "type": "object",
+      "properties": {
+        "rodada": {
+          "type": "integer"
+        },
+        "notas": {
+          "type": "object",
+          "properties": {
+            "gancho": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "clareza": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "tom_de_voz": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "estrutura": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "visual": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            },
+            "cta_funil": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10
+            }
+          }
+        },
+        "bloqueios": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Violações das regras inegociáveis; qualquer item = reprovado"
+        },
+        "ajustes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "para": {
+                "enum": [
+                  "redator",
+                  "visual",
+                  "pesquisador",
+                  "humano"
+                ]
+              },
+              "onde": {
+                "type": "string"
+              },
+              "problema": {
+                "type": "string"
+              },
+              "sugestao": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "veredito": {
+          "enum": [
+            "aprovado",
+            "aprovado_com_ressalvas",
+            "reprovado"
+          ]
+        }
+      }
+    },
+    "publicacao": {
+      "description": "Preenchido pelo Agente Publicador",
+      "type": "object",
+      "properties": {
+        "aprovacao_humana": {
+          "type": "boolean"
+        },
+        "data_hora": {
+          "type": "string",
+          "description": "ISO 8601 com fuso, ex.: 2026-10-01T12:00:00-03:00"
+        },
+        "canal": {
+          "enum": [
+            "api_instagram",
+            "meta_business_suite",
+            "manual",
+            "outra_ferramenta"
+          ]
+        },
+        "url_post": {
+          "type": "string"
+        },
+        "automacao_dm": {
+          "type": "string",
+          "description": "Palavra-chave configurada no ManyChat e material enviado"
+        },
+        "metricas": {
+          "type": "object",
+          "properties": {
+            "coletado_em": {
+              "type": "string"
+            },
+            "alcance": {
+              "type": "integer"
+            },
+            "curtidas": {
+              "type": "integer"
+            },
+            "comentarios": {
+              "type": "integer"
+            },
+            "salvamentos": {
+              "type": "integer"
+            },
+            "compartilhamentos": {
+              "type": "integer"
+            },
+            "leads_dm": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "historico": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "agente": {
+            "type": "string"
+          },
+          "quando": {
+            "type": "string"
+          },
+          "acao": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
