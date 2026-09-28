@@ -4,19 +4,23 @@ import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
 
 export const temIA = () => Boolean(provedor());
 
-function esquema(qtdSlides) {
+function esquema(qtdSlides, comImagem) {
+  const slide = { titulo: z.string(), subtitulo: z.string() };
+  if (comImagem) {
+    slide.imagem = z.string().describe("Descrição da cena da imagem deste slide (pessoas, lugar, objetos, luz, enquadramento). Sem texto na imagem.");
+  }
   return z.object({
     angulo: z.string().describe("Ângulo/tema escolhido, exatamente como aparece na lista do cliente quando houver lista"),
     por_que_a_referencia_funcionou: z.string().describe("1 a 3 frases: o mecanismo de atenção da referência (gancho, tensão, identificação)"),
     slides: z
-      .array(z.object({ titulo: z.string(), subtitulo: z.string() }))
+      .array(z.object(slide))
       .describe(`Exatamente ${qtdSlides} slides, na ordem da estrutura`),
     legenda: z.string().describe("Legenda do post para o Instagram, com CTA comercial no final"),
     pendencias: z.array(z.string()).describe("Marcadores [ENTRE COLCHETES] usados que alguém precisa preencher. Vazio se nenhum."),
   });
 }
 
-function promptSistema(cliente, modelo) {
+function promptSistema(cliente, modelo, opcoes = {}) {
   const c = cliente.conteudo;
   const estrutura = modelo.estrutura.map((s, i) => `${i + 1}. ${s.papel}: ${s.instrucao}`).join("\n");
   const exemplos = cliente.exemplosCarrossel
@@ -52,7 +56,7 @@ Regras de formato:
 ${c.angulos?.length ? `- Escolha o ângulo mais adequado desta lista: ${c.angulos.join("; ")}.` : ""}
 ${c.proibir_travessao ? "- Nunca use travessão (— ou –). Use vírgula, ponto, dois pontos ou hífen simples." : ""}
 - Legenda: ${c.cta_legenda || "termine com um CTA claro."}
-- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
+${opcoes.comImagem ? `- Em cada slide, preencha "imagem" com uma descrição visual concreta (1 a 2 frases) de uma cena que reforce a mensagem, coerente com o público de ${cliente.nome}. Nada de texto dentro da imagem.${opcoes.estiloImagem ? ` Estilo das imagens: ${opcoes.estiloImagem}.` : ""}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
 }
 
 function promptUsuario(referencia, { angulo, angulosRecentes = [] }) {
@@ -79,7 +83,7 @@ function limpar(resultado, cliente) {
   if (!cliente.conteudo.proibir_travessao) return resultado;
   return {
     ...resultado,
-    slides: resultado.slides.map((s) => ({ titulo: semTravessao(s.titulo), subtitulo: semTravessao(s.subtitulo) })),
+    slides: resultado.slides.map((s) => ({ ...s, titulo: semTravessao(s.titulo), subtitulo: semTravessao(s.subtitulo) })),
     legenda: semTravessao(resultado.legenda),
   };
 }
@@ -104,9 +108,9 @@ export async function escreverCarrossel(cliente, referencia, opcoes = {}) {
   }
 
   const resultado = await gerarEstruturado({
-    sistema: promptSistema(cliente, modelo),
+    sistema: promptSistema(cliente, modelo, opcoes),
     usuario: promptUsuario(referencia, opcoes),
-    schema: esquema(qtd),
+    schema: esquema(qtd, opcoes.comImagem),
     nome: "carrossel",
   });
   if (resultado.slides.length !== qtd) {

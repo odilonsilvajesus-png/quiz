@@ -7,6 +7,7 @@ import { ranquear } from "./ranking.js";
 import { escreverCarrossel } from "./copy.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
+import { temGeradorImagem, slidesComImagem, gerarImagem, emParalelo } from "./imagens.js";
 
 const slug = (t) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
@@ -25,11 +26,16 @@ export async function referenciasRanqueadas(cliente, { recoletar = false, limite
   return { ...coleta, posts: ranquear(coleta.posts, { limite }) };
 }
 
-export async function gerarCarrossel(cliente, referencia, { angulo, modelo: modeloId, indice = 0, log = console.log } = {}) {
+export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
+  const { angulo, modelo: modeloId, estilo, indice = 0, log = console.log } = opcoes;
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
   const modelo = resolverModelo(cliente, modeloId);
+  const modoImagens = opcoes.imagens || cliente.visual.imagens?.modo || "nenhuma";
+  const estiloImagem = cliente.visual.imagens?.estilo || "";
   log(`Escrevendo carrossel (${modelo.nome}) a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
-  const copy = await escreverCarrossel(cliente, referencia, { angulo, indice, modelo, angulosRecentes: recentes });
+  const copy = await escreverCarrossel(cliente, referencia, {
+    angulo, indice, modelo, angulosRecentes: recentes, comImagem: modoImagens !== "nenhuma", estiloImagem,
+  });
   // Cada slide guarda o próprio fundo, para re-renderizar igual mesmo se o modelo mudar depois.
   copy.slides = copy.slides.map((s, i) => ({ ...s, fundo: modelo.estrutura[i]?.fundo || "escuro" }));
 
@@ -44,11 +50,13 @@ export async function gerarCarrossel(cliente, referencia, { angulo, modelo: mode
       outlier: referencia.ranking?.outlier ?? null,
     },
     modelo: { id: modelo.id, nome: modelo.nome },
+    estilo: estilo || cliente.visual.template || "classico",
     ...copy,
   };
 
   const carimbo = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
   const pasta = pastaSaida(cliente.id, "carrosseis", `${carimbo}-${slug(copy.angulo)}`);
+  await gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo: modoImagens, estilo: estiloImagem, log });
   log(`Renderizando ${copy.slides.length} slides...`);
   const render = await renderizar(cliente, carrossel, pasta);
 
@@ -57,4 +65,39 @@ export async function gerarCarrossel(cliente, referencia, { angulo, modelo: mode
   fs.writeFileSync(arquivoHistorico(cliente.id), JSON.stringify(hist, null, 2));
 
   return { carrossel, ...render };
+}
+
+// Gera as imagens dos slides escolhidos. Uma falha não derruba o carrossel: vira pendência.
+async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo, log }) {
+  // A IA devolve a descrição em "imagem"; o campo passa a guardar só o arquivo gerado.
+  for (const s of carrossel.slides) {
+    if (s.imagem) s.imagem_descricao = s.imagem;
+    delete s.imagem;
+  }
+  const indices = slidesComImagem(modo, carrossel.slides.length);
+  if (!indices.length) return;
+  carrossel.pendencias ??= [];
+  if (!temGeradorImagem()) {
+    carrossel.pendencias.push("Imagens não geradas: preencha OPENAI_API_KEY no .env.");
+    return;
+  }
+  log(`Gerando ${indices.length} imagem(ns) com IA...`);
+  const tarefas = indices.map((i) => async () => {
+    const s = carrossel.slides[i];
+    const arquivo = `imagem-${String(i + 1).padStart(2, "0")}.jpg`;
+    await gerarImagem({
+      descricao: s.imagem_descricao || `${s.titulo.replace(/\*/g, "")}. ${s.subtitulo}`,
+      estilo,
+      paleta: cliente.visual.paleta,
+      destino: path.join(pasta, arquivo),
+    });
+    return arquivo;
+  });
+  const resultados = await emParalelo(tarefas);
+  resultados.forEach((r, k) => {
+    if (r.ok) carrossel.slides[indices[k]].imagem = r.valor;
+    else {
+      carrossel.pendencias.push(`Imagem do slide ${indices[k] + 1} não gerada: ${r.erro.message}`);
+    }
+  });
 }

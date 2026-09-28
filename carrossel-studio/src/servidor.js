@@ -9,7 +9,8 @@ import {
 } from "./cliente.js";
 import { referenciasRanqueadas, gerarCarrossel, historico } from "./pipeline.js";
 import { listarModelos, modelosDoCliente, resolverModelo } from "./modelos.js";
-import { montarHtml } from "./render.js";
+import { montarHtml, listarEstilos } from "./render.js";
+import { imagemExemplo, slidesComImagem, temGeradorImagem } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
 import { descreverVoz } from "./copy.js";
 import { coletarLegendas } from "./coleta/instagram.js";
@@ -97,6 +98,8 @@ function detalheCliente(id) {
       cta_final: c.visual.cta_final || "",
       texto_arraste: c.visual.rodape?.texto_arraste || "",
       tem_logo: Boolean(c.visual.logo),
+      template: c.visual.template,
+      imagens: c.visual.imagens,
     },
     voz: c.voz,
     direcionamento: c.baseConhecimento,
@@ -121,16 +124,21 @@ async function previa(id, dados) {
       rodape: { ...c.visual.rodape, texto_arraste: dados.texto_arraste ?? c.visual.rodape?.texto_arraste },
     },
   };
+  const modoImagens = dados.imagens?.modo || c.visual.imagens?.modo || "nenhuma";
+  const comImagem = new Set(slidesComImagem(modoImagens, resolverModelo(c, dados.modelo).estrutura.length));
   const modelo = resolverModelo(c, dados.modelo);
+  const estilo = dados.template || c.visual.template;
   const exemplo = c.exemplosCarrossel.find((e) => e.slides.length === modelo.estrutura.length);
   const slides = modelo.estrutura.map((s, i) => ({
     titulo: exemplo?.slides[i].titulo || `${s.papel} com *destaque*`,
     subtitulo: exemplo?.slides[i].subtitulo || s.instrucao,
     fundo: s.fundo,
+    imagem: comImagem.has(i) ? "exemplo" : undefined,
   }));
   const zoom = Number(dados.zoom) || 0.22;
   const css = `body{display:flex;flex-wrap:wrap;gap:40px;padding:40px;background:transparent;zoom:${zoom}}.slide{margin:0;border-radius:24px;flex:none}`;
-  return new Resposta("text/html; charset=utf-8", await montarHtml(cliente, { angulo: "Prévia", slides }, { cssExtra: css }));
+  const html = await montarHtml(cliente, { angulo: "Prévia", estilo, slides }, { cssExtra: css, imagemExemplo: imagemExemplo(paleta) });
+  return new Resposta("text/html; charset=utf-8", html);
 }
 
 async function gerarVoz(id) {
@@ -148,8 +156,10 @@ const C = "([\\w-]+)";
 const rota = (metodo, padrao, fn) => [metodo, new RegExp(`^${padrao.replace(":id", C)}$`), fn];
 
 const rotas = [
-  rota("GET", "/api/status", () => ({
+  rota("GET", "/api/status", async () => ({
     ia: nomeProvedor(),
+    imagens: temGeradorImagem(),
+    estilos: await listarEstilos(),
     apify: Boolean(process.env.APIFY_TOKEN),
     youtube: Boolean(process.env.YOUTUBE_API_KEY),
     fontes: FONTES,
@@ -171,12 +181,14 @@ const rotas = [
   rota("PUT", "/api/clientes/:id/referencias", async (m, _u, req) => salvarReferencias(m[1], await corpo(req))),
   rota("GET", "/api/clientes/:id/carrosseis", (m) => listarGerados(m[1])),
   rota("POST", "/api/clientes/:id/gerar", async (m, _u, req) => {
-    const { refId, angulo, modelo, indice } = await corpo(req);
+    const { refId, angulo, modelo, estilo, imagens, indice } = await corpo(req);
     const cliente = carregarCliente(m[1]);
     const { posts } = await referenciasRanqueadas(cliente, { log: () => {} });
     const ref = posts.find((p) => p.id === refId);
     if (!ref) throw new Error("Referência não encontrada. Atualize a coleta.");
-    await gerarCarrossel(cliente, ref, { angulo: angulo || undefined, modelo: modelo || undefined, indice, log: () => {} });
+    await gerarCarrossel(cliente, ref, {
+      angulo: angulo || undefined, modelo: modelo || undefined, estilo: estilo || undefined, imagens: imagens || undefined, indice, log: () => {},
+    });
     return listarGerados(cliente.id)[0];
   }),
   rota("POST", "/api/clientes/:id/aprovar", async (m, _u, req) => {

@@ -105,6 +105,12 @@
   .presets { display:flex; flex-wrap:wrap; gap:8px; }
   .preset { display:flex; border-radius:8px; overflow:hidden; border:1px solid var(--borda); cursor:pointer; padding:0; background:none; }
   .preset i { width:18px; height:28px; }
+  .estilos { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .estilo { text-align:left; background:#fff; color:var(--texto); border:1px solid var(--borda); border-radius:10px; padding:10px 12px; white-space:normal; }
+  .estilo b { display:block; font-size:14px; margin-bottom:2px; pointer-events:none; }
+  .estilo span { font-size:12px; color:var(--suave); line-height:1.35; display:block; pointer-events:none; }
+  .estilo.ativo { border-color:var(--acento); box-shadow:0 0 0 1px var(--acento); }
+  @media (max-width: 500px) { .estilos { grid-template-columns:1fr; } }
   iframe.previa { width:100%; height:640px; border:1px solid var(--borda); border-radius:12px; background:repeating-conic-gradient(#eee 0% 25%, #fafafa 0% 50%) 50% / 20px 20px; }
   .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--texto); color:#fff; padding:10px 16px; border-radius:8px; font-size:13px; z-index:10; opacity:0; transition:opacity .2s; pointer-events:none; }
   .toast.on { opacity:1; }
@@ -282,6 +288,9 @@ async function abaConteudo(recoletar = false) {
   ]);
   $("avisos").innerHTML = (dados.avisos || []).map((a) => `<div class="aviso">${esc(a)}</div>`).join("");
   const optModelos = c.modelos.map((m) => `<option value="${m.id}" ${m.id === c.conteudo.modelo_padrao ? "selected" : ""}>${esc(m.nome)}</option>`).join("");
+  const optEstilos = status.estilos.map((e) => `<option value="${e.id}" ${e.id === c.visual.template ? "selected" : ""}>Estilo: ${esc(e.nome)}</option>`).join("");
+  const optImagens = [["nenhuma", "Sem imagens"], ["capa", "Imagem só na capa"], ["todas", "Imagens em todos"]]
+    .map(([k, n]) => `<option value="${k}" ${k === (c.visual.imagens?.modo || "nenhuma") ? "selected" : ""}>${n}</option>`).join("");
   const optAngulos = `<option value="">Tema: IA escolhe</option>` + c.conteudo.angulos.map((a) => `<option>${esc(a)}</option>`).join("");
   $("refs").className = "";
   $("refs").innerHTML = dados.posts.map((p, i) => `
@@ -289,7 +298,7 @@ async function abaConteudo(recoletar = false) {
       <div class="topo"><span>#${i + 1} · ${esc(p.plataforma)} · ${esc(p.tipo)} · ${esc(p.perfil)}</span><span class="score">${p.ranking.outlier}x</span></div>
       <p>${esc(p.texto)}</p>
       <div class="topo" style="margin-bottom:10px"><span>${num(p.metricas.curtidas)} curtidas · ${num(p.metricas.comentarios)} comentários${p.metricas.visualizacoes ? " · " + num(p.metricas.visualizacoes) + " views" : ""}</span>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</div>
-      <div class="escolhas"><select data-modelo>${optModelos}</select><select data-angulo>${optAngulos}</select></div>
+      <div class="escolhas"><select data-modelo>${optModelos}</select><select data-angulo>${optAngulos}</select><select data-estilo-sel>${optEstilos}</select><select data-imagens>${optImagens}</select></div>
       <button data-gerar="${esc(p.id)}" data-i="${i}" style="width:100%">Gerar carrossel</button>
     </div>`).join("") || '<span class="vazio">Nada coletado.</span>';
   mostrarGerados(gerados);
@@ -303,7 +312,7 @@ function mostrarGerados(lista) {
   el.innerHTML = lista.map((g) => `
     <div class="cartao gerado">
       <h3>${esc(g.angulo)}${g.demo ? " <small style='color:var(--alerta)'>(demo)</small>" : ""}</h3>
-      <div class="meta">${[new Date(g.data).toLocaleString("pt-BR"), g.carrossel.modelo?.nome, g.carrossel.referencia?.perfil && "referência " + g.carrossel.referencia.perfil].filter(Boolean).map(esc).join(" · ")}</div>
+      <div class="meta">${[new Date(g.data).toLocaleString("pt-BR"), g.carrossel.modelo?.nome, status.estilos.find((e) => e.id === g.carrossel.estilo)?.nome, g.carrossel.referencia?.perfil && "referência " + g.carrossel.referencia.perfil].filter(Boolean).map(esc).join(" · ")}</div>
       <div class="slides">${g.imagens.map((src) => `<a href="${src}" target="_blank" download><img src="${src}" loading="lazy" alt=""></a>`).join("")}</div>
       <details><summary>Por que a referência funcionou</summary><pre>${esc(g.carrossel.por_que_a_referencia_funcionou)}</pre></details>
       <details><summary>Legenda</summary><pre>${esc(g.carrossel.legenda)}</pre></details>
@@ -524,7 +533,21 @@ function abaVisual() {
   $("aba").innerHTML = `
     <div class="duas">
       <div class="cartao">
-        <h2>Cores</h2>
+        <h2>Estilo do carrossel</h2>
+        <div class="estilos">${status.estilos.map((e) => `<button class="estilo" data-estilo="${e.id}"><b>${esc(e.nome)}</b><span>${esc(e.descricao)}</span></button>`).join("")}</div>
+
+        <h2 style="margin-top:24px">Imagens com IA (gpt-image-2)</h2>
+        <label for="modoImagens">Gerar imagens em</label>
+        <select id="modoImagens" class="campo">
+          <option value="nenhuma">Nenhum slide (só texto)</option>
+          <option value="capa">Só na capa</option>
+          <option value="todas">Todos os slides</option>
+        </select>
+        <label for="estiloImagens">Estilo das imagens</label>
+        <textarea id="estiloImagens" rows="3" placeholder="Ex.: fotografia editorial, luz natural, mulheres reais de 30 a 45 anos, tons terrosos, sem aparência de banco de imagens"></textarea>
+        <div class="ajuda">Cada imagem tem custo na OpenAI. Comece com "Só na capa". ${status.imagens ? "" : "<b>Preencha OPENAI_API_KEY no .env para gerar imagens.</b>"}</div>
+
+        <h2 style="margin-top:24px">Cores</h2>
         <label>Paletas prontas</label>
         <div class="presets">${PRESETS.map(([n, p], i) => `<button class="preset" title="${n}" data-preset="${i}">${swatches({ ...p }).map((cor) => `<i style="background:${cor}" data-preset="${i}"></i>`).join("")}</button>`).join("")}</div>
         <label>Paleta do cliente</label>
@@ -547,7 +570,7 @@ function abaVisual() {
       </div>
       <div>
         <h2>Prévia ao vivo</h2>
-        <div class="ajuda">Mostra o modelo padrão com as cores acima. Só vale para os próximos carrosséis depois de salvar.</div>
+        <div class="ajuda">Mostra o modelo padrão com o estilo e as cores escolhidos. As imagens aparecem como marcação. Só vale para os próximos carrosséis depois de salvar.</div>
         <iframe class="previa" id="previa" title="Prévia"></iframe>
       </div>
     </div>`;
@@ -558,12 +581,16 @@ function abaVisual() {
       document.querySelector(`[data-hex="${k}"]`).value = v.paleta[k].toUpperCase();
     }
     $("gradiente").checked = v.paleta.gradiente !== false;
+    document.querySelectorAll("[data-estilo]").forEach((b) => b.classList.toggle("ativo", b.dataset.estilo === v.template));
+    $("modoImagens").value = v.imagens?.modo || "nenhuma";
+    $("estiloImagens").value = v.imagens?.estilo || "";
     $("fonte").value = v.fonte;
     $("assinatura").value = v.assinatura;
     $("ctaFinal").value = v.cta_final;
     $("arraste").value = v.texto_arraste;
   };
   const dadosVisual = () => ({
+    template: v.template, imagens: { modo: $("modoImagens").value, estilo: $("estiloImagens").value },
     paleta: v.paleta, fonte: $("fonte").value, assinatura: $("assinatura").value,
     cta_final: $("ctaFinal").value, texto_arraste: $("arraste").value,
   });
@@ -588,6 +615,12 @@ function abaVisual() {
   };
   $("aba").onchange = $("aba").oninput;
   $("aba").onclick = (e) => {
+    if (e.target.dataset.estilo) {
+      v.template = e.target.dataset.estilo;
+      preencher();
+      atualizarPrevia();
+      return;
+    }
     const i = e.target.dataset.preset;
     if (i === undefined) return;
     Object.assign(v.paleta, PRESETS[i][1]);
@@ -620,11 +653,13 @@ document.addEventListener("click", async (e) => {
   if (d.gerar) {
     const card = e.target.closest(".ref");
     const botao = e.target;
-    botao.disabled = true; botao.textContent = "Gerando...";
+    botao.disabled = true;
+    botao.textContent = card.querySelector("[data-imagens]").value === "nenhuma" ? "Gerando..." : "Gerando texto e imagens (1 a 3 min)...";
     try {
       await post(`/api/clientes/${cliente.id}/gerar`, {
         refId: d.gerar, indice: Number(d.i),
         modelo: card.querySelector("[data-modelo]").value, angulo: card.querySelector("[data-angulo]").value,
+        estilo: card.querySelector("[data-estilo-sel]").value, imagens: card.querySelector("[data-imagens]").value,
       });
       mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
       toast("Carrossel gerado.");

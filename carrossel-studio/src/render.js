@@ -27,25 +27,52 @@ function fontesCss(fonte, pesos = [400, 500, 600, 700, 800]) {
     .join("\n");
 }
 
-function comoDataUri(cliente, arquivo) {
+// Imagens viram data URI para o HTML funcionar sozinho (render e prévia). Caminhos relativos
+// procuram primeiro na pasta do carrossel (imagens geradas) e depois na pasta do cliente (logo, capa).
+function comoDataUri(arquivo, ...pastas) {
   if (!arquivo) return null;
   if (/^(https?:|data:)/.test(arquivo)) return arquivo;
-  const p = path.join(cliente.pasta, arquivo);
-  if (!fs.existsSync(p)) return null;
-  const ext = path.extname(p).slice(1).replace("jpg", "jpeg");
+  const p = pastas.filter(Boolean).map((d) => path.join(d, arquivo)).find((c) => fs.existsSync(c));
+  if (!p) return null;
+  const ext = path.extname(p).slice(1).replace("jpg", "jpeg").replace("svg", "svg+xml");
   return `data:image/${ext};base64,${fs.readFileSync(p).toString("base64")}`;
 }
 
-export async function montarHtml(cliente, carrossel, { cssExtra = "" } = {}) {
-  const visual = { ...cliente.visual, logo: comoDataUri(cliente, cliente.visual.logo) };
-  const template = await import(path.join(RAIZ, "templates", `${visual.template || "classico"}.js`));
+const PASTA_TEMPLATES = path.join(RAIZ, "templates");
+
+export async function listarEstilos() {
+  const arquivos = fs.readdirSync(PASTA_TEMPLATES).filter((f) => f.endsWith(".js") && !f.startsWith("_"));
+  const estilos = await Promise.all(
+    arquivos.map(async (f) => {
+      const t = await import(path.join(PASTA_TEMPLATES, f));
+      return { id: path.basename(f, ".js"), ...t.info };
+    }),
+  );
+  const ordem = ["classico", "editorial", "tweet", "cinematografico", "dividido"];
+  return estilos.sort((a, b) => (ordem.indexOf(a.id) + 1 || 99) - (ordem.indexOf(b.id) + 1 || 99));
+}
+
+// opcoes.pastaImagens: pasta do carrossel, onde ficam as imagens geradas pela IA.
+// opcoes.imagemExemplo: usada na prévia no lugar das imagens que ainda não existem.
+export async function montarHtml(cliente, carrossel, { cssExtra = "", pastaImagens, imagemExemplo } = {}) {
+  const estilo = carrossel.estilo || cliente.visual.template || "classico";
+  const arquivoTemplate = path.join(PASTA_TEMPLATES, `${estilo}.js`);
+  const template = await import(fs.existsSync(arquivoTemplate) ? arquivoTemplate : path.join(PASTA_TEMPLATES, "classico.js"));
+  const visual = {
+    ...cliente.visual,
+    logo: comoDataUri(cliente.visual.logo, cliente.pasta),
+    nome_exibicao: cliente.nome,
+    arroba: cliente.instagram || cliente.visual.assinatura,
+  };
   const estrutura = cliente.conteudo.estrutura;
   const total = carrossel.slides.length;
 
   const slides = carrossel.slides
     .map((s, i) => {
-      const foto = comoDataUri(cliente, s.imagem || (i === 0 ? visual.foto_capa : null));
-      let nomeFundo = foto ? "foto" : s.fundo || estrutura?.[i]?.fundo;
+      const foto = s.imagem === "exemplo"
+        ? imagemExemplo
+        : comoDataUri(s.imagem || (i === 0 ? visual.foto_capa : null), pastaImagens, cliente.pasta);
+      let nomeFundo = s.fundo || estrutura?.[i]?.fundo;
       if (nomeFundo === "gradiente") nomeFundo = "destaque";
       const fundo = visual.fundos[nomeFundo] || visual.fundos.escuro;
       return template.slide({ visual, s, i, total, fundo, foto });
@@ -66,7 +93,7 @@ function abrirNavegador() {
 
 export async function renderizar(cliente, carrossel, pastaDestino) {
   fs.mkdirSync(pastaDestino, { recursive: true });
-  const html = await montarHtml(cliente, carrossel);
+  const html = await montarHtml(cliente, carrossel, { pastaImagens: pastaDestino });
   const arquivoHtml = path.join(pastaDestino, "carrossel.html");
   fs.writeFileSync(arquivoHtml, html);
   fs.writeFileSync(path.join(pastaDestino, "carrossel.json"), JSON.stringify(carrossel, null, 2));

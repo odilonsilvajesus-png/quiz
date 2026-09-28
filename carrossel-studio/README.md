@@ -52,7 +52,7 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 | **Perfil e referências** | Nome, Instagram e nicho do cliente. Perfis do Instagram e canais do YouTube de referência (cole o @ ou o link). **Salvar e coletar** já busca os posts. |
 | **Voz e direcionamento** | **1. Tom de voz coletado pelo sistema** a partir das legendas do Instagram do cliente (editável). **2. Informações e direcionamento**: o que você levantou sobre o cliente; a IA segue com prioridade. **3. Temas e regras**: temas, CTA da legenda, proibir travessão. |
 | **Modelos de carrossel** | Biblioteca de estruturas (Quebra de crença, Lista de dicas, Mito x Verdade, Storytelling, Passo a passo, Erros comuns, e o modelo próprio do cliente quando existe). Escolha o padrão e veja a prévia. |
-| **Identidade visual** | Paleta de 6 cores (com paletas prontas), gradiente, fonte, assinatura, logo, textos do botão final e do "arraste". Prévia ao vivo antes de salvar. |
+| **Identidade visual** | **Estilo do carrossel** (Clássico, Editorial, Tweet, Cinematográfico, Dividido), **imagens com IA** (nenhuma, só capa ou todos os slides, com estilo das imagens), paleta de 6 cores (com paletas prontas), fonte, assinatura, logo e textos. Prévia ao vivo antes de salvar. |
 
 Os arquivos saem em `saida/<cliente>/carrosseis/<data>-<tema>/`: `slide-01.png` …, `legenda.txt`, `carrossel.json` (editável) e `carrossel.html`.
 
@@ -62,6 +62,15 @@ npm run coletar -- camila
 npm run gerar -- camila --top 3 --modelo lista-de-dicas
 npm run renderizar -- saida/camila/carrosseis/<pasta>/carrossel.json   # depois de editar o texto à mão
 ```
+
+### Imagens com IA (gpt-image-2)
+Com `OPENAI_API_KEY` no `.env`, o sistema gera uma imagem por slide escolhido: a IA de texto descreve a cena de cada slide e o `gpt-image-2` cria a imagem em 4:5, sem texto, nas cores da marca.
+Cada imagem tem custo na OpenAI, então comece com "Só na capa". Qualidade e modelo podem ser trocados no `.env` (`IMAGEM_QUALIDADE`, `IMAGEM_MODELO`).
+Se uma imagem falhar, o carrossel sai mesmo assim e o problema aparece em "Pendências".
+
+### Criar um estilo visual novo
+Copie um arquivo de `templates/` (ex.: `editorial.js`), mude `info` (nome e descrição), o CSS e o HTML do slide.
+Ele aparece sozinho na aba **Identidade visual**.
 
 ### Criar um modelo de carrossel novo
 Copie um arquivo de `modelos/` (ex.: `lista-de-dicas.json`) e mude `id`, `nome`, `descricao` e a `estrutura`.

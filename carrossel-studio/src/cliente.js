@@ -72,6 +72,7 @@ function normalizar(config) {
   c.visual.template ??= "classico";
   c.visual.fonte ??= "Poppins";
   c.visual.rodape ??= { paginacao: true, pontos: true, texto_arraste: "ARRASTE →" };
+  c.visual.imagens ??= { modo: "nenhuma", estilo: "" };
   c.conteudo.limites ??= { titulo_max_caracteres: 110, subtitulo_max_caracteres: 220 };
   c.conteudo.angulos ??= [];
   c.conteudo.modelo_padrao ??= c.conteudo.estrutura?.length ? "proprio" : "quebra-de-crenca";
@@ -206,6 +207,15 @@ export function salvarVisual(id, v) {
   alterarConfig(id, (c) => {
     if (v.paleta) c.visual.paleta = { ...c.visual.paleta, ...v.paleta };
     if (v.fonte && FONTES.includes(v.fonte)) c.visual.fonte = v.fonte;
+    if (v.template && /^[a-z0-9-]+$/.test(v.template) && fs.existsSync(path.join(RAIZ, "templates", `${v.template}.js`))) {
+      c.visual.template = v.template;
+    }
+    if (v.imagens) {
+      c.visual.imagens = {
+        modo: ["nenhuma", "capa", "todas"].includes(v.imagens.modo) ? v.imagens.modo : c.visual.imagens.modo,
+        estilo: String(v.imagens.estilo ?? c.visual.imagens.estilo ?? ""),
+      };
+    }
     if (v.assinatura !== undefined) c.visual.assinatura = v.assinatura;
     if (v.cta_final !== undefined) c.visual.cta_final = v.cta_final;
     if (v.texto_arraste !== undefined) c.visual.rodape = { ...c.visual.rodape, texto_arraste: v.texto_arraste };
