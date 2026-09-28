@@ -15,13 +15,24 @@
       "Bash(python3 agents/reels/scripts/montar_reel.py:*)",
       "Read(conteudo/reels/**)",
       "Write(conteudo/reels/**)",
-      "Edit(conteudo/reels/**)"
+      "Edit(conteudo/reels/**)",
+      "Bash(python prospeccao/prospectar.py seguidores:*)",
+      "Bash(python3 prospeccao/prospectar.py seguidores:*)",
+      "Bash(python prospeccao/prospectar.py pontuar:*)",
+      "Bash(python3 prospeccao/prospectar.py pontuar:*)",
+      "Read(prospeccao/**)",
+      "Write(prospeccao/dados/**)",
+      "Edit(prospeccao/dados/**)"
     ],
     "ask": [
       "Bash(python agents/publish/publicar_instagram.py:*)",
       "Bash(python3 agents/publish/publicar_instagram.py:*)",
       "Bash(python agents/reels/scripts/voz_elevenlabs.py:*)",
-      "Bash(python3 agents/reels/scripts/voz_elevenlabs.py:*)"
+      "Bash(python3 agents/reels/scripts/voz_elevenlabs.py:*)",
+      "Bash(python prospeccao/prospectar.py engajados:*)",
+      "Bash(python3 prospeccao/prospectar.py engajados:*)",
+      "Bash(python prospeccao/prospectar.py enriquecer:*)",
+      "Bash(python3 prospeccao/prospectar.py enriquecer:*)"
     ],
     "deny": [
       "Read(.env)",

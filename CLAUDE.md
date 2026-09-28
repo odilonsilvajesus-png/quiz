@@ -16,9 +16,10 @@ agents/                         ← fonte da verdade (instruções e conheciment
   render/render.py              JSON → PNGs 1080×1350 (formatos A, B, C, D)
   reels/                        ESTÚDIO DE REELS (time separado): guia, 5 agentes, voz-config.json, scripts de voz e montagem
   publish/publicar_instagram.py publicação pela Graph API (simula por padrão)
-.claude/agents/                 subagentes: carrosséis (pesquisador, redator, visual, revisor, publicador, arquivista-de-fotos) e reels (reel-roteirista, reel-voz, reel-diretor-de-cena, reel-editor, reel-revisor)
-.claude/commands/               comandos: /dia, /produzir-dia, /produzir-reel, /montar-reel, /semana, /produzir-post, /catalogar-fotos, /referencias, /publicar, /metricas
+.claude/agents/                 subagentes: qualificador-de-leads (prospecção); carrosséis (pesquisador, redator, visual, revisor, publicador, arquivista-de-fotos) e reels (reel-roteirista, reel-voz, reel-diretor-de-cena, reel-editor, reel-revisor)
+.claude/commands/               comandos: /dia, /produzir-dia, /produzir-reel, /montar-reel, /semana, /produzir-post, /catalogar-fotos, /referencias, /publicar, /metricas, /prospectar
 scraper/instagram_scraper.py    coleta de perfis de referência (Apify)
+prospeccao/                     prospecção de clientes na base de seguidores: prospectar.py, icp.json, README (dados/ é ignorado pelo git)
 conteudo/fichas/                uma ficha JSON por post (versionada)
 conteudo/lotes/                 resumo de cada lote semanal de pautas (versionado)
 conteudo/render/                PNGs gerados (ignorado pelo git)
@@ -47,6 +48,7 @@ Odilon escolhe as pautas
 Odilon aprova         → publicacao.aprovacao_humana = true na ficha
 /publicar <id>        → publicador agenda/publica e registra
 /metricas             → publicador coleta métricas 48h depois e alimenta o pesquisador
+/prospectar <zip>     → seguidores (exportação do Instagram) → Apify → pontuação → subagente qualificador-de-leads
 ```
 Cada etapa é feita pelo **subagente certo** (ver `.claude/agents/`). O agente principal **orquestra**: chama o subagente, lê a ficha que ele devolveu, decide o próximo passo e mostra ao Odilon um resumo curto.
 
