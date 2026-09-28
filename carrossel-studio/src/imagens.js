@@ -9,17 +9,23 @@ const TAMANHO = "1088x1360";
 
 export const temGeradorImagem = () => Boolean(process.env.OPENAI_API_KEY);
 
-// Quais slides recebem imagem em cada modo.
+// Quais slides recebem imagem em cada modo. "auto" segue o estilo (ex.: cinematográfico pede todas).
+export function resolverModo(modo, infoEstilo) {
+  return !modo || modo === "auto" ? infoEstilo?.imagens || "capa" : modo;
+}
+
 export function slidesComImagem(modo, total) {
   if (modo === "todas") return Array.from({ length: total }, (_, i) => i);
   if (modo === "capa") return [0];
   return [];
 }
 
-function montarPrompt({ descricao, estilo, paleta }) {
+function montarPrompt({ descricao, direcao, estilo, paleta }) {
   return [
-    descricao,
-    estilo ? `Estilo visual: ${estilo}.` : "",
+    `Cena: ${descricao}`,
+    direcao ? `Direção de arte do carrossel (mantenha a mesma personagem, ambiente e luz): ${direcao}` : "",
+    estilo ? `Preferência visual: ${estilo}.` : "",
+    "Fotografia realista e natural, com emoção verdadeira, sem aparência de banco de imagens.",
     paleta ? `Harmonize com as cores da marca: ${[paleta.escura, paleta.clara, paleta.destaque].join(", ")}.` : "",
     "Imagem vertical para post de Instagram.",
     "Não escreva nenhum texto, letra, número, logotipo ou marca d'água na imagem.",
@@ -27,11 +33,11 @@ function montarPrompt({ descricao, estilo, paleta }) {
   ].filter(Boolean).join(" ");
 }
 
-export async function gerarImagem({ descricao, estilo, paleta, destino }) {
+export async function gerarImagem({ descricao, direcao, estilo, paleta, destino }) {
   const client = new OpenAI();
   const resposta = await client.images.generate({
     model: MODELO(),
-    prompt: montarPrompt({ descricao, estilo, paleta }),
+    prompt: montarPrompt({ descricao, direcao, estilo, paleta }),
     size: TAMANHO,
     quality: QUALIDADE(),
     output_format: "jpeg",

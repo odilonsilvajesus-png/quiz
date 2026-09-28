@@ -64,9 +64,13 @@ npm run renderizar -- saida/camila/carrosseis/<pasta>/carrossel.json   # depois 
 ```
 
 ### Imagens com IA (gpt-image-2)
-Com `OPENAI_API_KEY` no `.env`, o sistema gera uma imagem por slide escolhido: a IA de texto descreve a cena de cada slide e o `gpt-image-2` cria a imagem em 4:5, sem texto, nas cores da marca.
-Cada imagem tem custo na OpenAI, então comece com "Só na capa". Qualidade e modelo podem ser trocados no `.env` (`IMAGEM_QUALIDADE`, `IMAGEM_MODELO`).
-Se uma imagem falhar, o carrossel sai mesmo assim e o problema aparece em "Pendências".
+As imagens são geradas sozinhas, a partir do conteúdo, sem ninguém escrever prompt:
+1. Junto com o texto, a IA define uma **direção de arte** para o carrossel inteiro (a mesma personagem, ambiente, luz e clima), tirada do tema e do público do cliente.
+2. Para cada slide, ela descreve a **cena que aquele texto descreve** (se o slide fala de comer escondida à noite, a imagem mostra isso).
+3. O `gpt-image-2` gera cada imagem com a cena e a direção de arte, em 4:5, sem texto e nas cores da marca.
+
+No modo **automático** (padrão), Clássico, Editorial e Tweet ganham imagem na capa, e Cinematográfico e Dividido, em todos os slides. A direção de arte e a cena de cada imagem aparecem em cada carrossel gerado.
+Precisa de `OPENAI_API_KEY`. Cada imagem tem custo; qualidade e modelo mudam no `.env` (`IMAGEM_QUALIDADE`, `IMAGEM_MODELO`).
 
 ### Criar um estilo visual novo
 Copie um arquivo de `templates/` (ex.: `editorial.js`), mude `info` (nome e descrição), o CSS e o HTML do slide.

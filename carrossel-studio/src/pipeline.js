@@ -7,7 +7,8 @@ import { ranquear } from "./ranking.js";
 import { escreverCarrossel } from "./copy.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
-import { temGeradorImagem, slidesComImagem, gerarImagem, emParalelo } from "./imagens.js";
+import { temGeradorImagem, slidesComImagem, gerarImagem, emParalelo, resolverModo } from "./imagens.js";
+import { listarEstilos } from "./render.js";
 
 const slug = (t) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
@@ -30,7 +31,9 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
   const { angulo, modelo: modeloId, estilo, indice = 0, log = console.log } = opcoes;
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
   const modelo = resolverModelo(cliente, modeloId);
-  const modoImagens = opcoes.imagens || cliente.visual.imagens?.modo || "nenhuma";
+  const estiloFinal = estilo || cliente.visual.template || "classico";
+  const infoEstilo = (await listarEstilos()).find((e) => e.id === estiloFinal);
+  const modoImagens = resolverModo(opcoes.imagens || cliente.visual.imagens?.modo, infoEstilo);
   const estiloImagem = cliente.visual.imagens?.estilo || "";
   log(`Escrevendo carrossel (${modelo.nome}) a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
   const copy = await escreverCarrossel(cliente, referencia, {
@@ -50,7 +53,7 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
       outlier: referencia.ranking?.outlier ?? null,
     },
     modelo: { id: modelo.id, nome: modelo.nome },
-    estilo: estilo || cliente.visual.template || "classico",
+    estilo: estiloFinal,
     ...copy,
   };
 
@@ -87,6 +90,7 @@ async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo
     const arquivo = `imagem-${String(i + 1).padStart(2, "0")}.jpg`;
     await gerarImagem({
       descricao: s.imagem_descricao || `${s.titulo.replace(/\*/g, "")}. ${s.subtitulo}`,
+      direcao: carrossel.direcao_de_arte,
       estilo,
       paleta: cliente.visual.paleta,
       destino: path.join(pasta, arquivo),

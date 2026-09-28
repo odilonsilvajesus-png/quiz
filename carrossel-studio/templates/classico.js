@@ -1,7 +1,7 @@
 // Estilo "Clássico": título central com palavra em destaque, divisor curto, subtítulo e barra de navegação.
 import { escapar, comDestaque, tituloGrande, subtitulo, vars, marca, rodape, cssBase } from "./_comum.js";
 
-export const info = { nome: "Clássico", descricao: "Texto centralizado, divisor e palavra em destaque. Com imagem, ela vira fundo escurecido." };
+export const info = { imagens: "capa", nome: "Clássico", descricao: "Texto centralizado, divisor e palavra em destaque. Com imagem, ela vira fundo escurecido." };
 
 export function css(visual, fontesCss) {
   return `${cssBase(visual, fontesCss)}

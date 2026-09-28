@@ -7,9 +7,13 @@ export const temIA = () => Boolean(provedor());
 function esquema(qtdSlides, comImagem) {
   const slide = { titulo: z.string(), subtitulo: z.string() };
   if (comImagem) {
-    slide.imagem = z.string().describe("Descrição da cena da imagem deste slide (pessoas, lugar, objetos, luz, enquadramento). Sem texto na imagem.");
+    slide.imagem = z.string().describe("A cena exata que este slide descreve, mostrada como fotografia: quem, fazendo o quê, onde, com qual expressão. Sem texto na imagem.");
   }
+  const extras = comImagem
+    ? { direcao_de_arte: z.string().describe("Direção de arte única para todas as imagens do carrossel: personagem principal (idade, aparência, roupa), ambiente, luz, clima e tipo de foto.") }
+    : {};
   return z.object({
+    ...extras,
     angulo: z.string().describe("Ângulo/tema escolhido, exatamente como aparece na lista do cliente quando houver lista"),
     por_que_a_referencia_funcionou: z.string().describe("1 a 3 frases: o mecanismo de atenção da referência (gancho, tensão, identificação)"),
     slides: z
@@ -18,6 +22,17 @@ function esquema(qtdSlides, comImagem) {
     legenda: z.string().describe("Legenda do post para o Instagram, com CTA comercial no final"),
     pendencias: z.array(z.string()).describe("Marcadores [ENTRE COLCHETES] usados que alguém precisa preencher. Vazio se nenhum."),
   });
+}
+
+// As imagens nascem do texto: uma direção de arte para o carrossel inteiro e, em cada slide,
+// a cena que aquele texto descreve. Nada genérico ou de banco de imagens.
+function regrasImagem(cliente, preferencia) {
+  return `Imagens (serão geradas por IA a partir do que você escrever):
+- Preencha "direcao_de_arte" com UM conceito visual para o carrossel inteiro, tirado do tema e do público de ${cliente.nome}: a mesma personagem principal em todos os slides (idade, aparência, roupa), o mesmo ambiente, a mesma luz e o mesmo clima emocional.${preferencia ? ` Preferência visual do cliente: ${preferencia}.` : ""}
+- Em cada slide, preencha "imagem" com a cena que ILUSTRA LITERALMENTE aquele texto: se o slide fala de comer escondida à noite, mostre a personagem comendo escondida à noite. A imagem precisa fazer sentido mesmo para quem ler só aquele slide.
+- Mostre ação, gesto e expressão concretos. Nada de imagem genérica, simbólica demais, de banco de imagens ou sem relação com a frase.
+- Respeite o posicionamento do cliente: nada que contradiga a base de conhecimento (ex.: se o cliente é contra dieta, não mostre balança, fita métrica ou prato de salada como solução).
+- Nunca peça texto, letras, números ou logotipos dentro da imagem.`;
 }
 
 function promptSistema(cliente, modelo, opcoes = {}) {
@@ -56,7 +71,7 @@ Regras de formato:
 ${c.angulos?.length ? `- Escolha o ângulo mais adequado desta lista: ${c.angulos.join("; ")}.` : ""}
 ${c.proibir_travessao ? "- Nunca use travessão (— ou –). Use vírgula, ponto, dois pontos ou hífen simples." : ""}
 - Legenda: ${c.cta_legenda || "termine com um CTA claro."}
-${opcoes.comImagem ? `- Em cada slide, preencha "imagem" com uma descrição visual concreta (1 a 2 frases) de uma cena que reforce a mensagem, coerente com o público de ${cliente.nome}. Nada de texto dentro da imagem.${opcoes.estiloImagem ? ` Estilo das imagens: ${opcoes.estiloImagem}.` : ""}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
+${opcoes.comImagem ? `${regrasImagem(cliente, opcoes.estiloImagem)}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
 }
 
 function promptUsuario(referencia, { angulo, angulosRecentes = [] }) {

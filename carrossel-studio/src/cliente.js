@@ -72,7 +72,7 @@ function normalizar(config) {
   c.visual.template ??= "classico";
   c.visual.fonte ??= "Poppins";
   c.visual.rodape ??= { paginacao: true, pontos: true, texto_arraste: "ARRASTE →" };
-  c.visual.imagens ??= { modo: "nenhuma", estilo: "" };
+  c.visual.imagens ??= { modo: "auto", estilo: "" };
   c.conteudo.limites ??= { titulo_max_caracteres: 110, subtitulo_max_caracteres: 220 };
   c.conteudo.angulos ??= [];
   c.conteudo.modelo_padrao ??= c.conteudo.estrutura?.length ? "proprio" : "quebra-de-crenca";
@@ -212,7 +212,7 @@ export function salvarVisual(id, v) {
     }
     if (v.imagens) {
       c.visual.imagens = {
-        modo: ["nenhuma", "capa", "todas"].includes(v.imagens.modo) ? v.imagens.modo : c.visual.imagens.modo,
+        modo: ["auto", "nenhuma", "capa", "todas"].includes(v.imagens.modo) ? v.imagens.modo : c.visual.imagens.modo,
         estilo: String(v.imagens.estilo ?? c.visual.imagens.estilo ?? ""),
       };
     }

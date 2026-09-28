@@ -1,7 +1,7 @@
 // Estilo "Cinematográfico": imagem ocupando o slide inteiro, texto grande embaixo sobre degradê.
 import { escapar, comDestaque, tamanho, vars, marca, rodape, cssBase } from "./_comum.js";
 
-export const info = { nome: "Cinematográfico", descricao: "Imagem no slide inteiro com texto embaixo. Pede imagens com IA (sem imagem, usa a cor do fundo)." };
+export const info = { imagens: "todas", nome: "Cinematográfico", descricao: "Imagem no slide inteiro com texto embaixo. Pede imagens com IA (sem imagem, usa a cor do fundo)." };
 
 export function css(visual, fontesCss) {
   return `${cssBase(visual, fontesCss)}

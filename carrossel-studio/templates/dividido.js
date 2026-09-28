@@ -1,7 +1,7 @@
 // Estilo "Dividido": imagem na metade de cima e texto na metade de baixo.
 import { escapar, comDestaque, tamanho, subtitulo, vars, marca, rodape, cssBase } from "./_comum.js";
 
-export const info = { nome: "Dividido", descricao: "Imagem em cima, texto embaixo. Sem imagem, o texto ocupa o slide todo." };
+export const info = { imagens: "todas", nome: "Dividido", descricao: "Imagem em cima, texto embaixo. Sem imagem, o texto ocupa o slide todo." };
 
 export function css(visual, fontesCss) {
   return `${cssBase(visual, fontesCss)}

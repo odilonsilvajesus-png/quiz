@@ -10,7 +10,7 @@ import {
 import { referenciasRanqueadas, gerarCarrossel, historico } from "./pipeline.js";
 import { listarModelos, modelosDoCliente, resolverModelo } from "./modelos.js";
 import { montarHtml, listarEstilos } from "./render.js";
-import { imagemExemplo, slidesComImagem, temGeradorImagem } from "./imagens.js";
+import { imagemExemplo, slidesComImagem, temGeradorImagem, resolverModo } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
 import { descreverVoz } from "./copy.js";
 import { coletarLegendas } from "./coleta/instagram.js";
@@ -124,7 +124,8 @@ async function previa(id, dados) {
       rodape: { ...c.visual.rodape, texto_arraste: dados.texto_arraste ?? c.visual.rodape?.texto_arraste },
     },
   };
-  const modoImagens = dados.imagens?.modo || c.visual.imagens?.modo || "nenhuma";
+  const infoEstilo = (await listarEstilos()).find((e) => e.id === (dados.template || c.visual.template));
+  const modoImagens = resolverModo(dados.imagens?.modo || c.visual.imagens?.modo, infoEstilo);
   const comImagem = new Set(slidesComImagem(modoImagens, resolverModelo(c, dados.modelo).estrutura.length));
   const modelo = resolverModelo(c, dados.modelo);
   const estilo = dados.template || c.visual.template;

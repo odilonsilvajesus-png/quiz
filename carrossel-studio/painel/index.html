@@ -289,8 +289,8 @@ async function abaConteudo(recoletar = false) {
   $("avisos").innerHTML = (dados.avisos || []).map((a) => `<div class="aviso">${esc(a)}</div>`).join("");
   const optModelos = c.modelos.map((m) => `<option value="${m.id}" ${m.id === c.conteudo.modelo_padrao ? "selected" : ""}>${esc(m.nome)}</option>`).join("");
   const optEstilos = status.estilos.map((e) => `<option value="${e.id}" ${e.id === c.visual.template ? "selected" : ""}>Estilo: ${esc(e.nome)}</option>`).join("");
-  const optImagens = [["nenhuma", "Sem imagens"], ["capa", "Imagem só na capa"], ["todas", "Imagens em todos"]]
-    .map(([k, n]) => `<option value="${k}" ${k === (c.visual.imagens?.modo || "nenhuma") ? "selected" : ""}>${n}</option>`).join("");
+  const optImagens = [["auto", "Imagens: automático"], ["nenhuma", "Sem imagens"], ["capa", "Imagem só na capa"], ["todas", "Imagens em todos"]]
+    .map(([k, n]) => `<option value="${k}" ${k === (c.visual.imagens?.modo || "auto") ? "selected" : ""}>${n}</option>`).join("");
   const optAngulos = `<option value="">Tema: IA escolhe</option>` + c.conteudo.angulos.map((a) => `<option>${esc(a)}</option>`).join("");
   $("refs").className = "";
   $("refs").innerHTML = dados.posts.map((p, i) => `
@@ -316,6 +316,7 @@ function mostrarGerados(lista) {
       <div class="slides">${g.imagens.map((src) => `<a href="${src}" target="_blank" download><img src="${src}" loading="lazy" alt=""></a>`).join("")}</div>
       <details><summary>Por que a referência funcionou</summary><pre>${esc(g.carrossel.por_que_a_referencia_funcionou)}</pre></details>
       <details><summary>Legenda</summary><pre>${esc(g.carrossel.legenda)}</pre></details>
+      ${g.carrossel.direcao_de_arte ? `<details><summary>Direção de arte das imagens</summary><pre>${esc(g.carrossel.direcao_de_arte)}\n\n${g.carrossel.slides.map((s, i) => s.imagem_descricao ? `Slide ${i + 1}: ${s.imagem_descricao}` : "").filter(Boolean).map(esc).join("\n")}</pre></details>` : ""}
       ${g.carrossel.pendencias?.length ? `<details open><summary>Pendências para preencher</summary><pre>${esc(g.carrossel.pendencias.join("\n"))}</pre></details>` : ""}
       <div class="acoes"><button class="sec" data-aprovar="${esc(g.pasta)}">Aprovar como exemplo</button><span class="msg"></span></div>
     </div>`).join("");
@@ -537,15 +538,17 @@ function abaVisual() {
         <div class="estilos">${status.estilos.map((e) => `<button class="estilo" data-estilo="${e.id}"><b>${esc(e.nome)}</b><span>${esc(e.descricao)}</span></button>`).join("")}</div>
 
         <h2 style="margin-top:24px">Imagens com IA (gpt-image-2)</h2>
-        <label for="modoImagens">Gerar imagens em</label>
+        <div class="ajuda">As imagens são criadas sozinhas a partir do conteúdo: a IA define uma direção de arte para o carrossel (mesma personagem, ambiente e luz) e cada imagem mostra exatamente a cena que o texto do slide descreve.</div>
+        <label for="modoImagens">Quando gerar</label>
         <select id="modoImagens" class="campo">
-          <option value="nenhuma">Nenhum slide (só texto)</option>
+          <option value="auto">Automático, conforme o estilo</option>
+          <option value="nenhuma">Nunca (só texto)</option>
           <option value="capa">Só na capa</option>
           <option value="todas">Todos os slides</option>
         </select>
-        <label for="estiloImagens">Estilo das imagens</label>
-        <textarea id="estiloImagens" rows="3" placeholder="Ex.: fotografia editorial, luz natural, mulheres reais de 30 a 45 anos, tons terrosos, sem aparência de banco de imagens"></textarea>
-        <div class="ajuda">Cada imagem tem custo na OpenAI. Comece com "Só na capa". ${status.imagens ? "" : "<b>Preencha OPENAI_API_KEY no .env para gerar imagens.</b>"}</div>
+        <label for="estiloImagens">Preferência visual (opcional)</label>
+        <textarea id="estiloImagens" rows="2" placeholder="Não precisa preencher. Use só se quiser orientar, ex.: luz natural, tons terrosos"></textarea>
+        <div class="ajuda">No automático: Clássico, Editorial e Tweet ganham imagem na capa; Cinematográfico e Dividido, em todos os slides. Cada imagem tem custo na OpenAI. ${status.imagens ? "" : "<b>Preencha OPENAI_API_KEY no .env para gerar imagens.</b>"}</div>
 
         <h2 style="margin-top:24px">Cores</h2>
         <label>Paletas prontas</label>
@@ -582,7 +585,7 @@ function abaVisual() {
     }
     $("gradiente").checked = v.paleta.gradiente !== false;
     document.querySelectorAll("[data-estilo]").forEach((b) => b.classList.toggle("ativo", b.dataset.estilo === v.template));
-    $("modoImagens").value = v.imagens?.modo || "nenhuma";
+    $("modoImagens").value = v.imagens?.modo || "auto";
     $("estiloImagens").value = v.imagens?.estilo || "";
     $("fonte").value = v.fonte;
     $("assinatura").value = v.assinatura;

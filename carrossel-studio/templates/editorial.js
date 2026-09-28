@@ -1,7 +1,7 @@
 // Estilo "Editorial": número grande do slide, texto alinhado à esquerda, visual de revista.
 import { escapar, comDestaque, tamanho, subtitulo, vars, marca, rodape, cssBase } from "./_comum.js";
 
-export const info = { nome: "Editorial", descricao: "Número grande, texto à esquerda e linhas finas. Com imagem, ela fica em um quadro no topo." };
+export const info = { imagens: "capa", nome: "Editorial", descricao: "Número grande, texto à esquerda e linhas finas. Com imagem, ela fica em um quadro no topo." };
 
 export function css(visual, fontesCss) {
   return `${cssBase(visual, fontesCss)}
