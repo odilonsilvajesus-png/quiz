@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
-import { RAIZ, PASTA_SAIDA, carregarCliente, listarClientes } from "./cliente.js";
+import { RAIZ, PASTA_SAIDA, carregarCliente, listarClientes, salvarReferencias } from "./cliente.js";
 import { referenciasRanqueadas, gerarCarrossel, historico } from "./pipeline.js";
 import { nomeProvedor } from "./ia.js";
 
@@ -55,10 +55,11 @@ const rotas = [
   })],
   ["GET", /^\/api\/clientes\/([\w-]+)$/, (m) => {
     const c = carregarCliente(m[1]);
-    return { id: c.id, nome: c.nome, angulos: c.conteudo.angulos || [], referencias: c.referencias };
+    return { id: c.id, nome: c.nome, instagram: c.instagram || "", angulos: c.conteudo.angulos || [], referencias: c.referencias };
   }],
   ["GET", /^\/api\/clientes\/([\w-]+)\/referencias$/, (m, url) =>
     referenciasRanqueadas(carregarCliente(m[1]), { recoletar: url.searchParams.has("recoletar"), log: () => {} })],
+  ["PUT", /^\/api\/clientes\/([\w-]+)\/referencias$/, async (m, _url, req) => salvarReferencias(m[1], await corpo(req))],
   ["GET", /^\/api\/clientes\/([\w-]+)\/carrosseis$/, (m) => listarGerados(m[1])],
   ["POST", /^\/api\/clientes\/([\w-]+)\/gerar$/, async (m, _url, req) => {
     const { refId, angulo, indice } = await corpo(req);

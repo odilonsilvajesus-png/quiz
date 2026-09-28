@@ -57,3 +57,37 @@ export function criarCliente(id, nome) {
   fs.writeFileSync(arquivo, JSON.stringify(config, null, 2) + "\n");
   return destino;
 }
+
+// "@Perfil", "perfil" ou "https://instagram.com/perfil/" viram "@perfil".
+function normalizarInstagram(ref) {
+  const url = ref.match(/instagram\.com\/([\w.]+)/i);
+  const handle = (url ? url[1] : ref).trim().replace(/^@/, "").replace(/\/+$/, "");
+  return handle ? `@${handle.toLowerCase()}` : "";
+}
+
+// Canal do YouTube: aceita @handle, ID "UC..." ou link do canal.
+function normalizarYoutube(ref) {
+  const limpo = ref.trim().replace(/\/+$/, "");
+  const handle = limpo.match(/@[\w.-]+/);
+  if (handle) return handle[0];
+  const id = limpo.match(/UC[\w-]{22}/);
+  if (id) return id[0];
+  return limpo ? `@${limpo.replace(/^@/, "")}` : "";
+}
+
+const semRepetir = (lista, normalizar) => [...new Set((lista || []).map(normalizar).filter(Boolean))];
+
+// Atualiza só as referências no cliente.json, preservando o resto do arquivo.
+export function salvarReferencias(id, { instagram, youtube, perfil_cliente, periodo_dias }) {
+  const arquivo = path.join(PASTA_CLIENTES, id, "cliente.json");
+  const config = JSON.parse(fs.readFileSync(arquivo, "utf8"));
+  config.referencias = {
+    ...config.referencias,
+    instagram: semRepetir(instagram, normalizarInstagram),
+    youtube: semRepetir(youtube, normalizarYoutube),
+    periodo_dias: Number(periodo_dias) || config.referencias?.periodo_dias || 90,
+  };
+  if (perfil_cliente !== undefined) config.instagram = perfil_cliente ? normalizarInstagram(perfil_cliente) : "";
+  fs.writeFileSync(arquivo, JSON.stringify(config, null, 2) + "\n");
+  return { instagram: config.instagram, referencias: config.referencias };
+}

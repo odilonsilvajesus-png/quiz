@@ -38,6 +38,18 @@
   details pre { white-space:pre-wrap; background:var(--fundo); padding:10px; border-radius:8px; font-family:inherit; }
   .vazio { color:var(--suave); font-size:14px; }
   .carregando { font-size:13px; color:var(--suave); }
+  .config { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:12px 14px; margin-bottom:20px; }
+  .config summary { cursor:pointer; font-weight:600; font-size:15px; }
+  .config label { display:block; font-size:12px; font-weight:600; color:var(--suave); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
+  .config input { width:100%; min-width:0; padding:8px 10px; border:1px solid var(--borda); border-radius:8px; font:inherit; }
+  .linha { display:flex; gap:8px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 6px 4px 10px; border-radius:99px; background:var(--fundo); border:1px solid var(--borda); font-size:13px; }
+  .chip button { border:0; background:transparent; color:var(--suave); padding:0 4px; font-size:16px; line-height:1; }
+  .chip button:hover { color:var(--acento); }
+  .vazio-chip { font-size:13px; color:var(--suave); }
+  .rodape-config { display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap; }
+  .msg { font-size:13px; color:var(--suave); }
 </style>
 </head>
 <body>
@@ -50,6 +62,27 @@
 </header>
 <main>
   <section>
+    <details class="config" id="config">
+      <summary id="configTitulo">Referências cadastradas</summary>
+      <label for="perfilCliente">Instagram da cliente</label>
+      <input id="perfilCliente" placeholder="@perfil_da_cliente">
+
+      <label for="novoIg">Perfis de referência no Instagram</label>
+      <div class="chips" id="chipsIg"></div>
+      <div class="linha"><input id="novoIg" placeholder="@perfil ou link do perfil"><button class="sec" data-add="ig">Adicionar</button></div>
+
+      <label for="novoYt">Canais de referência no YouTube</label>
+      <div class="chips" id="chipsYt"></div>
+      <div class="linha"><input id="novoYt" placeholder="@canal ou link do canal"><button class="sec" data-add="yt">Adicionar</button></div>
+
+      <label for="periodo">Analisar posts dos últimos</label>
+      <select id="periodo">
+        <option value="30">30 dias</option><option value="60">60 dias</option><option value="90">90 dias</option>
+        <option value="180">180 dias</option><option value="365">365 dias</option>
+      </select>
+
+      <div class="rodape-config"><button id="salvar">Salvar e coletar</button><span class="msg" id="msgConfig"></span></div>
+    </details>
     <h2>Referências que mais engajaram <button class="sec" id="recoletar">Coletar de novo</button></h2>
     <div id="avisos"></div>
     <div id="refs" class="carregando">Carregando...</div>
@@ -81,8 +114,61 @@ async function iniciar() {
   if (s.clientes.length) carregarCliente(s.clientes[0].id);
 }
 
+let edicao = { ig: [], yt: [] };
+
+function mostrarChips() {
+  for (const tipo of ["ig", "yt"]) {
+    const lista = edicao[tipo];
+    $(tipo === "ig" ? "chipsIg" : "chipsYt").innerHTML = lista.length
+      ? lista.map((r, i) => `<span class="chip">${esc(r)}<button title="Remover" data-remover="${tipo}" data-i="${i}">×</button></span>`).join("")
+      : '<span class="vazio-chip">Nenhum cadastrado.</span>';
+  }
+  const total = edicao.ig.length + edicao.yt.length;
+  $("configTitulo").textContent = `Referências cadastradas (${total})`;
+}
+
+function preencherConfig() {
+  const r = cliente.referencias || {};
+  edicao = { ig: [...(r.instagram || [])], yt: [...(r.youtube || [])] };
+  $("perfilCliente").value = cliente.instagram || "";
+  $("periodo").value = String(r.periodo_dias || 90);
+  $("msgConfig").textContent = "";
+  $("config").open = !(edicao.ig.length + edicao.yt.length);
+  mostrarChips();
+}
+
+// Aceita vários de uma vez, separados por vírgula, espaço ou quebra de linha.
+function adicionar(tipo) {
+  const campo = $(tipo === "ig" ? "novoIg" : "novoYt");
+  const novos = campo.value.split(/[\s,;]+/).map((v) => v.trim()).filter(Boolean);
+  for (const n of novos) if (!edicao[tipo].includes(n)) edicao[tipo].push(n);
+  campo.value = "";
+  campo.focus();
+  mostrarChips();
+}
+
+async function salvarConfig() {
+  for (const tipo of ["ig", "yt"]) if ($(tipo === "ig" ? "novoIg" : "novoYt").value.trim()) adicionar(tipo);
+  const botao = $("salvar");
+  botao.disabled = true;
+  $("msgConfig").textContent = "Salvando...";
+  try {
+    await api(`/api/clientes/${cliente.id}/referencias`, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ instagram: edicao.ig, youtube: edicao.yt, perfil_cliente: $("perfilCliente").value, periodo_dias: $("periodo").value }),
+    });
+    $("msgConfig").textContent = "Salvo. Coletando posts, pode levar alguns minutos...";
+    await carregarCliente(cliente.id, true);
+    $("msgConfig").textContent = "Salvo e coletado.";
+  } catch (erro) {
+    $("msgConfig").textContent = `Erro: ${erro.message}`;
+  }
+  botao.disabled = false;
+}
+
 async function carregarCliente(id, recoletar = false) {
   cliente = await api(`/api/clientes/${id}`);
+  if (!recoletar) preencherConfig();
   $("refs").innerHTML = '<span class="carregando">Coletando e ranqueando...</span>';
   const [dados, gerados] = await Promise.all([
     api(`/api/clientes/${id}/referencias${recoletar ? "?recoletar=1" : ""}`),
@@ -116,7 +202,10 @@ function mostrarGerados(lista) {
 }
 
 document.addEventListener("click", async (e) => {
-  const id = e.target.dataset?.gerar;
+  const d = e.target.dataset || {};
+  if (d.add) return adicionar(d.add);
+  if (d.remover) { edicao[d.remover].splice(Number(d.i), 1); return mostrarChips(); }
+  const id = d.gerar;
   if (!id) return;
   const botao = e.target;
   botao.disabled = true; botao.textContent = "Gerando...";
@@ -131,6 +220,9 @@ document.addEventListener("click", async (e) => {
   botao.disabled = false; botao.textContent = "Gerar carrossel";
 });
 $("recoletar").onclick = () => carregarCliente(cliente.id, true);
+$("salvar").onclick = salvarConfig;
+$("novoIg").onkeydown = (e) => { if (e.key === "Enter") adicionar("ig"); };
+$("novoYt").onkeydown = (e) => { if (e.key === "Enter") adicionar("yt"); };
 iniciar().catch((e) => { $("refs").textContent = e.message; });
 </script>
 </body>

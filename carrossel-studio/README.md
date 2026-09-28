@@ -40,9 +40,10 @@ O modelo padrão é o `gpt-5.5`. Para trocar, defina `OPENAI_MODEL` no `.env`. P
 
 ### Pelo painel (`npm run painel`)
 1. Escolha o cliente no topo.
-2. À esquerda aparecem as referências ranqueadas. O número em laranja é quantas vezes o post performou acima da média do próprio perfil.
-3. Escolha o ângulo (ou deixe a IA escolher) e clique em **Gerar carrossel**.
-4. À direita aparecem os slides prontos para baixar, com a legenda e as pendências (marcadores `[ENTRE COLCHETES]` que alguém precisa preencher).
+2. Em **Referências cadastradas**, adicione os perfis do Instagram e os canais do YouTube (pode colar o @ ou o link) e clique em **Salvar e coletar**. Dá para remover qualquer um pelo ×.
+3. Logo abaixo aparecem as referências ranqueadas. O número em laranja é quantas vezes o post performou acima da média do próprio perfil.
+4. Escolha o ângulo (ou deixe a IA escolher) e clique em **Gerar carrossel**.
+5. À direita aparecem os slides prontos para baixar, com a legenda e as pendências (marcadores `[ENTRE COLCHETES]` que alguém precisa preencher).
 
 ### Pela linha de comando
 ```bash
