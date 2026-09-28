@@ -109,8 +109,25 @@ def _seguidores_json(dados) -> list[tuple[str, int | None]]:
     return saida
 
 
+MESES = {m: i for i, m in enumerate(["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"], 1)}
+MESES.update({m: i for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)})
+
+
+def _data_html(txt: str) -> int | None:
+    m = re.search(r"([a-z]{3})\w*\.? (\d{1,2}), (\d{4})", norm(txt))
+    if m and m.group(1) in MESES:
+        return int(datetime(int(m.group(3)), MESES[m.group(1)], int(m.group(2)), tzinfo=timezone.utc).timestamp())
+    return None
+
+
 def _seguidores_html(html: str) -> list[tuple[str, int | None]]:
-    return [(usuario_de(h), None) for h in re.findall(r'href="(https://www\.instagram\.com/[^"]+)"', html)]
+    saida = []
+    blocos = re.split(r'(?=<a [^>]*href="https://www\.instagram\.com/)', html)
+    for b in blocos[1:]:
+        h = re.match(r'<a [^>]*href="([^"]+)"', b).group(1)
+        resto = re.sub(r"<[^>]+>", " ", b.split("</a>", 1)[-1])
+        saida.append((usuario_de(h), _data_html(resto)))
+    return saida
 
 
 def cmd_seguidores(a) -> None:
