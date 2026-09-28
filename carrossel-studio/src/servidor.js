@@ -4,7 +4,7 @@ import http from "node:http";
 import path from "node:path";
 import { RAIZ, PASTA_SAIDA, carregarCliente, listarClientes } from "./cliente.js";
 import { referenciasRanqueadas, gerarCarrossel, historico } from "./pipeline.js";
-import { temClaude } from "./copy.js";
+import { nomeProvedor } from "./ia.js";
 
 if (fs.existsSync(path.join(RAIZ, ".env"))) process.loadEnvFile(path.join(RAIZ, ".env"));
 
@@ -48,7 +48,7 @@ function listarGerados(clienteId) {
 
 const rotas = [
   ["GET", /^\/api\/status$/, () => ({
-    claude: temClaude(),
+    ia: nomeProvedor(),
     apify: Boolean(process.env.APIFY_TOKEN),
     youtube: Boolean(process.env.YOUTUBE_API_KEY),
     clientes: listarClientes().map((c) => ({ id: c.id, nome: c.nome, descricao: c.descricao })),

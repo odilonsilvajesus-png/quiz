@@ -74,7 +74,7 @@ async function api(caminho, opcoes) {
 
 async function iniciar() {
   const s = await api("/api/status");
-  $("selos").innerHTML = [["Claude (copy)", s.claude], ["Apify (Instagram)", s.apify], ["YouTube API", s.youtube]]
+  $("selos").innerHTML = [[s.ia ? `IA: ${s.ia}` : "IA (copy)", s.ia], ["Apify (Instagram)", s.apify], ["YouTube API", s.youtube]]
     .map(([n, ok]) => `<span class="selo ${ok ? "on" : "off"}">${n}: ${ok ? "ativo" : "demo"}</span>`).join("");
   $("cliente").innerHTML = s.clientes.map((c) => `<option value="${c.id}">${esc(c.nome)}</option>`).join("");
   $("cliente").onchange = () => carregarCliente($("cliente").value);

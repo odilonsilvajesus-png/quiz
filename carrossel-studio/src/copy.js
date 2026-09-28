@@ -1,11 +1,8 @@
 // Escreve o carrossel na voz do cliente a partir de uma referência que performou bem.
-import Anthropic from "@anthropic-ai/sdk";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
 import { z } from "zod";
+import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
 
-const MODELO = process.env.CLAUDE_MODEL || "claude-opus-5-5";
-
-export const temClaude = () => Boolean(process.env.ANTHROPIC_API_KEY);
+export const temIA = () => Boolean(provedor());
 
 function esquema(qtdSlides) {
   return z.object({
@@ -87,40 +84,27 @@ function limpar(resultado, cliente) {
 export async function escreverCarrossel(cliente, referencia, opcoes = {}) {
   const qtd = cliente.conteudo.estrutura.length;
 
-  if (!temClaude()) {
+  if (!temIA()) {
     // Modo demonstração: devolve um carrossel aprovado do próprio cliente para testar o visual.
     const exemplos = cliente.exemplosCarrossel;
-    if (!exemplos.length) throw new Error("Sem ANTHROPIC_API_KEY e sem exemplos em exemplos.json para demonstrar.");
+    if (!exemplos.length) throw new Error("Sem chave de IA e sem exemplos em exemplos.json para demonstrar.");
     const ex = exemplos.find((e) => e.angulo === opcoes.angulo) || exemplos[(opcoes.indice || 0) % exemplos.length];
     return {
       demo: true,
       angulo: ex.angulo,
-      por_que_a_referencia_funcionou: "MODO DEMONSTRAÇÃO: configure ANTHROPIC_API_KEY para gerar copy nova a partir da referência. Este é um carrossel aprovado do cliente.",
+      por_que_a_referencia_funcionou: "MODO DEMONSTRAÇÃO: configure OPENAI_API_KEY no .env para gerar copy nova a partir da referência. Este é um carrossel aprovado do cliente.",
       slides: ex.slides,
       legenda: "[LEGENDA GERADA PELA IA]",
       pendencias: [],
     };
   }
 
-  const client = new Anthropic();
-  const resposta = await client.beta.messages.parse({
-    model: MODELO,
-    max_tokens: 16000,
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
-    output_config: { effort: "high", format: betaZodOutputFormat(esquema(qtd)) },
-    // A base de conhecimento é igual em todas as chamadas do cliente: fica em cache.
-    system: [{ type: "text", text: promptSistema(cliente), cache_control: { type: "ephemeral" } }],
-    messages: [{ role: "user", content: promptUsuario(referencia, opcoes) }],
+  const resultado = await gerarEstruturado({
+    sistema: promptSistema(cliente),
+    usuario: promptUsuario(referencia, opcoes),
+    schema: esquema(qtd),
+    nome: "carrossel",
   });
-
-  if (resposta.stop_reason === "refusal") {
-    throw new Error(`O modelo recusou esta referência (${resposta.stop_details?.category ?? "sem categoria"}). Escolha outra.`);
-  }
-  if (resposta.stop_reason === "max_tokens" || !resposta.parsed_output) {
-    throw new Error("A resposta veio incompleta. Tente de novo.");
-  }
-  const resultado = resposta.parsed_output;
   if (resultado.slides.length !== qtd) {
     throw new Error(`O modelo devolveu ${resultado.slides.length} slides em vez de ${qtd}. Tente de novo.`);
   }
@@ -129,18 +113,8 @@ export async function escreverCarrossel(cliente, referencia, opcoes = {}) {
 
 // Gera o voz.md do cliente a partir de legendas reais dele.
 export async function descreverVoz(cliente, legendas) {
-  if (!temClaude()) throw new Error("Configure ANTHROPIC_API_KEY para gerar a voz automaticamente.");
-  const client = new Anthropic();
-  const resposta = await client.beta.messages.create({
-    model: MODELO,
-    max_tokens: 16000,
-    betas: ["server-side-fallback-2026-07-01"],
-    fallbacks: "default",
-    output_config: { effort: "high" },
-    messages: [
-      {
-        role: "user",
-        content: `Abaixo estão ${legendas.length} legendas reais do Instagram de ${cliente.nome}.
+  if (!temIA()) throw new Error("Configure OPENAI_API_KEY no .env para gerar a voz automaticamente.");
+  return gerarTexto(`Abaixo estão ${legendas.length} legendas reais do Instagram de ${cliente.nome}.
 Escreva um guia de voz em Markdown, em português do Brasil, para um redator imitar o jeito dela escrever. Inclua:
 - Tom (formal/informal, acolhedor/firme, técnico/simples) com exemplos tirados das legendas
 - Vocabulário e expressões que ela repete
@@ -149,10 +123,5 @@ Escreva um guia de voz em Markdown, em português do Brasil, para um redator imi
 - O que ela evita
 Descreva só o que aparece nas legendas, sem inventar.
 
-${legendas.map((l, i) => `<legenda n="${i + 1}">\n${l}\n</legenda>`).join("\n")}`,
-      },
-    ],
-  });
-  if (resposta.stop_reason === "refusal") throw new Error("O modelo recusou gerar a voz.");
-  return resposta.content.filter((b) => b.type === "text").map((b) => b.text).join("\n");
+${legendas.map((l, i) => `<legenda n="${i + 1}">\n${l}\n</legenda>`).join("\n")}`);
 }

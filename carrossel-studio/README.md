@@ -4,7 +4,7 @@ Sistema que:
 
 1. **Coleta** os posts e vídeos de perfis do Instagram e canais do YouTube que você usa como referência.
 2. **Ranqueia** o que engajou acima do normal de cada perfil (outlier score).
-3. **Escreve** um carrossel original na voz do seu cliente, com o Claude, usando a base de conhecimento dele.
+3. **Escreve** um carrossel original na voz do seu cliente, com o GPT (ou o Claude), usando a base de conhecimento dele.
 4. **Renderiza** os slides em PNG 1080×1350 com a identidade visual do cliente.
 
 Funciona para qualquer cliente: tudo que muda de um para outro fica na pasta `clientes/<id>/`.
@@ -26,9 +26,11 @@ Sem as chaves, tudo roda em **modo demonstração**: referências fictícias e o
 
 ### Chaves de API (arquivo `.env`)
 
+O modelo padrão é o `gpt-5.5`. Para trocar, defina `OPENAI_MODEL` no `.env`. Para usar o Claude no lugar do GPT, preencha `ANTHROPIC_API_KEY` e `IA_PROVEDOR=anthropic`.
+
 | Chave | Para quê | Onde pegar | Custo |
 |---|---|---|---|
-| `ANTHROPIC_API_KEY` | Escrever a copy | console.anthropic.com → API Keys | por uso, centavos por carrossel |
+| `OPENAI_API_KEY` | Escrever a copy (GPT) | platform.openai.com → API keys | por uso, centavos por carrossel |
 | `YOUTUBE_API_KEY` | Vídeos e métricas do YouTube | Google Cloud → ativar "YouTube Data API v3" → Credenciais → Chave de API | gratuito dentro da cota diária |
 | `APIFY_TOKEN` | Posts e métricas do Instagram | apify.com → Settings → Integrations | por uso, ~US$ 2 a 5 por mil posts |
 
