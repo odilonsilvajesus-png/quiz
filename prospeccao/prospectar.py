@@ -270,8 +270,6 @@ def cmd_enriquecer(a) -> None:
 
 # ---------- 4. pontuar ----------
 def pontuar_perfil(p: dict, icp: dict, seguiu_em: str, comentarios: int, hoje: datetime) -> dict:
-    if str(p.get("categoria")).lower() in ("none", "null"):
-        p = {**p, "categoria": ""}
     texto = norm(" ".join(p.get(k) or "" for k in ("nome", "bio", "categoria")))
     links = " ".join([p.get("link") or ""] + [x for x in (p.get("links") or []) if x]).lower()
     pontos, motivos = 0, []
@@ -361,6 +359,8 @@ def cmd_pontuar(a) -> None:
         if p.get("nao_encontrado"):
             sem_dados.append({**base, "grupo": "não encontrado", "pontos": 0})
             continue
+        if str(p.get("categoria")).lower() in ("none", "null"):
+            p = {**p, "categoria": ""}
         r = pontuar_perfil(p, icp, seguiu.get(u, ""), coment.get(u, 0), hoje)
         linhas.append({**base, **r, "nome": p.get("nome"), "categoria": p.get("categoria"),
                        "seguidores": p.get("seguidores"), "bio": (p.get("bio") or "").replace("\n", " / "),
