@@ -1,0 +1,7 @@
+node_modules/
+saida/
+.env
+cache/
+# Kits de clientes ficam fora do Git (repositório público). Só o modelo é versionado.
+clientes/*
+!clientes/_modelo/

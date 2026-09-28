@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrossel Studio</title>
+<style>
+  :root { --fundo:#F6F4F0; --cartao:#FFFFFF; --texto:#1C1B19; --suave:#6B6760; --borda:#E4E0D8; --acento:#D0654A; --ok:#2F7D4F; --alerta:#B7791F; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fundo); color: var(--texto); }
+  header { display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--borda); background:var(--cartao); position:sticky; top:0; z-index:2; }
+  h1 { font-size:18px; margin:0; }
+  select, button { font: inherit; }
+  select { padding:8px 10px; border:1px solid var(--borda); border-radius:8px; background:#fff; }
+  button { padding:8px 14px; border-radius:8px; border:1px solid var(--texto); background:var(--texto); color:#fff; cursor:pointer; }
+  button.sec { white-space:nowrap; background:#fff; color:var(--texto); border-color:var(--borda); }
+  button:disabled { opacity:.5; cursor:wait; }
+  .selos { display:flex; gap:8px; flex-wrap:wrap; }
+  .selo { font-size:12px; padding:4px 10px; border-radius:99px; border:1px solid var(--borda); }
+  .selo.on { color:var(--ok); border-color:var(--ok); }
+  .selo.off { color:var(--alerta); border-color:var(--alerta); }
+  main { display:grid; grid-template-columns: minmax(320px, 440px) 1fr; gap:24px; padding:24px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding:16px; } }
+  h2 { font-size:15px; margin:0 0 12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .aviso { background:#FFF7E6; border:1px solid #F3D9A4; padding:10px 12px; border-radius:8px; font-size:13px; margin-bottom:12px; }
+  .ref { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+  .ref .topo { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--suave); }
+  .score { font-weight:700; color:var(--acento); font-size:14px; }
+  .ref p { margin:8px 0; font-size:14px; line-height:1.4; white-space:pre-line; max-height:5.6em; overflow:hidden; }
+  .ref .acoes { display:flex; gap:8px; align-items:center; }
+  .ref .acoes select { flex:1; min-width:0; font-size:13px; }
+  .gerado { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:16px; }
+  .gerado h3 { margin:0 0 4px; font-size:15px; }
+  .meta { font-size:12px; color:var(--suave); margin-bottom:10px; }
+  .slides { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
+  .slides a img { height:220px; aspect-ratio:1080/1350; border-radius:6px; display:block; border:1px solid var(--borda); }
+  details { margin-top:10px; font-size:13px; }
+  details pre { white-space:pre-wrap; background:var(--fundo); padding:10px; border-radius:8px; font-family:inherit; }
+  .vazio { color:var(--suave); font-size:14px; }
+  .carregando { font-size:13px; color:var(--suave); }
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;gap:12px;align-items:center">
+    <h1>Carrossel Studio</h1>
+    <select id="cliente"></select>
+  </div>
+  <div class="selos" id="selos"></div>
+</header>
+<main>
+  <section>
+    <h2>Referências que mais engajaram <button class="sec" id="recoletar">Coletar de novo</button></h2>
+    <div id="avisos"></div>
+    <div id="refs" class="carregando">Carregando...</div>
+  </section>
+  <section>
+    <h2>Carrosséis gerados</h2>
+    <div id="gerados" class="vazio">Nenhum carrossel ainda.</div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const num = (n) => Intl.NumberFormat("pt-BR", { notation: "compact" }).format(n || 0);
+let cliente = null;
+
+async function api(caminho, opcoes) {
+  const r = await fetch(caminho, opcoes);
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.erro || "Erro");
+  return d;
+}
+
+async function iniciar() {
+  const s = await api("/api/status");
+  $("selos").innerHTML = [["Claude (copy)", s.claude], ["Apify (Instagram)", s.apify], ["YouTube API", s.youtube]]
+    .map(([n, ok]) => `<span class="selo ${ok ? "on" : "off"}">${n}: ${ok ? "ativo" : "demo"}</span>`).join("");
+  $("cliente").innerHTML = s.clientes.map((c) => `<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+  $("cliente").onchange = () => carregarCliente($("cliente").value);
+  if (s.clientes.length) carregarCliente(s.clientes[0].id);
+}
+
+async function carregarCliente(id, recoletar = false) {
+  cliente = await api(`/api/clientes/${id}`);
+  $("refs").innerHTML = '<span class="carregando">Coletando e ranqueando...</span>';
+  const [dados, gerados] = await Promise.all([
+    api(`/api/clientes/${id}/referencias${recoletar ? "?recoletar=1" : ""}`),
+    api(`/api/clientes/${id}/carrosseis`),
+  ]);
+  $("avisos").innerHTML = (dados.avisos || []).map((a) => `<div class="aviso">${esc(a)}</div>`).join("");
+  const opcoesAngulo = `<option value="">Ângulo: IA escolhe</option>` + cliente.angulos.map((a) => `<option>${esc(a)}</option>`).join("");
+  $("refs").className = "";
+  $("refs").innerHTML = dados.posts.map((p, i) => `
+    <div class="ref">
+      <div class="topo"><span>#${i + 1} · ${esc(p.plataforma)} · ${esc(p.tipo)} · ${esc(p.perfil)}</span><span class="score">${p.ranking.outlier}x</span></div>
+      <p>${esc(p.texto)}</p>
+      <div class="topo" style="margin-bottom:8px"><span>${num(p.metricas.curtidas)} curtidas · ${num(p.metricas.comentarios)} comentários${p.metricas.visualizacoes ? " · " + num(p.metricas.visualizacoes) + " views" : ""}</span>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</div>
+      <div class="acoes"><select data-angulo="${esc(p.id)}">${opcoesAngulo}</select><button data-gerar="${esc(p.id)}" data-i="${i}">Gerar carrossel</button></div>
+    </div>`).join("") || '<span class="vazio">Nada coletado.</span>';
+  mostrarGerados(gerados);
+}
+
+function mostrarGerados(lista) {
+  if (!lista.length) { $("gerados").innerHTML = '<span class="vazio">Nenhum carrossel ainda.</span>'; return; }
+  $("gerados").className = "";
+  $("gerados").innerHTML = lista.map((g) => `
+    <div class="gerado">
+      <h3>${esc(g.angulo)}${g.demo ? " <small style='color:var(--alerta)'>(demo)</small>" : ""}</h3>
+      <div class="meta">${new Date(g.data).toLocaleString("pt-BR")} · referência ${esc(g.carrossel.referencia?.perfil)}</div>
+      <div class="slides">${g.imagens.map((src) => `<a href="${src}" target="_blank" download><img src="${src}" loading="lazy" alt=""></a>`).join("")}</div>
+      <details><summary>Por que a referência funcionou</summary><pre>${esc(g.carrossel.por_que_a_referencia_funcionou)}</pre></details>
+      <details><summary>Legenda</summary><pre>${esc(g.carrossel.legenda)}</pre></details>
+      ${g.carrossel.pendencias?.length ? `<details open><summary>Pendências para preencher</summary><pre>${esc(g.carrossel.pendencias.join("\n"))}</pre></details>` : ""}
+    </div>`).join("");
+}
+
+document.addEventListener("click", async (e) => {
+  const id = e.target.dataset?.gerar;
+  if (!id) return;
+  const botao = e.target;
+  botao.disabled = true; botao.textContent = "Gerando...";
+  try {
+    const angulo = document.querySelector(`select[data-angulo="${CSS.escape(id)}"]`).value;
+    await api(`/api/clientes/${cliente.id}/gerar`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refId: id, angulo, indice: Number(botao.dataset.i) }),
+    });
+    mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
+  } catch (erro) { alert(erro.message); }
+  botao.disabled = false; botao.textContent = "Gerar carrossel";
+});
+$("recoletar").onclick = () => carregarCliente(cliente.id, true);
+iniciar().catch((e) => { $("refs").textContent = e.message; });
+</script>
+</body>
+</html>

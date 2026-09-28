@@ -1,0 +1,98 @@
+{
+  "nome": "Nome do Cliente",
+  "descricao": "Profissão, nicho e método em uma frase.",
+  "instagram": "@perfil_do_cliente",
+  "base_conhecimento": "base-conhecimento.md",
+  "exemplos": "exemplos.json",
+  "referencias": {
+    "instagram": [
+      "@referencia1",
+      "@referencia2"
+    ],
+    "youtube": [
+      "@CanalReferencia"
+    ],
+    "periodo_dias": 90,
+    "posts_por_perfil": 30,
+    "videos_por_canal": 30
+  },
+  "conteudo": {
+    "formato": "carrossel",
+    "regra_de_ouro": "1 tema por carrossel.",
+    "proibir_travessao": false,
+    "limites": {
+      "titulo_max_caracteres": 110,
+      "subtitulo_max_caracteres": 220
+    },
+    "estrutura": [
+      {
+        "papel": "Gancho",
+        "fundo": "escuro",
+        "instrucao": "Frase que para o scroll: nomeia uma dor ou crença do público."
+      },
+      {
+        "papel": "Quebra de crença",
+        "fundo": "claro",
+        "instrucao": "Desmonta a explicação óbvia e promete o motivo real."
+      },
+      {
+        "papel": "Explicação",
+        "fundo": "claro",
+        "instrucao": "Explica o motivo real em linguagem simples."
+      },
+      {
+        "papel": "Exemplo",
+        "fundo": "escuro",
+        "instrucao": "Uma cena concreta do dia a dia do público."
+      },
+      {
+        "papel": "Virada",
+        "fundo": "destaque",
+        "instrucao": "O insight que muda a forma de ver o problema."
+      },
+      {
+        "papel": "Fechamento + CTA",
+        "fundo": "destaque",
+        "instrucao": "Resume a mensagem. O botão de CTA é adicionado pelo template."
+      }
+    ],
+    "angulos": [],
+    "cta_legenda": "Termine com um CTA claro (comentar uma palavra, salvar, link na bio)."
+  },
+  "visual": {
+    "template": "classico",
+    "largura": 1080,
+    "altura": 1350,
+    "fonte": "Poppins",
+    "peso_titulo": 700,
+    "fundos": {
+      "escuro": {
+        "fundo": "#111827",
+        "texto": "#FFFFFF",
+        "subtexto": "rgba(255,255,255,0.72)",
+        "destaque": "#60A5FA"
+      },
+      "claro": {
+        "fundo": "#F8FAFC",
+        "texto": "#111827",
+        "subtexto": "rgba(17,24,39,0.68)",
+        "destaque": "#2F6FED"
+      },
+      "destaque": {
+        "fundo": "linear-gradient(160deg,#3B82F6,#1D4ED8)",
+        "texto": "#FFFFFF",
+        "subtexto": "rgba(255,255,255,0.85)",
+        "destaque": "#111827"
+      }
+    },
+    "foto_capa": null,
+    "logo": null,
+    "assinatura": "@perfil_do_cliente",
+    "rodape": {
+      "paginacao": true,
+      "pontos": true,
+      "texto_arraste": "ARRASTE →"
+    },
+    "cta_final": "SALVAR ESTE POST"
+  }
+}

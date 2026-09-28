@@ -1,0 +1,10 @@
+[
+  {
+    "angulo": "Exemplo: troque por um carrossel real e aprovado do cliente",
+    "origem": "Carrossel publicado",
+    "slides": [
+      { "titulo": "Frase de gancho com *destaque.*", "subtitulo": "Subtítulo curto de reforço." },
+      { "titulo": "Quebra da *crença óbvia.*", "subtitulo": "O motivo real é outro." }
+    ]
+  }
+]

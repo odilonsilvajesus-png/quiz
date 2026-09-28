@@ -1,0 +1,23 @@
+{
+  "name": "carrossel-studio",
+  "private": true,
+  "type": "module",
+  "description": "Coleta referências do Instagram e YouTube, escreve carrosséis na voz do cliente e renderiza com a identidade visual dele.",
+  "scripts": {
+    "painel": "node src/servidor.js",
+    "coletar": "node src/cli.js coletar",
+    "gerar": "node src/cli.js gerar",
+    "renderizar": "node src/cli.js renderizar",
+    "novo-cliente": "node src/cli.js novo-cliente",
+    "gerar-voz": "node src/cli.js gerar-voz"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.129.0",
+    "@fontsource/poppins": "^5.3.0",
+    "playwright-core": "^1.63.0",
+    "zod": "^4.6.5"
+  }
+}
