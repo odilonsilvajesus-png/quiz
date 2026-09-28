@@ -1,0 +1,38 @@
+{
+  "id": "passo-a-passo",
+  "nome": "Passo a passo",
+  "descricao": "Ensina um processo em etapas numeradas. Muito salvo e compartilhado.",
+  "ordem": 5,
+  "estrutura": [
+    {
+      "papel": "Capa com resultado",
+      "fundo": "escuro",
+      "instrucao": "Diz qual resultado o passo a passo entrega."
+    },
+    {
+      "papel": "Passo 1",
+      "fundo": "claro",
+      "instrucao": "Comece o título com \"1.\" e descreva a primeira etapa."
+    },
+    {
+      "papel": "Passo 2",
+      "fundo": "claro",
+      "instrucao": "Comece o título com \"2.\" e descreva a segunda etapa."
+    },
+    {
+      "papel": "Passo 3",
+      "fundo": "escuro",
+      "instrucao": "Comece o título com \"3.\" e descreva a terceira etapa."
+    },
+    {
+      "papel": "Passo 4",
+      "fundo": "claro",
+      "instrucao": "Comece o título com \"4.\" e descreva a quarta etapa."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "destaque",
+      "instrucao": "Convida a aplicar hoje. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

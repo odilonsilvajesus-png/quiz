@@ -5,225 +5,645 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carrossel Studio</title>
 <style>
-  :root { --fundo:#F6F4F0; --cartao:#FFFFFF; --texto:#1C1B19; --suave:#6B6760; --borda:#E4E0D8; --acento:#D0654A; --ok:#2F7D4F; --alerta:#B7791F; }
+  :root { --fundo:#F6F4F0; --cartao:#FFFFFF; --texto:#1C1B19; --suave:#6B6760; --borda:#E4E0D8; --acento:#D0654A; --ok:#2F7D4F; --alerta:#B7791F; --erro:#B42318; }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fundo); color: var(--texto); }
-  header { display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--borda); background:var(--cartao); position:sticky; top:0; z-index:2; }
-  h1 { font-size:18px; margin:0; }
-  select, button { font: inherit; }
-  select { padding:8px 10px; border:1px solid var(--borda); border-radius:8px; background:#fff; }
-  button { padding:8px 14px; border-radius:8px; border:1px solid var(--texto); background:var(--texto); color:#fff; cursor:pointer; }
-  button.sec { white-space:nowrap; background:#fff; color:var(--texto); border-color:var(--borda); }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fundo); color: var(--texto); font-size:14px; }
+  a { color: inherit; }
+  header { display:flex; flex-wrap:wrap; gap:12px 16px; align-items:center; justify-content:space-between; padding:14px 24px; border-bottom:1px solid var(--borda); background:var(--cartao); position:sticky; top:0; z-index:5; }
+  .marca { font-weight:700; font-size:17px; text-decoration:none; }
+  .trilha { color:var(--suave); }
+  .trilha b { color:var(--texto); }
+  select, button, input, textarea { font: inherit; }
+  input, select, textarea { padding:8px 10px; border:1px solid var(--borda); border-radius:8px; background:#fff; color:var(--texto); min-width:0; }
+  textarea { width:100%; resize:vertical; line-height:1.5; }
+  button { padding:8px 14px; border-radius:8px; border:1px solid var(--texto); background:var(--texto); color:#fff; cursor:pointer; white-space:nowrap; }
+  button.sec { background:#fff; color:var(--texto); border-color:var(--borda); }
+  button.link { background:none; border:0; color:var(--acento); padding:0; }
   button:disabled { opacity:.5; cursor:wait; }
   .selos { display:flex; gap:8px; flex-wrap:wrap; }
   .selo { font-size:12px; padding:4px 10px; border-radius:99px; border:1px solid var(--borda); }
   .selo.on { color:var(--ok); border-color:var(--ok); }
   .selo.off { color:var(--alerta); border-color:var(--alerta); }
-  main { display:grid; grid-template-columns: minmax(320px, 440px) 1fr; gap:24px; padding:24px; }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding:16px; } }
-  h2 { font-size:15px; margin:0 0 12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  main { padding:24px; max-width:1400px; margin:0 auto; }
+  @media (max-width: 700px) { main { padding:16px; } header { padding:12px 16px; } }
+  h1 { font-size:22px; margin:0 0 4px; }
+  h2 { font-size:16px; margin:0 0 12px; }
+  h3 { font-size:15px; margin:0 0 6px; }
+  .sub { color:var(--suave); margin:0 0 20px; }
+  .cartao { background:var(--cartao); border:1px solid var(--borda); border-radius:12px; padding:16px; }
+  .grade { display:grid; gap:16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  .duas { display:grid; gap:20px; grid-template-columns: minmax(300px, 420px) 1fr; align-items:start; }
+  .metade { display:grid; gap:20px; grid-template-columns: 1fr 1fr; align-items:start; }
+  .duas > *, .metade > * { min-width:0; }
+  h2 button { font-size:13px; font-weight:400; padding:6px 12px; }
+  @media (max-width: 950px) { .duas, .metade { grid-template-columns: 1fr; } }
+  label { display:block; font-size:12px; font-weight:600; color:var(--suave); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
+  label:first-child { margin-top:0; }
+  .campo { width:100%; }
+  .linha { display:flex; gap:8px; align-items:center; }
+  .linha > input { flex:1; }
+  .ajuda { font-size:13px; color:var(--suave); margin:4px 0 10px; line-height:1.45; }
+  .acoes { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:16px; }
+  .msg { font-size:13px; color:var(--suave); }
+  .msg.erro { color:var(--erro); }
   .aviso { background:#FFF7E6; border:1px solid #F3D9A4; padding:10px 12px; border-radius:8px; font-size:13px; margin-bottom:12px; }
+
+  /* clientes */
+  .card-cliente { text-decoration:none; display:flex; flex-direction:column; overflow:hidden; padding:0; transition: box-shadow .15s; }
+  .card-cliente:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); }
+  .faixa { display:flex; height:38px; }
+  .faixa i { flex:1; }
+  .card-cliente .corpo { padding:14px 16px 16px; }
+  .card-cliente .nums { font-size:12px; color:var(--suave); margin-top:10px; }
+  .descricao { color:var(--suave); font-size:13px; margin:4px 0 0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .card-novo { display:flex; align-items:center; justify-content:center; min-height:150px; border-style:dashed; cursor:pointer; color:var(--suave); font-weight:600; background:transparent; }
+  .card-novo:hover { color:var(--texto); border-color:var(--suave); }
+  .cores-rapidas { display:flex; gap:12px; }
+  .cores-rapidas div { flex:1; }
+
+  /* cliente */
+  .topo-cliente { display:flex; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap; }
+  .bolinhas { display:flex; }
+  .bolinhas i { width:22px; height:22px; border-radius:50%; border:2px solid var(--cartao); margin-left:-6px; }
+  .bolinhas i:first-child { margin-left:0; }
+  .abas { display:flex; gap:4px; border-bottom:1px solid var(--borda); margin-bottom:20px; overflow-x:auto; }
+  .abas a { padding:10px 14px; text-decoration:none; color:var(--suave); border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; font-weight:500; }
+  .abas a.ativa { color:var(--texto); border-bottom-color:var(--acento); }
+
+  /* conteúdo */
   .ref { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
   .ref .topo { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--suave); }
   .score { font-weight:700; color:var(--acento); font-size:14px; }
-  .ref p { margin:8px 0; font-size:14px; line-height:1.4; white-space:pre-line; max-height:5.6em; overflow:hidden; }
-  .ref .acoes { display:flex; gap:8px; align-items:center; }
-  .ref .acoes select { flex:1; min-width:0; font-size:13px; }
-  .gerado { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:14px; margin-bottom:16px; }
-  .gerado h3 { margin:0 0 4px; font-size:15px; }
+  .ref p { margin:8px 0; line-height:1.4; white-space:pre-line; max-height:5.6em; overflow:hidden; }
+  .ref .escolhas { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+  .ref .escolhas select { width:100%; font-size:13px; }
+  .gerado { margin-bottom:16px; }
   .meta { font-size:12px; color:var(--suave); margin-bottom:10px; }
   .slides { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
   .slides a img { height:220px; aspect-ratio:1080/1350; border-radius:6px; display:block; border:1px solid var(--borda); }
   details { margin-top:10px; font-size:13px; }
   details pre { white-space:pre-wrap; background:var(--fundo); padding:10px; border-radius:8px; font-family:inherit; }
-  .vazio { color:var(--suave); font-size:14px; }
-  .carregando { font-size:13px; color:var(--suave); }
-  .config { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:12px 14px; margin-bottom:20px; }
-  .config summary { cursor:pointer; font-weight:600; font-size:15px; }
-  .config label { display:block; font-size:12px; font-weight:600; color:var(--suave); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
-  .config input { width:100%; min-width:0; padding:8px 10px; border:1px solid var(--borda); border-radius:8px; font:inherit; }
-  .linha { display:flex; gap:8px; }
+  .vazio { color:var(--suave); }
+
+  /* chips */
   .chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
   .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 6px 4px 10px; border-radius:99px; background:var(--fundo); border:1px solid var(--borda); font-size:13px; }
   .chip button { border:0; background:transparent; color:var(--suave); padding:0 4px; font-size:16px; line-height:1; }
-  .chip button:hover { color:var(--acento); }
-  .vazio-chip { font-size:13px; color:var(--suave); }
-  .rodape-config { display:flex; align-items:center; gap:12px; margin-top:16px; flex-wrap:wrap; }
-  .msg { font-size:13px; color:var(--suave); }
+
+  /* modelos */
+  .modelo { display:flex; flex-direction:column; gap:10px; }
+  .modelo.padrao { border-color:var(--acento); box-shadow:0 0 0 1px var(--acento); }
+  .tira { display:flex; gap:4px; }
+  .tira span { flex:1; aspect-ratio:1080/1350; border-radius:4px; display:flex; align-items:flex-end; padding:4px; font-size:9px; line-height:1.15; overflow:hidden; }
+  .etiqueta { font-size:11px; font-weight:700; color:var(--acento); text-transform:uppercase; letter-spacing:.05em; }
+  .modelo ol { margin:0; padding-left:18px; color:var(--suave); font-size:13px; line-height:1.5; }
+
+  /* visual */
+  .cor { display:grid; grid-template-columns: 1fr 44px 96px; gap:8px; align-items:center; margin-bottom:8px; }
+  .cor span { font-size:13px; }
+  .cor input[type=color] { width:44px; height:36px; padding:2px; cursor:pointer; }
+  .presets { display:flex; flex-wrap:wrap; gap:8px; }
+  .preset { display:flex; border-radius:8px; overflow:hidden; border:1px solid var(--borda); cursor:pointer; padding:0; background:none; }
+  .preset i { width:18px; height:28px; }
+  iframe.previa { width:100%; height:640px; border:1px solid var(--borda); border-radius:12px; background:repeating-conic-gradient(#eee 0% 25%, #fafafa 0% 50%) 50% / 20px 20px; }
+  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--texto); color:#fff; padding:10px 16px; border-radius:8px; font-size:13px; z-index:10; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .toast.on { opacity:1; }
 </style>
 </head>
 <body>
 <header>
-  <div style="display:flex;gap:12px;align-items:center">
-    <h1>Carrossel Studio</h1>
-    <select id="cliente"></select>
+  <div class="linha" style="gap:10px">
+    <a class="marca" href="#/">Carrossel Studio</a>
+    <span class="trilha" id="trilha"></span>
   </div>
   <div class="selos" id="selos"></div>
 </header>
-<main>
-  <section>
-    <details class="config" id="config">
-      <summary id="configTitulo">Referências cadastradas</summary>
-      <label for="perfilCliente">Instagram da cliente</label>
-      <input id="perfilCliente" placeholder="@perfil_da_cliente">
+<main id="app"></main>
+<div class="toast" id="toast"></div>
 
-      <label for="novoIg">Perfis de referência no Instagram</label>
-      <div class="chips" id="chipsIg"></div>
-      <div class="linha"><input id="novoIg" placeholder="@perfil ou link do perfil"><button class="sec" data-add="ig">Adicionar</button></div>
-
-      <label for="novoYt">Canais de referência no YouTube</label>
-      <div class="chips" id="chipsYt"></div>
-      <div class="linha"><input id="novoYt" placeholder="@canal ou link do canal"><button class="sec" data-add="yt">Adicionar</button></div>
-
-      <label for="periodo">Analisar posts dos últimos</label>
-      <select id="periodo">
-        <option value="30">30 dias</option><option value="60">60 dias</option><option value="90">90 dias</option>
-        <option value="180">180 dias</option><option value="365">365 dias</option>
-      </select>
-
-      <div class="rodape-config"><button id="salvar">Salvar e coletar</button><span class="msg" id="msgConfig"></span></div>
-    </details>
-    <h2>Referências que mais engajaram <button class="sec" id="recoletar">Coletar de novo</button></h2>
-    <div id="avisos"></div>
-    <div id="refs" class="carregando">Carregando...</div>
-  </section>
-  <section>
-    <h2>Carrosséis gerados</h2>
-    <div id="gerados" class="vazio">Nenhum carrossel ainda.</div>
-  </section>
-</main>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
 const num = (n) => Intl.NumberFormat("pt-BR", { notation: "compact" }).format(n || 0);
+const app = $("app");
+let status = { fontes: [] };
 let cliente = null;
 
-async function api(caminho, opcoes) {
+async function api(caminho, opcoes = {}) {
+  if (opcoes.corpo !== undefined) {
+    opcoes = { ...opcoes, headers: { "Content-Type": "application/json" }, body: JSON.stringify(opcoes.corpo) };
+  }
   const r = await fetch(caminho, opcoes);
-  const d = await r.json();
-  if (!r.ok) throw new Error(d.erro || "Erro");
+  const tipo = r.headers.get("Content-Type") || "";
+  const d = tipo.includes("json") ? await r.json() : await r.text();
+  if (!r.ok) throw new Error(d.erro || "Erro inesperado");
   return d;
 }
+const put = (caminho, corpo) => api(caminho, { method: "PUT", corpo });
+const post = (caminho, corpo = {}) => api(caminho, { method: "POST", corpo });
 
-async function iniciar() {
-  const s = await api("/api/status");
-  $("selos").innerHTML = [[s.ia ? `IA: ${s.ia}` : "IA (copy)", s.ia], ["Apify (Instagram)", s.apify], ["YouTube API", s.youtube]]
-    .map(([n, ok]) => `<span class="selo ${ok ? "on" : "off"}">${n}: ${ok ? "ativo" : "demo"}</span>`).join("");
-  $("cliente").innerHTML = s.clientes.map((c) => `<option value="${c.id}">${esc(c.nome)}</option>`).join("");
-  $("cliente").onchange = () => carregarCliente($("cliente").value);
-  if (s.clientes.length) carregarCliente(s.clientes[0].id);
+let toastTimer;
+function toast(texto) {
+  $("toast").textContent = texto;
+  $("toast").classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").classList.remove("on"), 2600);
 }
 
-let edicao = { ig: [], yt: [] };
-
-function mostrarChips() {
-  for (const tipo of ["ig", "yt"]) {
-    const lista = edicao[tipo];
-    $(tipo === "ig" ? "chipsIg" : "chipsYt").innerHTML = lista.length
-      ? lista.map((r, i) => `<span class="chip">${esc(r)}<button title="Remover" data-remover="${tipo}" data-i="${i}">×</button></span>`).join("")
-      : '<span class="vazio-chip">Nenhum cadastrado.</span>';
-  }
-  const total = edicao.ig.length + edicao.yt.length;
-  $("configTitulo").textContent = `Referências cadastradas (${total})`;
-}
-
-function preencherConfig() {
-  const r = cliente.referencias || {};
-  edicao = { ig: [...(r.instagram || [])], yt: [...(r.youtube || [])] };
-  $("perfilCliente").value = cliente.instagram || "";
-  $("periodo").value = String(r.periodo_dias || 90);
-  $("msgConfig").textContent = "";
-  $("config").open = !(edicao.ig.length + edicao.yt.length);
-  mostrarChips();
-}
-
-// Aceita vários de uma vez, separados por vírgula, espaço ou quebra de linha.
-function adicionar(tipo) {
-  const campo = $(tipo === "ig" ? "novoIg" : "novoYt");
-  const novos = campo.value.split(/[\s,;]+/).map((v) => v.trim()).filter(Boolean);
-  for (const n of novos) if (!edicao[tipo].includes(n)) edicao[tipo].push(n);
-  campo.value = "";
-  campo.focus();
-  mostrarChips();
-}
-
-async function salvarConfig() {
-  for (const tipo of ["ig", "yt"]) if ($(tipo === "ig" ? "novoIg" : "novoYt").value.trim()) adicionar(tipo);
-  const botao = $("salvar");
+// Executa uma ação com o botão travado e mensagem de status ao lado.
+async function acao(botao, msgEl, fn, { ok = "Salvo." } = {}) {
   botao.disabled = true;
-  $("msgConfig").textContent = "Salvando...";
+  if (msgEl) { msgEl.className = "msg"; msgEl.textContent = "Aguarde..."; }
   try {
-    await api(`/api/clientes/${cliente.id}/referencias`, {
-      method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ instagram: edicao.ig, youtube: edicao.yt, perfil_cliente: $("perfilCliente").value, periodo_dias: $("periodo").value }),
-    });
-    $("msgConfig").textContent = "Salvo. Coletando posts, pode levar alguns minutos...";
-    await carregarCliente(cliente.id, true);
-    $("msgConfig").textContent = "Salvo e coletado.";
-  } catch (erro) {
-    $("msgConfig").textContent = `Erro: ${erro.message}`;
+    const r = await fn();
+    if (msgEl) msgEl.textContent = typeof ok === "function" ? ok(r) : ok;
+    return r;
+  } catch (e) {
+    if (msgEl) { msgEl.className = "msg erro"; msgEl.textContent = e.message; } else alert(e.message);
+  } finally {
+    botao.disabled = false;
   }
-  botao.disabled = false;
 }
 
-async function carregarCliente(id, recoletar = false) {
+const swatches = (p) => [p.escura, p.clara, p.destaque, p.destaque2];
+
+// ============ roteamento ============
+async function rotear() {
+  const partes = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  try {
+    if (partes[0] === "c" && partes[1]) await telaCliente(partes[1], partes[2] || "conteudo");
+    else await telaInicio();
+  } catch (e) {
+    app.innerHTML = `<div class="aviso">${esc(e.message)}</div><a href="#/">Voltar para clientes</a>`;
+  }
+}
+window.addEventListener("hashchange", rotear);
+
+// ============ início: lista e cadastro de clientes ============
+async function telaInicio() {
+  cliente = null;
+  $("trilha").innerHTML = "";
+  const clientes = await api("/api/clientes");
+  app.innerHTML = `
+    <h1>Clientes</h1>
+    <p class="sub">Cada cliente tem o próprio painel com referências, tom de voz, modelos e identidade visual.</p>
+    <div class="grade">
+      ${clientes.map((c) => `
+        <a class="cartao card-cliente" href="#/c/${c.id}">
+          <div class="faixa">${swatches(c.paleta).map((cor) => `<i style="background:${cor}"></i>`).join("")}</div>
+          <div class="corpo">
+            <h3>${esc(c.nome)}</h3>
+            <div class="descricao">${esc(c.instagram || "sem Instagram")}${c.descricao ? " · " + esc(c.descricao) : ""}</div>
+            <div class="nums">${c.referencias} referências · ${c.carrosseis} carrosséis</div>
+          </div>
+        </a>`).join("")}
+      <button class="cartao card-novo" id="abrirNovo">+ Cadastrar cliente</button>
+    </div>
+    <div class="cartao" id="formNovo" hidden style="margin-top:20px;max-width:640px">
+      <h2>Novo cliente</h2>
+      <label for="nNome">Nome *</label><input id="nNome" class="campo" placeholder="Ex.: Maria Silva">
+      <label for="nInsta">Instagram do cliente</label><input id="nInsta" class="campo" placeholder="@perfil ou link">
+      <label for="nDesc">Profissão, nicho e método</label><input id="nDesc" class="campo" placeholder="Ex.: Nutricionista comportamental, foco em mulheres 30+">
+      <label for="nModelo">Modelo de carrossel padrão</label><select id="nModelo" class="campo"></select>
+      <label>Cores principais (dá para ajustar depois)</label>
+      <div class="cores-rapidas">
+        <div><div class="ajuda">Fundo escuro</div><input type="color" id="nEscura" value="#1A1A1A"></div>
+        <div><div class="ajuda">Fundo claro</div><input type="color" id="nClara" value="#F5F1EA"></div>
+        <div><div class="ajuda">Destaque</div><input type="color" id="nDestaque" value="#E07A5F"></div>
+      </div>
+      <div class="acoes"><button id="criar">Criar cliente</button><button class="sec" id="cancelarNovo">Cancelar</button><span class="msg" id="msgNovo"></span></div>
+    </div>`;
+
+  const modelos = await api("/api/modelos");
+  $("nModelo").innerHTML = modelos.map((m) => `<option value="${m.id}">${esc(m.nome)}</option>`).join("");
+  $("abrirNovo").onclick = () => { $("formNovo").hidden = false; $("nNome").focus(); };
+  $("cancelarNovo").onclick = () => { $("formNovo").hidden = true; };
+  $("criar").onclick = (e) => acao(e.target, $("msgNovo"), async () => {
+    const escura = $("nEscura").value, clara = $("nClara").value, destaque = $("nDestaque").value;
+    const { id } = await post("/api/clientes", {
+      nome: $("nNome").value, instagram: $("nInsta").value, descricao: $("nDesc").value, modelo: $("nModelo").value,
+      paleta: { escura, clara, destaque, destaque2: escurecer(destaque), texto_claro: "#FFFFFF", texto_escuro: escura },
+    });
+    location.hash = `#/c/${id}/perfil`;
+    toast("Cliente criado. Agora cadastre as referências.");
+  });
+}
+
+function escurecer(hex, f = 0.72) {
+  const n = parseInt(hex.slice(1), 16);
+  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * f).toString(16).padStart(2, "0"));
+  return "#" + c.join("");
+}
+
+// ============ painel do cliente ============
+const ABAS = [
+  ["conteudo", "Conteúdo"],
+  ["perfil", "Perfil e referências"],
+  ["voz", "Voz e direcionamento"],
+  ["modelos", "Modelos de carrossel"],
+  ["visual", "Identidade visual"],
+];
+
+async function telaCliente(id, aba) {
   cliente = await api(`/api/clientes/${id}`);
-  if (!recoletar) preencherConfig();
-  $("refs").innerHTML = '<span class="carregando">Coletando e ranqueando...</span>';
+  $("trilha").innerHTML = `/ <b>${esc(cliente.nome)}</b>`;
+  app.innerHTML = `
+    <div class="topo-cliente">
+      <div class="bolinhas">${swatches(cliente.paleta).map((c) => `<i style="background:${c}"></i>`).join("")}</div>
+      <div><h1>${esc(cliente.nome)}</h1><div class="descricao">${esc(cliente.instagram || "Instagram não cadastrado")}</div></div>
+    </div>
+    <nav class="abas">${ABAS.map(([k, n]) => `<a href="#/c/${id}/${k}" class="${k === aba ? "ativa" : ""}">${n}</a>`).join("")}</nav>
+    <div id="aba"></div>`;
+  const telas = { conteudo: abaConteudo, perfil: abaPerfil, voz: abaVoz, modelos: abaModelos, visual: abaVisual };
+  await (telas[aba] || abaConteudo)();
+}
+
+// ---------- aba conteúdo ----------
+async function abaConteudo(recoletar = false) {
+  const c = cliente;
+  $("aba").innerHTML = `
+    <div class="duas">
+      <section>
+        <h2 class="linha" style="justify-content:space-between">Referências que mais engajaram <button class="sec" id="recoletar">Coletar de novo</button></h2>
+        ${c.referencias.instagram.length + c.referencias.youtube.length ? "" : `<div class="aviso">Nenhuma referência cadastrada. <a href="#/c/${c.id}/perfil">Cadastrar agora</a></div>`}
+        <div id="avisos"></div>
+        <div id="refs" class="vazio">Coletando e ranqueando...</div>
+      </section>
+      <section>
+        <h2>Carrosséis gerados</h2>
+        <div id="gerados" class="vazio">Carregando...</div>
+      </section>
+    </div>`;
+  $("recoletar").onclick = () => abaConteudo(true);
+
   const [dados, gerados] = await Promise.all([
-    api(`/api/clientes/${id}/referencias${recoletar ? "?recoletar=1" : ""}`),
-    api(`/api/clientes/${id}/carrosseis`),
+    api(`/api/clientes/${c.id}/referencias${recoletar ? "?recoletar=1" : ""}`),
+    api(`/api/clientes/${c.id}/carrosseis`),
   ]);
   $("avisos").innerHTML = (dados.avisos || []).map((a) => `<div class="aviso">${esc(a)}</div>`).join("");
-  const opcoesAngulo = `<option value="">Ângulo: IA escolhe</option>` + cliente.angulos.map((a) => `<option>${esc(a)}</option>`).join("");
+  const optModelos = c.modelos.map((m) => `<option value="${m.id}" ${m.id === c.conteudo.modelo_padrao ? "selected" : ""}>${esc(m.nome)}</option>`).join("");
+  const optAngulos = `<option value="">Tema: IA escolhe</option>` + c.conteudo.angulos.map((a) => `<option>${esc(a)}</option>`).join("");
   $("refs").className = "";
   $("refs").innerHTML = dados.posts.map((p, i) => `
     <div class="ref">
       <div class="topo"><span>#${i + 1} · ${esc(p.plataforma)} · ${esc(p.tipo)} · ${esc(p.perfil)}</span><span class="score">${p.ranking.outlier}x</span></div>
       <p>${esc(p.texto)}</p>
-      <div class="topo" style="margin-bottom:8px"><span>${num(p.metricas.curtidas)} curtidas · ${num(p.metricas.comentarios)} comentários${p.metricas.visualizacoes ? " · " + num(p.metricas.visualizacoes) + " views" : ""}</span>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</div>
-      <div class="acoes"><select data-angulo="${esc(p.id)}">${opcoesAngulo}</select><button data-gerar="${esc(p.id)}" data-i="${i}">Gerar carrossel</button></div>
+      <div class="topo" style="margin-bottom:10px"><span>${num(p.metricas.curtidas)} curtidas · ${num(p.metricas.comentarios)} comentários${p.metricas.visualizacoes ? " · " + num(p.metricas.visualizacoes) + " views" : ""}</span>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</div>
+      <div class="escolhas"><select data-modelo>${optModelos}</select><select data-angulo>${optAngulos}</select></div>
+      <button data-gerar="${esc(p.id)}" data-i="${i}" style="width:100%">Gerar carrossel</button>
     </div>`).join("") || '<span class="vazio">Nada coletado.</span>';
   mostrarGerados(gerados);
 }
 
 function mostrarGerados(lista) {
-  if (!lista.length) { $("gerados").innerHTML = '<span class="vazio">Nenhum carrossel ainda.</span>'; return; }
-  $("gerados").className = "";
-  $("gerados").innerHTML = lista.map((g) => `
-    <div class="gerado">
+  const el = $("gerados");
+  if (!el) return;
+  if (!lista.length) { el.innerHTML = '<span class="vazio">Nenhum carrossel ainda. Escolha uma referência e clique em Gerar carrossel.</span>'; return; }
+  el.className = "";
+  el.innerHTML = lista.map((g) => `
+    <div class="cartao gerado">
       <h3>${esc(g.angulo)}${g.demo ? " <small style='color:var(--alerta)'>(demo)</small>" : ""}</h3>
-      <div class="meta">${new Date(g.data).toLocaleString("pt-BR")} · referência ${esc(g.carrossel.referencia?.perfil)}</div>
+      <div class="meta">${[new Date(g.data).toLocaleString("pt-BR"), g.carrossel.modelo?.nome, g.carrossel.referencia?.perfil && "referência " + g.carrossel.referencia.perfil].filter(Boolean).map(esc).join(" · ")}</div>
       <div class="slides">${g.imagens.map((src) => `<a href="${src}" target="_blank" download><img src="${src}" loading="lazy" alt=""></a>`).join("")}</div>
       <details><summary>Por que a referência funcionou</summary><pre>${esc(g.carrossel.por_que_a_referencia_funcionou)}</pre></details>
       <details><summary>Legenda</summary><pre>${esc(g.carrossel.legenda)}</pre></details>
       ${g.carrossel.pendencias?.length ? `<details open><summary>Pendências para preencher</summary><pre>${esc(g.carrossel.pendencias.join("\n"))}</pre></details>` : ""}
+      <div class="acoes"><button class="sec" data-aprovar="${esc(g.pasta)}">Aprovar como exemplo</button><span class="msg"></span></div>
     </div>`).join("");
 }
 
+// ---------- aba perfil e referências ----------
+function abaPerfil() {
+  const c = cliente;
+  const edicao = { ig: [...c.referencias.instagram], yt: [...c.referencias.youtube] };
+  $("aba").innerHTML = `
+    <div class="metade">
+      <div class="cartao">
+        <h2>Dados do cliente</h2>
+        <label for="pNome">Nome</label><input id="pNome" class="campo" value="${esc(c.nome)}">
+        <label for="pInsta">Instagram do cliente</label><input id="pInsta" class="campo" value="${esc(c.instagram)}" placeholder="@perfil_do_cliente">
+        <div class="ajuda">Usado para coletar o tom de voz automaticamente.</div>
+        <label for="pDesc">Profissão, nicho e método</label><input id="pDesc" class="campo" value="${esc(c.descricao)}">
+        <div class="acoes"><button id="salvarPerfil">Salvar dados</button><span class="msg" id="msgPerfil"></span></div>
+      </div>
+      <div class="cartao">
+        <h2>Referências deste cliente</h2>
+        <div class="ajuda">Perfis e canais de onde o sistema vai tirar as ideias que mais engajaram. Pode colar o @ ou o link, vários de uma vez.</div>
+        <label for="novoIg">Instagram</label>
+        <div class="chips" id="chipsIg"></div>
+        <div class="linha"><input id="novoIg" placeholder="@perfil ou link do perfil"><button class="sec" data-add="ig">Adicionar</button></div>
+        <label for="novoYt">YouTube</label>
+        <div class="chips" id="chipsYt"></div>
+        <div class="linha"><input id="novoYt" placeholder="@canal ou link do canal"><button class="sec" data-add="yt">Adicionar</button></div>
+        <label for="periodo">Analisar posts dos últimos</label>
+        <select id="periodo">${[30, 60, 90, 180, 365].map((d) => `<option value="${d}" ${d === (c.referencias.periodo_dias || 90) ? "selected" : ""}>${d} dias</option>`).join("")}</select>
+        <div class="acoes"><button id="salvarRefs">Salvar e coletar</button><span class="msg" id="msgRefs"></span></div>
+      </div>
+    </div>`;
+
+  const chips = () => {
+    for (const t of ["ig", "yt"]) {
+      $(t === "ig" ? "chipsIg" : "chipsYt").innerHTML = edicao[t].length
+        ? edicao[t].map((r, i) => `<span class="chip">${esc(r)}<button title="Remover" data-remover="${t}" data-i="${i}">×</button></span>`).join("")
+        : '<span class="vazio">Nenhum cadastrado.</span>';
+    }
+  };
+  const adicionar = (t) => {
+    const campo = $(t === "ig" ? "novoIg" : "novoYt");
+    for (const n of campo.value.split(/[\s,;]+/).filter(Boolean)) if (!edicao[t].includes(n)) edicao[t].push(n);
+    campo.value = "";
+    chips();
+  };
+  chips();
+  $("aba").onclick = (e) => {
+    const d = e.target.dataset;
+    if (d.add) adicionar(d.add);
+    if (d.remover) { edicao[d.remover].splice(Number(d.i), 1); chips(); }
+  };
+  $("novoIg").onkeydown = (e) => e.key === "Enter" && adicionar("ig");
+  $("novoYt").onkeydown = (e) => e.key === "Enter" && adicionar("yt");
+
+  $("salvarPerfil").onclick = (e) => acao(e.target, $("msgPerfil"), async () => {
+    cliente = await put(`/api/clientes/${c.id}/perfil`, { nome: $("pNome").value, instagram: $("pInsta").value, descricao: $("pDesc").value });
+    $("trilha").innerHTML = `/ <b>${esc(cliente.nome)}</b>`;
+  });
+  $("salvarRefs").onclick = (e) => acao(e.target, $("msgRefs"), async () => {
+    for (const t of ["ig", "yt"]) if ($(t === "ig" ? "novoIg" : "novoYt").value.trim()) adicionar(t);
+    await put(`/api/clientes/${c.id}/referencias`, { instagram: edicao.ig, youtube: edicao.yt, periodo_dias: $("periodo").value });
+    $("msgRefs").textContent = "Salvo. Coletando posts, pode levar alguns minutos...";
+    await api(`/api/clientes/${c.id}/referencias?recoletar=1`);
+    cliente = await api(`/api/clientes/${c.id}`);
+  }, { ok: "Salvo e coletado. Veja o ranking na aba Conteúdo." });
+}
+
+// ---------- aba voz e direcionamento ----------
+const MODELO_DIRECIONAMENTO = `## Quem é
+Profissão, formação, tempo de atuação, história pessoal com o tema.
+
+## Método
+Nome do método, como funciona, frases de impacto que o cliente usa.
+
+## Público
+Quem é, dores, desejos, frases que o público diz, objeções.
+
+## Produtos e objetivo do conteúdo
+O que vende, para onde cada post deve levar (CTA).
+
+## Regras
+O que nunca dizer, promessas proibidas, palavras que o cliente não usa.`;
+
+function abaVoz() {
+  const c = cliente;
+  const podeColetar = c.instagram && status.apify && status.ia;
+  $("aba").innerHTML = `
+    <div class="metade">
+      <div class="cartao">
+        <h2>1. Tom de voz coletado pelo sistema</h2>
+        <div class="ajuda">O sistema lê as legendas do Instagram ${c.instagram ? `<b>${esc(c.instagram)}</b>` : "do cliente"} e descreve o jeito de escrever: vocabulário, ritmo, expressões e CTAs. Você pode ajustar o texto depois.</div>
+        ${podeColetar ? "" : `<div class="aviso">${!c.instagram ? `Cadastre o Instagram do cliente na aba <a href="#/c/${c.id}/perfil">Perfil e referências</a>.` : "Precisa das chaves do Apify e da IA no arquivo .env."}</div>`}
+        <div class="acoes" style="margin:0 0 12px"><button id="coletarVoz" ${podeColetar ? "" : "disabled"}>Coletar tom de voz do Instagram</button><span class="msg" id="msgColeta"></span></div>
+        <textarea id="voz" rows="18" placeholder="O tom de voz aparece aqui depois da coleta. Você também pode escrever à mão.">${esc(c.voz)}</textarea>
+        <div class="acoes"><button class="sec" id="salvarVoz">Salvar ajustes</button><span class="msg" id="msgVoz"></span></div>
+      </div>
+      <div class="cartao">
+        <h2>2. Informações e direcionamento</h2>
+        <div class="ajuda">Tudo que você coletou sobre o cliente: método, público, produtos, regras. A IA segue isso com prioridade ao escrever.</div>
+        <textarea id="direcionamento" rows="18" placeholder="${esc(MODELO_DIRECIONAMENTO)}">${esc(c.direcionamento)}</textarea>
+        <div class="acoes"><button id="salvarDir">Salvar direcionamento</button><span class="msg" id="msgDir"></span></div>
+      </div>
+    </div>
+    <div class="cartao" style="margin-top:20px">
+      <h2>3. Temas e regras de conteúdo</h2>
+      <div class="metade">
+        <div>
+          <label for="angulos">Temas ou ângulos (um por linha)</label>
+          <textarea id="angulos" rows="8" placeholder="Opcional. Ex.:&#10;Ansiedade no trabalho&#10;Culpa depois de comer">${esc(c.conteudo.angulos.join("\n"))}</textarea>
+          <div class="ajuda">A IA escolhe um tema por carrossel. Aparecem também na hora de gerar.</div>
+        </div>
+        <div>
+          <label for="cta">Objetivo e CTA da legenda</label>
+          <textarea id="cta" rows="4">${esc(c.conteudo.cta_legenda)}</textarea>
+          <label><input type="checkbox" id="travessao" ${c.conteudo.proibir_travessao ? "checked" : ""}> Nunca usar travessão</label>
+          <div class="ajuda">${c.exemplos} carrossel(is) aprovado(s) como exemplo de tom. Aprove mais na aba Conteúdo.</div>
+        </div>
+      </div>
+      <div class="acoes"><button id="salvarRegras">Salvar temas e regras</button><span class="msg" id="msgRegras"></span></div>
+    </div>`;
+
+  $("coletarVoz").onclick = (e) => acao(e.target, $("msgColeta"), async () => {
+    $("msgColeta").textContent = "Coletando legendas e analisando, pode levar alguns minutos...";
+    const r = await post(`/api/clientes/${c.id}/voz/gerar`);
+    $("voz").value = r.texto;
+    cliente.voz = r.texto;
+    return r;
+  }, { ok: (r) => `Pronto. Tom de voz gerado a partir de ${r.legendas} legendas e salvo.` });
+  $("salvarVoz").onclick = (e) => acao(e.target, $("msgVoz"), async () => {
+    await put(`/api/clientes/${c.id}/voz`, { texto: $("voz").value });
+    cliente.voz = $("voz").value;
+  });
+  $("salvarDir").onclick = (e) => acao(e.target, $("msgDir"), async () => {
+    await put(`/api/clientes/${c.id}/direcionamento`, { texto: $("direcionamento").value });
+    cliente.direcionamento = $("direcionamento").value;
+  });
+  $("salvarRegras").onclick = (e) => acao(e.target, $("msgRegras"), async () => {
+    cliente = await put(`/api/clientes/${c.id}/conteudo`, {
+      angulos: $("angulos").value.split("\n"), cta_legenda: $("cta").value, proibir_travessao: $("travessao").checked,
+    });
+  });
+}
+
+// ---------- aba modelos ----------
+function corDoFundo(fundo, p) {
+  if (fundo === "claro") return { bg: p.clara, fg: p.texto_escuro };
+  if (fundo === "destaque") return { bg: p.gradiente ? `linear-gradient(160deg, ${p.destaque}, ${p.destaque2})` : p.destaque, fg: p.texto_claro };
+  return { bg: p.escura, fg: p.texto_claro };
+}
+
+function abaModelos() {
+  const c = cliente;
+  $("aba").innerHTML = `
+    <p class="sub">Escolha o modelo padrão deste cliente. Na hora de gerar, dá para trocar o modelo em cada carrossel.</p>
+    <div class="grade" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">
+      ${c.modelos.map((m) => `
+        <div class="cartao modelo ${m.id === c.conteudo.modelo_padrao ? "padrao" : ""}">
+          <div class="linha" style="justify-content:space-between"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta">Padrão</span>' : ""}</div>
+          <div class="descricao" style="-webkit-line-clamp:3">${esc(m.descricao)}</div>
+          <div class="tira">${m.estrutura.map((s) => { const k = corDoFundo(s.fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
+          <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>
+          <div class="acoes" style="margin-top:auto">
+            ${m.id === c.conteudo.modelo_padrao ? "" : `<button data-padrao="${m.id}">Usar como padrão</button>`}
+            <button class="sec" data-ver="${m.id}">Ver prévia</button>
+          </div>
+        </div>`).join("")}
+    </div>
+    <div id="areaPrevia" style="margin-top:20px" hidden>
+      <h2 id="tituloPrevia"></h2>
+      <iframe class="previa" id="previaModelo" title="Prévia do modelo"></iframe>
+    </div>`;
+
+  $("aba").onclick = async (e) => {
+    const d = e.target.dataset;
+    if (d.padrao) {
+      await acao(e.target, null, async () => {
+        cliente = await put(`/api/clientes/${c.id}/conteudo`, { modelo_padrao: d.padrao });
+        abaModelos();
+        toast("Modelo padrão atualizado.");
+      });
+    }
+    if (d.ver) {
+      const m = c.modelos.find((x) => x.id === d.ver);
+      $("areaPrevia").hidden = false;
+      $("tituloPrevia").textContent = `Prévia: ${m.nome}`;
+      $("previaModelo").srcdoc = await post(`/api/clientes/${c.id}/previa`, { modelo: m.id });
+      $("areaPrevia").scrollIntoView({ behavior: "smooth" });
+    }
+  };
+}
+
+// ---------- aba identidade visual ----------
+const PRESETS = [
+  ["Terracota", { escura: "#1A1A1A", clara: "#F0EBE1", destaque: "#E07A5F", destaque2: "#B8513A", texto_claro: "#F7F2E9", texto_escuro: "#1A1A1A" }],
+  ["Azul", { escura: "#111827", clara: "#F8FAFC", destaque: "#3B82F6", destaque2: "#1D4ED8", texto_claro: "#FFFFFF", texto_escuro: "#111827" }],
+  ["Verde", { escura: "#14231C", clara: "#F1F5EE", destaque: "#4F9D69", destaque2: "#2F6B45", texto_claro: "#FFFFFF", texto_escuro: "#14231C" }],
+  ["Rosa", { escura: "#2A1620", clara: "#FBF1F4", destaque: "#E26D9A", destaque2: "#B3446F", texto_claro: "#FFFFFF", texto_escuro: "#2A1620" }],
+  ["Roxo", { escura: "#1B1530", clara: "#F4F1FB", destaque: "#8B5CF6", destaque2: "#5B34C9", texto_claro: "#FFFFFF", texto_escuro: "#1B1530" }],
+  ["Preto e dourado", { escura: "#0E0E0E", clara: "#F6F1E7", destaque: "#C9A24B", destaque2: "#8C6B22", texto_claro: "#FFFFFF", texto_escuro: "#0E0E0E" }],
+];
+const CAMPOS_COR = [
+  ["escura", "Fundo escuro"],
+  ["clara", "Fundo claro"],
+  ["destaque", "Cor de destaque"],
+  ["destaque2", "Segunda cor do gradiente"],
+  ["texto_claro", "Texto sobre fundo escuro"],
+  ["texto_escuro", "Texto sobre fundo claro"],
+];
+
+function abaVisual() {
+  const c = cliente;
+  const v = { ...c.visual, paleta: { ...c.visual.paleta } };
+  $("aba").innerHTML = `
+    <div class="duas">
+      <div class="cartao">
+        <h2>Cores</h2>
+        <label>Paletas prontas</label>
+        <div class="presets">${PRESETS.map(([n, p], i) => `<button class="preset" title="${n}" data-preset="${i}">${swatches({ ...p }).map((cor) => `<i style="background:${cor}" data-preset="${i}"></i>`).join("")}</button>`).join("")}</div>
+        <label>Paleta do cliente</label>
+        ${CAMPOS_COR.map(([k, n]) => `<div class="cor"><span>${n}</span><input type="color" data-cor="${k}"><input data-hex="${k}" maxlength="7"></div>`).join("")}
+        <label><input type="checkbox" id="gradiente"> Slides de destaque com gradiente</label>
+
+        <h2 style="margin-top:24px">Texto e marca</h2>
+        <label for="fonte">Fonte</label>
+        <select id="fonte" class="campo">${status.fontes.map((f) => `<option>${f}</option>`).join("")}</select>
+        <label for="assinatura">Assinatura no topo dos slides</label>
+        <input id="assinatura" class="campo" placeholder="@perfil (deixe vazio para não mostrar)">
+        <label for="ctaFinal">Botão do último slide</label>
+        <input id="ctaFinal" class="campo" placeholder="SALVAR ESTE POST">
+        <label for="arraste">Texto de "arraste"</label>
+        <input id="arraste" class="campo" placeholder="ARRASTE →">
+        <label>Logo (aparece no topo, no lugar da assinatura)</label>
+        <div class="linha"><input type="file" id="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">${c.visual.tem_logo ? '<button class="sec" id="removerLogo">Remover logo</button>' : ""}</div>
+
+        <div class="acoes"><button id="salvarVisual">Salvar identidade visual</button><span class="msg" id="msgVisual"></span></div>
+      </div>
+      <div>
+        <h2>Prévia ao vivo</h2>
+        <div class="ajuda">Mostra o modelo padrão com as cores acima. Só vale para os próximos carrosséis depois de salvar.</div>
+        <iframe class="previa" id="previa" title="Prévia"></iframe>
+      </div>
+    </div>`;
+
+  const preencher = () => {
+    for (const [k] of CAMPOS_COR) {
+      document.querySelector(`[data-cor="${k}"]`).value = v.paleta[k];
+      document.querySelector(`[data-hex="${k}"]`).value = v.paleta[k].toUpperCase();
+    }
+    $("gradiente").checked = v.paleta.gradiente !== false;
+    $("fonte").value = v.fonte;
+    $("assinatura").value = v.assinatura;
+    $("ctaFinal").value = v.cta_final;
+    $("arraste").value = v.texto_arraste;
+  };
+  const dadosVisual = () => ({
+    paleta: v.paleta, fonte: $("fonte").value, assinatura: $("assinatura").value,
+    cta_final: $("ctaFinal").value, texto_arraste: $("arraste").value,
+  });
+  let timer;
+  const atualizarPrevia = () => {
+    clearTimeout(timer);
+    timer = setTimeout(async () => { $("previa").srcdoc = await post(`/api/clientes/${c.id}/previa`, dadosVisual()); }, 250);
+  };
+  preencher();
+  atualizarPrevia();
+
+  $("aba").oninput = (e) => {
+    const d = e.target.dataset;
+    if (d.cor) { v.paleta[d.cor] = e.target.value; document.querySelector(`[data-hex="${d.cor}"]`).value = e.target.value.toUpperCase(); }
+    if (d.hex) {
+      if (!/^#[0-9a-f]{6}$/i.test(e.target.value)) return;
+      v.paleta[d.hex] = e.target.value;
+      document.querySelector(`[data-cor="${d.hex}"]`).value = e.target.value;
+    }
+    if (e.target.id === "gradiente") v.paleta.gradiente = e.target.checked;
+    atualizarPrevia();
+  };
+  $("aba").onchange = $("aba").oninput;
+  $("aba").onclick = (e) => {
+    const i = e.target.dataset.preset;
+    if (i === undefined) return;
+    Object.assign(v.paleta, PRESETS[i][1]);
+    preencher();
+    atualizarPrevia();
+  };
+  $("logo").onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 2_000_000) return alert("Use uma imagem de até 2 MB.");
+    const dataUrl = await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(f); });
+    cliente = await put(`/api/clientes/${c.id}/logo`, { dataUrl });
+    toast("Logo enviado.");
+    abaVisual();
+  };
+  if ($("removerLogo")) $("removerLogo").onclick = async () => {
+    cliente = await put(`/api/clientes/${c.id}/logo`, { dataUrl: null });
+    toast("Logo removido.");
+    abaVisual();
+  };
+  $("salvarVisual").onclick = (e) => acao(e.target, $("msgVisual"), async () => {
+    cliente = await put(`/api/clientes/${c.id}/visual`, dadosVisual());
+    document.querySelector(".bolinhas").innerHTML = swatches(cliente.paleta).map((cor) => `<i style="background:${cor}"></i>`).join("");
+  }, { ok: "Salvo. Os próximos carrosséis já saem com essa identidade." });
+}
+
+// ============ ações globais (aba conteúdo) ============
 document.addEventListener("click", async (e) => {
   const d = e.target.dataset || {};
-  if (d.add) return adicionar(d.add);
-  if (d.remover) { edicao[d.remover].splice(Number(d.i), 1); return mostrarChips(); }
-  const id = d.gerar;
-  if (!id) return;
-  const botao = e.target;
-  botao.disabled = true; botao.textContent = "Gerando...";
-  try {
-    const angulo = document.querySelector(`select[data-angulo="${CSS.escape(id)}"]`).value;
-    await api(`/api/clientes/${cliente.id}/gerar`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refId: id, angulo, indice: Number(botao.dataset.i) }),
-    });
-    mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
-  } catch (erro) { alert(erro.message); }
-  botao.disabled = false; botao.textContent = "Gerar carrossel";
+  if (d.gerar) {
+    const card = e.target.closest(".ref");
+    const botao = e.target;
+    botao.disabled = true; botao.textContent = "Gerando...";
+    try {
+      await post(`/api/clientes/${cliente.id}/gerar`, {
+        refId: d.gerar, indice: Number(d.i),
+        modelo: card.querySelector("[data-modelo]").value, angulo: card.querySelector("[data-angulo]").value,
+      });
+      mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
+      toast("Carrossel gerado.");
+    } catch (erro) { alert(erro.message); }
+    botao.disabled = false; botao.textContent = "Gerar carrossel";
+  }
+  if (d.aprovar) {
+    const msg = e.target.nextElementSibling;
+    acao(e.target, msg, () => post(`/api/clientes/${cliente.id}/aprovar`, { pasta: d.aprovar }),
+      { ok: (r) => `Aprovado. ${r.exemplos} exemplo(s) de tom salvos.` });
+  }
 });
-$("recoletar").onclick = () => carregarCliente(cliente.id, true);
-$("salvar").onclick = salvarConfig;
-$("novoIg").onkeydown = (e) => { if (e.key === "Enter") adicionar("ig"); };
-$("novoYt").onkeydown = (e) => { if (e.key === "Enter") adicionar("yt"); };
-iniciar().catch((e) => { $("refs").textContent = e.message; });
+
+(async () => {
+  status = await api("/api/status");
+  $("selos").innerHTML = [[status.ia ? `IA: ${status.ia}` : "IA (copy)", status.ia], ["Apify (Instagram)", status.apify], ["YouTube API", status.youtube]]
+    .map(([n, ok]) => `<span class="selo ${ok ? "on" : "off"}">${n}: ${ok ? "ativo" : "demo"}</span>`).join("");
+  rotear();
+})();
 </script>
 </body>
 </html>

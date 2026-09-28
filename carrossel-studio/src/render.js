@@ -36,7 +36,7 @@ function comoDataUri(cliente, arquivo) {
   return `data:image/${ext};base64,${fs.readFileSync(p).toString("base64")}`;
 }
 
-export async function montarHtml(cliente, carrossel) {
+export async function montarHtml(cliente, carrossel, { cssExtra = "" } = {}) {
   const visual = { ...cliente.visual, logo: comoDataUri(cliente, cliente.visual.logo) };
   const template = await import(path.join(RAIZ, "templates", `${visual.template || "classico"}.js`));
   const estrutura = cliente.conteudo.estrutura;
@@ -45,15 +45,16 @@ export async function montarHtml(cliente, carrossel) {
   const slides = carrossel.slides
     .map((s, i) => {
       const foto = comoDataUri(cliente, s.imagem || (i === 0 ? visual.foto_capa : null));
-      const nomeFundo = foto ? "foto" : estrutura[i]?.fundo;
-      const fundo = visual.fundos[nomeFundo] || visual.fundos.escuro || Object.values(visual.fundos)[0];
+      let nomeFundo = foto ? "foto" : s.fundo || estrutura?.[i]?.fundo;
+      if (nomeFundo === "gradiente") nomeFundo = "destaque";
+      const fundo = visual.fundos[nomeFundo] || visual.fundos.escuro;
       return template.slide({ visual, s, i, total, fundo, foto });
     })
     .join("\n");
 
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>${cliente.nome} · ${carrossel.angulo}</title>
-<style>${template.css(visual, fontesCss(visual.fonte || "Poppins"))}</style>
+<style>${template.css(visual, fontesCss(visual.fonte || "Poppins"))}${cssExtra}</style>
 </head><body>${slides}</body></html>`;
 }
 

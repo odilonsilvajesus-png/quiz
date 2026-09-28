@@ -1,0 +1,38 @@
+{
+  "id": "mito-verdade",
+  "nome": "Mito x Verdade",
+  "descricao": "Alterna mitos e verdades do nicho. Gera comentários e compartilhamentos.",
+  "ordem": 3,
+  "estrutura": [
+    {
+      "papel": "Capa",
+      "fundo": "escuro",
+      "instrucao": "Anuncia que vai desmentir mitos que o público acredita."
+    },
+    {
+      "papel": "Mito 1",
+      "fundo": "claro",
+      "instrucao": "Comece o título com \"MITO:\" e apresente o mito."
+    },
+    {
+      "papel": "Verdade 1",
+      "fundo": "destaque",
+      "instrucao": "Comece o título com \"VERDADE:\" e corrija o mito anterior."
+    },
+    {
+      "papel": "Mito 2",
+      "fundo": "claro",
+      "instrucao": "Comece o título com \"MITO:\" e apresente o segundo mito."
+    },
+    {
+      "papel": "Verdade 2",
+      "fundo": "destaque",
+      "instrucao": "Comece o título com \"VERDADE:\" e corrija o mito anterior."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "escuro",
+      "instrucao": "Resume a lição principal. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": "lista-de-dicas",
+  "nome": "Lista de dicas",
+  "descricao": "Capa com promessa e dicas práticas, uma por slide. Alto índice de salvamento.",
+  "ordem": 2,
+  "estrutura": [
+    {
+      "papel": "Capa com promessa",
+      "fundo": "escuro",
+      "instrucao": "Promete um resultado claro e diz quantas dicas vêm a seguir."
+    },
+    {
+      "papel": "Dica 1",
+      "fundo": "claro",
+      "instrucao": "Primeira dica: título curto e explicação prática no subtítulo."
+    },
+    {
+      "papel": "Dica 2",
+      "fundo": "claro",
+      "instrucao": "Segunda dica, no mesmo formato."
+    },
+    {
+      "papel": "Dica 3",
+      "fundo": "escuro",
+      "instrucao": "Terceira dica, no mesmo formato."
+    },
+    {
+      "papel": "Dica 4",
+      "fundo": "claro",
+      "instrucao": "Quarta dica, no mesmo formato."
+    },
+    {
+      "papel": "Dica 5",
+      "fundo": "escuro",
+      "instrucao": "Quinta dica, a mais forte de todas."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "destaque",
+      "instrucao": "Convida a salvar e aplicar. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

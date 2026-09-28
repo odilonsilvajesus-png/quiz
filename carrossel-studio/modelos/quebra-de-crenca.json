@@ -1,0 +1,38 @@
+{
+  "id": "quebra-de-crenca",
+  "nome": "Quebra de crença",
+  "descricao": "Derruba uma crença comum do público e mostra o motivo real. Ótimo para autoridade.",
+  "ordem": 1,
+  "estrutura": [
+    {
+      "papel": "Gancho polêmico",
+      "fundo": "escuro",
+      "instrucao": "Frase curta que confronta uma crença comum do público, em segunda pessoa."
+    },
+    {
+      "papel": "A crença",
+      "fundo": "claro",
+      "instrucao": "Descreve o que o público acredita hoje e por que parece fazer sentido."
+    },
+    {
+      "papel": "Por que está errada",
+      "fundo": "claro",
+      "instrucao": "Mostra a falha dessa crença com um argumento simples."
+    },
+    {
+      "papel": "O que realmente acontece",
+      "fundo": "escuro",
+      "instrucao": "Explica o mecanismo real por trás do problema."
+    },
+    {
+      "papel": "Virada",
+      "fundo": "destaque",
+      "instrucao": "A nova forma de enxergar o problema, em uma frase forte."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "destaque",
+      "instrucao": "Resume a mensagem. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

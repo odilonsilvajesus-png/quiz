@@ -1,0 +1,38 @@
+{
+  "id": "erros-comuns",
+  "nome": "Erros comuns",
+  "descricao": "Aponta erros que o público comete sem perceber. Gera identificação imediata.",
+  "ordem": 6,
+  "estrutura": [
+    {
+      "papel": "Capa",
+      "fundo": "escuro",
+      "instrucao": "Anuncia quantos erros e o que eles estão custando ao público."
+    },
+    {
+      "papel": "Erro 1",
+      "fundo": "claro",
+      "instrucao": "Nomeia o primeiro erro e por que ele atrapalha."
+    },
+    {
+      "papel": "Erro 2",
+      "fundo": "escuro",
+      "instrucao": "Nomeia o segundo erro e por que ele atrapalha."
+    },
+    {
+      "papel": "Erro 3",
+      "fundo": "claro",
+      "instrucao": "Nomeia o terceiro erro e por que ele atrapalha."
+    },
+    {
+      "papel": "O que fazer no lugar",
+      "fundo": "destaque",
+      "instrucao": "A alternativa certa, de forma prática."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "destaque",
+      "instrucao": "Resume e convida a salvar. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

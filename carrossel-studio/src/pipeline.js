@@ -6,6 +6,7 @@ import { coletar, ultimaColeta } from "./coleta/index.js";
 import { ranquear } from "./ranking.js";
 import { escreverCarrossel } from "./copy.js";
 import { renderizar } from "./render.js";
+import { resolverModelo } from "./modelos.js";
 
 const slug = (t) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
@@ -24,10 +25,13 @@ export async function referenciasRanqueadas(cliente, { recoletar = false, limite
   return { ...coleta, posts: ranquear(coleta.posts, { limite }) };
 }
 
-export async function gerarCarrossel(cliente, referencia, { angulo, indice = 0, log = console.log } = {}) {
+export async function gerarCarrossel(cliente, referencia, { angulo, modelo: modeloId, indice = 0, log = console.log } = {}) {
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
-  log(`Escrevendo carrossel a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
-  const copy = await escreverCarrossel(cliente, referencia, { angulo, indice, angulosRecentes: recentes });
+  const modelo = resolverModelo(cliente, modeloId);
+  log(`Escrevendo carrossel (${modelo.nome}) a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
+  const copy = await escreverCarrossel(cliente, referencia, { angulo, indice, modelo, angulosRecentes: recentes });
+  // Cada slide guarda o próprio fundo, para re-renderizar igual mesmo se o modelo mudar depois.
+  copy.slides = copy.slides.map((s, i) => ({ ...s, fundo: modelo.estrutura[i]?.fundo || "escuro" }));
 
   const carrossel = {
     cliente: cliente.id,
@@ -39,6 +43,7 @@ export async function gerarCarrossel(cliente, referencia, { angulo, indice = 0, 
       trecho: referencia.texto.slice(0, 300),
       outlier: referencia.ranking?.outlier ?? null,
     },
+    modelo: { id: modelo.id, nome: modelo.nome },
     ...copy,
   };
 

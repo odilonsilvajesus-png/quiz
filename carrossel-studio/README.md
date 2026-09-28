@@ -38,53 +38,35 @@ O modelo padrão é o `gpt-5.5`. Para trocar, defina `OPENAI_MODEL` no `.env`. P
 
 ## Uso no dia a dia
 
-### Pelo painel (`npm run painel`)
-1. Escolha o cliente no topo.
-2. Em **Referências cadastradas**, adicione os perfis do Instagram e os canais do YouTube (pode colar o @ ou o link) e clique em **Salvar e coletar**. Dá para remover qualquer um pelo ×.
-3. Logo abaixo aparecem as referências ranqueadas. O número em laranja é quantas vezes o post performou acima da média do próprio perfil.
-4. Escolha o ângulo (ou deixe a IA escolher) e clique em **Gerar carrossel**.
-5. À direita aparecem os slides prontos para baixar, com a legenda e as pendências (marcadores `[ENTRE COLCHETES]` que alguém precisa preencher).
+Rode `npm run painel` e abra **http://localhost:3333**. Tudo é feito pelo painel.
 
-### Pela linha de comando
+### Página inicial: clientes
+Lista todos os clientes. Clique em **+ Cadastrar cliente** para criar um novo (nome, Instagram, nicho, modelo padrão e cores principais).
+
+### Painel de cada cliente
+Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) e cinco abas:
+
+| Aba | Para quê |
+|---|---|
+| **Conteúdo** | Ranking das referências que mais engajaram. Escolha o modelo e o tema e clique em **Gerar carrossel**. **Aprovar como exemplo** ensina a IA com os carrosséis bons. |
+| **Perfil e referências** | Nome, Instagram e nicho do cliente. Perfis do Instagram e canais do YouTube de referência (cole o @ ou o link). **Salvar e coletar** já busca os posts. |
+| **Voz e direcionamento** | **1. Tom de voz coletado pelo sistema** a partir das legendas do Instagram do cliente (editável). **2. Informações e direcionamento**: o que você levantou sobre o cliente; a IA segue com prioridade. **3. Temas e regras**: temas, CTA da legenda, proibir travessão. |
+| **Modelos de carrossel** | Biblioteca de estruturas (Quebra de crença, Lista de dicas, Mito x Verdade, Storytelling, Passo a passo, Erros comuns, e o modelo próprio do cliente quando existe). Escolha o padrão e veja a prévia. |
+| **Identidade visual** | Paleta de 6 cores (com paletas prontas), gradiente, fonte, assinatura, logo, textos do botão final e do "arraste". Prévia ao vivo antes de salvar. |
+
+Os arquivos saem em `saida/<cliente>/carrosseis/<data>-<tema>/`: `slide-01.png` …, `legenda.txt`, `carrossel.json` (editável) e `carrossel.html`.
+
+### Pela linha de comando (opcional)
 ```bash
-npm run coletar -- camila                     # coleta e mostra o ranking
-npm run gerar -- camila --top 3               # gera carrosséis das 3 melhores referências
-npm run gerar -- camila --ref 5 --angulo "Nome do ângulo"
+npm run coletar -- camila
+npm run gerar -- camila --top 3 --modelo lista-de-dicas
 npm run renderizar -- saida/camila/carrosseis/<pasta>/carrossel.json   # depois de editar o texto à mão
 ```
 
-Os arquivos saem em `saida/<cliente>/carrosseis/<data>-<angulo>/`:
-`slide-01.png` … `slide-07.png`, `legenda.txt`, `carrossel.json` (editável) e `carrossel.html`.
-
-**Ajustar um texto sem gastar IA:** edite o `carrossel.json` e rode `npm run renderizar` apontando para ele.
-
----
-
-## Cadastrar um cliente novo (~10 minutos)
-
-```bash
-npm run novo-cliente -- maria-nutri "Maria Silva"
-```
-
-Isso cria `clientes/maria-nutri/` a partir do modelo. Preencha:
-
-| Arquivo | O que colocar |
-|---|---|
-| `base-conhecimento.md` | Quem é, método, persona, produtos, regras. É o contexto que a IA lê antes de escrever. |
-| `exemplos.json` | 2 ou 3 carrosséis reais e aprovados. Ensinam tom, ritmo e tamanho do texto. |
-| `cliente.json` → `referencias` | @ do Instagram e canais do YouTube de referência. |
-| `cliente.json` → `conteudo.estrutura` | Papel de cada slide e qual fundo usar. A quantidade de itens define quantos slides o carrossel tem. |
-| `cliente.json` → `conteudo.angulos` | (Opcional) lista de temas ou ângulos do cliente. A IA escolhe um por carrossel. |
-| `cliente.json` → `visual` | Fonte, cores dos fundos, logo, assinatura, texto do CTA final. |
-| `assets/` | Logo e foto de capa (caminhos usados em `visual.logo` e `visual.foto_capa`). |
-
-**Voz automática:** preencha `"instagram"` no `cliente.json` e rode `npm run gerar-voz -- maria-nutri`. O sistema lê as legendas do cliente e cria o `voz.md`. Revise antes de usar.
-
-**Fonte diferente:** troque `visual.fonte` (ex.: `"Montserrat"`) e instale com `npm install @fontsource/montserrat`.
-
-**Visual diferente:** o template `templates/classico.js` serve para a maioria dos clientes só trocando as cores. Para um layout novo, copie o arquivo com outro nome e aponte `visual.template` para ele.
-
----
+### Criar um modelo de carrossel novo
+Copie um arquivo de `modelos/` (ex.: `lista-de-dicas.json`) e mude `id`, `nome`, `descricao` e a `estrutura`.
+Cada slide tem `papel`, `instrucao` (o que a IA deve escrever) e `fundo` (`escuro`, `claro` ou `destaque`).
+Ele aparece sozinho na aba **Modelos de carrossel** de todos os clientes.
 
 ## Como funciona o ranking
 

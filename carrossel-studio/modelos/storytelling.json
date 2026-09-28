@@ -1,0 +1,43 @@
+{
+  "id": "storytelling",
+  "nome": "Storytelling",
+  "descricao": "Conta uma história com virada e aprendizado. Gera conexão e identificação.",
+  "ordem": 4,
+  "estrutura": [
+    {
+      "papel": "Cena de abertura",
+      "fundo": "escuro",
+      "instrucao": "Começa no meio de uma cena concreta e intrigante."
+    },
+    {
+      "papel": "Conflito",
+      "fundo": "claro",
+      "instrucao": "Apresenta o problema ou a dor da personagem."
+    },
+    {
+      "papel": "Tentativas",
+      "fundo": "claro",
+      "instrucao": "Mostra o que ela tentou e não funcionou."
+    },
+    {
+      "papel": "Virada",
+      "fundo": "destaque",
+      "instrucao": "O momento em que algo muda."
+    },
+    {
+      "papel": "Aprendizado",
+      "fundo": "escuro",
+      "instrucao": "A lição que a história ensina."
+    },
+    {
+      "papel": "Aplicação para você",
+      "fundo": "claro",
+      "instrucao": "Traz a lição para a vida da leitora, em segunda pessoa."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "destaque",
+      "instrucao": "Frase final memorável. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

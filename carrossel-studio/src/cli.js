@@ -48,7 +48,7 @@ const comandos = {
       escolhidas = r.posts.slice(0, Number(flags.top || 3));
     }
     for (const [i, ref] of escolhidas.entries()) {
-      const res = await gerarCarrossel(cliente, ref, { angulo: flags.angulo, indice: i });
+      const res = await gerarCarrossel(cliente, ref, { angulo: flags.angulo, modelo: flags.modelo, indice: i });
       console.log(`\nOK: ${res.carrossel.angulo}\n    ${res.pasta}\n`);
     }
   },
@@ -63,9 +63,8 @@ const comandos = {
   },
 
   async "novo-cliente"() {
-    const [id, ...nome] = posicionais;
-    const pasta = criarCliente(id, nome.join(" "));
-    console.log(`Cliente criado em ${pasta}\nPreencha cliente.json e base-conhecimento.md.`);
+    const id = criarCliente({ nome: posicionais.join(" ") });
+    console.log(`Cliente "${id}" criado em clientes/${id}. Complete o cadastro pelo painel.`);
   },
 
   async "gerar-voz"() {
@@ -83,9 +82,9 @@ const comandos = {
 if (!comandos[comando]) {
   console.log(`Comandos:
   coletar <cliente>                         coleta e ranqueia as referências
-  gerar <cliente> [--top 3] [--ref N] [--angulo "..."] [--recoletar]
+  gerar <cliente> [--top 3] [--ref N] [--angulo "..."] [--modelo lista-de-dicas] [--recoletar]
   renderizar <caminho/carrossel.json>       re-renderiza depois de editar o texto
-  novo-cliente <id> <Nome>                  cria a pasta de um cliente novo
+  novo-cliente <Nome>                       cria um cliente novo (o resto pelo painel)
   gerar-voz <cliente>                       cria voz.md a partir do Instagram do cliente`);
   process.exit(comando ? 1 : 0);
 }
