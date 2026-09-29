@@ -46,10 +46,10 @@ const IMAGE = /\.(jpe?g|png|webp|gif|bmp)$/i;
  * Monta a trilha de “B-roll” no tamanho de uma caixa do layout, trocando de
  * vídeo/imagem a cada corte (imagens ganham um movimento de câmera lento).
  */
-export async function buildBroll(dir: string, media: MediaFile[], segs: Segment[], w: number, h: number) {
+export async function buildBroll(dir: string, media: MediaFile[], segs: Segment[], w: number, h: number, tag = "") {
   const files = media.map((m) => path.join(UPLOADS_DIR, m.file)).filter((f) => fs.existsSync(f));
   if (!files.length) return undefined;
-  const out = `broll-${w}x${h}.mp4`;
+  const out = `broll${tag ? `-${tag}` : ""}-${w}x${h}.mp4`;
   const inputs: string[] = [];
   const filters: string[] = [];
   segs.forEach((seg, i) => {

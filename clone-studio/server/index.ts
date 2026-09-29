@@ -3,24 +3,24 @@ import fs from "node:fs";
 import path from "node:path";
 import express, { type NextFunction, type Request, type Response } from "express";
 import multer from "multer";
-import { DIST_DIR, UPLOADS_DIR, avatarProvider, config, voiceProvider } from "./config.js";
+import { DIST_DIR, UPLOADS_DIR, avatarProvider, clipsProvider, config, transcribeProvider, voiceProvider } from "./config.js";
 import { enqueue } from "./pipeline.js";
 import * as eleven from "./providers/elevenlabs.js";
 import * as heygen from "./providers/heygen.js";
 import { deleteJob, getJob, getProfile, jobDir, listJobs, loadJobs, saveJob, saveProfile } from "./store.js";
-import type { EditOptions, Job, Profile } from "./types.js";
+import type { AutoOptions, EditOptions, Job, Profile } from "./types.js";
 import { HttpError } from "./util.js";
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination: UPLOADS_DIR,
-    filename: (_req, file, cb) => cb(null, `${crypto.randomUUID()}${path.extname(file.originalname).toLowerCase()}`),
-  }),
-  limits: { fileSize: 200 * 1024 * 1024 },
+const storage = multer.diskStorage({
+  destination: UPLOADS_DIR,
+  filename: (_req, file, cb) => cb(null, `${crypto.randomUUID()}${path.extname(file.originalname).toLowerCase()}`),
 });
+const upload = multer({ storage, limits: { fileSize: 200 * 1024 * 1024 } });
+/** Vídeos gravados podem ser grandes (aulas, lives, podcasts). */
+const uploadVideo = multer({ storage, limits: { fileSize: 8 * 1024 * 1024 * 1024 } });
 
 type Handler = (req: Request, res: Response) => Promise<unknown> | unknown;
 const h = (fn: Handler) => (req: Request, res: Response, next: NextFunction) =>
@@ -33,7 +33,7 @@ const requireConsent = () => {
 };
 
 app.get("/api/status", (_req, res) => {
-  res.json({ voice: voiceProvider(), avatar: avatarProvider() });
+  res.json({ voice: voiceProvider(), avatar: avatarProvider(), transcribe: transcribeProvider(), clips: clipsProvider() });
 });
 
 // ---- Meu clone -----------------------------------------------------------
@@ -130,12 +130,43 @@ app.post("/api/jobs", h((req, res) => {
   res.status(201).json(job);
 }));
 
+/** Modo vídeo gravado: sobe o vídeo e a plataforma transcreve, corta e edita sozinha. */
+app.post("/api/jobs/upload", uploadVideo.single("video"), h((req, res) => {
+  const file = req.file;
+  if (!file) throw new HttpError(400, "Envie o vídeo.");
+  const { title, options, auto } = JSON.parse(String(req.body.payload ?? "{}")) as { title?: string; options: EditOptions; auto: AutoOptions };
+  const now = new Date().toISOString();
+  const id = `${now.slice(0, 10)}-${crypto.randomBytes(3).toString("hex")}`;
+  const original = `original${path.extname(file.originalname).toLowerCase() || ".mp4"}`;
+  fs.mkdirSync(jobDir(id), { recursive: true });
+  fs.renameSync(file.path, path.join(jobDir(id), original));
+  const job: Job = {
+    id,
+    kind: "upload",
+    title: (title ?? "").trim() || file.originalname.replace(/\.[^.]+$/, ""),
+    copy: "",
+    source: { file: original, name: file.originalname },
+    auto,
+    options,
+    status: "queued",
+    steps: { transcribe: { status: "pending" }, plan: { status: "pending" }, edit: { status: "pending" } },
+    providers: { transcribe: transcribeProvider(), clips: auto.mode === "clips" ? clipsProvider() : undefined },
+    outputs: {},
+    external: {},
+    createdAt: now,
+    updatedAt: now,
+  };
+  saveJob(job);
+  enqueue(job.id);
+  res.status(201).json(job);
+}));
+
 /** Tenta de novo a partir da etapa que falhou (não gasta créditos das etapas já concluídas). */
 app.post("/api/jobs/:id/retry", h((req, res) => {
   const job = getJob(String(req.params.id));
   if (!job) throw new HttpError(404, "Vídeo não encontrado.");
   if (job.status === "running" || job.status === "queued") throw new HttpError(409, "Este vídeo já está sendo processado.");
-  for (const s of Object.values(job.steps)) if (s.status === "error") s.status = "pending";
+  for (const s of Object.values(job.steps)) if (s?.status === "error") s.status = "pending";
   job.status = "queued";
   saveJob(job);
   enqueue(job.id);
@@ -180,17 +211,24 @@ const DOWNLOADS: Record<string, (job: Job) => string | undefined> = {
 app.get("/api/jobs/:id/download/:kind", (req, res) => {
   const job = getJob(req.params.id);
   // ?layout=podcast escolhe qual modelo de edição baixar.
-  const render = job?.outputs.renders?.find((r) => r.layout === req.query.layout);
-  const file = render && job ? (req.params.kind === "capa" ? render.thumb : req.params.kind === "video" ? render.file : DOWNLOADS[req.params.kind]?.(job)) : job && DOWNLOADS[req.params.kind]?.(job);
+  const render = job?.outputs.renders?.find((r) => r.layout === req.query.layout && (!req.query.clip || r.clip === req.query.clip));
+  const kind = req.params.kind;
+  const file =
+    render && job
+      ? kind === "capa" ? render.thumb
+        : kind === "video" ? render.file
+        : kind === "legendas" && render.clip ? `legendas-${render.clip}.srt`
+        : DOWNLOADS[kind]?.(job)
+      : job && DOWNLOADS[kind]?.(job);
   if (!job || !file) return res.status(404).json({ error: "Arquivo não disponível." });
   const slug = job.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").slice(0, 40).toLowerCase() || job.id;
-  const suffix = render && job.outputs.renders!.length > 1 ? `-${render.layout}` : "";
+  const suffix = render && job.outputs.renders!.length > 1 ? `${render.clip ? `-corte${render.clip.slice(1)}` : ""}-${render.layout}` : "";
   res.download(path.join(jobDir(job.id), file), `${slug}${suffix}${path.extname(file)}`);
 });
 
 app.use("/files/jobs", (req, res, next) => {
   // Só expõe arquivos de saída para pré-visualização.
-  if (!/^\/[\w-]+\/((final|capa)(-\w+)?\.(mp4|jpg)|avatar\.mp4|voz\.mp3)$/.test(req.path)) return res.status(404).end();
+  if (!/^\/[\w-]+\/((final|capa)(-[\w-]+)?\.(mp4|jpg)|avatar\.mp4|voz\.mp3)$/.test(req.path)) return res.status(404).end();
   next();
 }, express.static(path.dirname(jobDir("x"))));
 app.use("/files/uploads", express.static(UPLOADS_DIR));

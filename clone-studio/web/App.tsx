@@ -49,7 +49,7 @@ export default function App() {
           <div className="grid size-10 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-fuchsia-500 text-lg font-black">C</div>
           <div>
             <h1 className="text-lg font-bold leading-tight">Clone Studio</h1>
-            <p className="text-xs text-zinc-500">copy → voz → clone → edição → download</p>
+            <p className="text-xs text-zinc-500">clone IA ou vídeo gravado → cortes → edição → download</p>
           </div>
         </div>
         <nav className="flex gap-1 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-1">
@@ -78,6 +78,7 @@ export default function App() {
       {tab === "new" && (
         <NewVideo
           profile={profile}
+          status={status}
           onCreated={() => {
             refresh();
             setTab("videos");

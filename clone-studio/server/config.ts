@@ -19,6 +19,10 @@ export const config = {
   elevenlabs: {
     apiKey: process.env.ELEVENLABS_API_KEY ?? "",
     modelId: process.env.ELEVENLABS_MODEL_ID ?? "eleven_multilingual_v2",
+    sttModelId: process.env.ELEVENLABS_STT_MODEL_ID ?? "scribe_v1",
+  },
+  anthropic: {
+    apiKey: process.env.ANTHROPIC_API_KEY ?? "",
   },
   heygen: {
     apiKey: process.env.HEYGEN_API_KEY ?? "",
@@ -28,3 +32,5 @@ export const config = {
 
 export const voiceProvider = () => (config.elevenlabs.apiKey ? "elevenlabs" : "mock") as "elevenlabs" | "mock";
 export const avatarProvider = () => (config.heygen.apiKey ? "heygen" : "mock") as "heygen" | "mock";
+export const transcribeProvider = () => (config.elevenlabs.apiKey ? "elevenlabs" : "mock") as "elevenlabs" | "mock";
+export const clipsProvider = () => (config.anthropic.apiKey ? "claude" : "auto") as "claude" | "auto";

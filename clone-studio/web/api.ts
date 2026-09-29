@@ -41,29 +41,48 @@ export type EditOptions = {
   music: { file?: string; name?: string; volume: number };
 };
 
-export type StepKey = "voice" | "avatar" | "edit";
+export type StepKey = "voice" | "avatar" | "transcribe" | "plan" | "edit";
+
+export type AutoOptions = {
+  mode: "full" | "clips";
+  clipCount: number;
+  clipLength: "short" | "medium" | "long";
+  removePauses: boolean;
+  removeFillers: boolean;
+};
+
+export type Clip = { id: string; title: string; hook: string; reason?: string; start: number; end: number; duration?: number };
 
 export type Job = {
   id: string;
   title: string;
   copy: string;
+  kind?: "ai" | "upload";
+  source?: { file: string; name: string };
+  auto?: AutoOptions;
   options: EditOptions;
   status: "queued" | "running" | "done" | "error";
-  steps: Record<StepKey, { status: "pending" | "running" | "done" | "error"; message?: string }>;
+  steps: Partial<Record<StepKey, { status: "pending" | "running" | "done" | "error"; message?: string }>>;
   error?: string;
-  providers: { voice: string; avatar: string };
+  providers: { voice?: string; avatar?: string; transcribe?: string; clips?: string };
   outputs: {
     final?: string;
     thumb?: string;
     srt?: string;
     duration?: number;
-    renders?: { layout: Layout; file: string; thumb: string }[];
+    renders?: { layout: Layout; file: string; thumb: string; clip?: string }[];
+    clips?: Clip[];
   };
   createdAt: string;
   updatedAt: string;
 };
 
-export type Status = { voice: "elevenlabs" | "mock"; avatar: "heygen" | "mock" };
+export type Status = {
+  voice: "elevenlabs" | "mock";
+  avatar: "heygen" | "mock";
+  transcribe: "elevenlabs" | "mock";
+  clips: "claude" | "auto";
+};
 export type Voice = { id: string; name: string; category: string };
 export type Avatar = { id: string; name: string; preview: string; type: "avatar" | "talking_photo" };
 
@@ -111,6 +130,23 @@ export const api = {
   jobs: () => call<Job[]>("/api/jobs"),
   createJob: (title: string, copy: string, options: EditOptions) =>
     call<Job>("/api/jobs", json("POST", { title, copy, options })),
+  /** Upload com progresso (vídeos grandes). */
+  uploadVideo: (file: File, payload: { title: string; options: EditOptions; auto: AutoOptions }, onProgress: (pct: number) => void) =>
+    new Promise<Job>((resolve, reject) => {
+      const form = new FormData();
+      form.append("payload", JSON.stringify(payload));
+      form.append("video", file);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/jobs/upload");
+      xhr.upload.onprogress = (e) => e.lengthComputable && onProgress(Math.round((e.loaded / e.total) * 100));
+      xhr.onload = () => {
+        const data = JSON.parse(xhr.responseText || "{}");
+        if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+        else reject(new Error(data.error ?? `Erro ${xhr.status}`));
+      };
+      xhr.onerror = () => reject(new Error("Falha de rede no envio do vídeo."));
+      xhr.send(form);
+    }),
   retry: (id: string) => call<Job>(`/api/jobs/${id}/retry`, { method: "POST" }),
   reedit: (id: string, options: EditOptions) => call<Job>(`/api/jobs/${id}/reedit`, json("POST", { options })),
   remove: (id: string) => call<void>(`/api/jobs/${id}`, { method: "DELETE" }),
@@ -136,4 +172,12 @@ export const defaultOptions = (handle = ""): EditOptions => ({
   hook: { enabled: false, text: "", seconds: 3 },
   watermark: { enabled: !!handle, text: handle },
   music: { volume: 0.12 },
+});
+
+export const defaultAuto = (): AutoOptions => ({
+  mode: "clips",
+  clipCount: 0,
+  clipLength: "medium",
+  removePauses: true,
+  removeFillers: true,
 });

@@ -1,11 +1,26 @@
 # Clone Studio
 
-Plataforma para transformar uma **copy** em um vídeo pronto para as redes sociais,
-com o **seu clone de IA falando com a sua voz**.
+Plataforma que produz vídeos prontos para as redes sociais de dois jeitos:
+
+**🤖 100% IA** — você escreve a copy e o **seu clone de IA grava com a sua voz**:
 
 ```
 copy ──► voz clonada (ElevenLabs) ──► clone em vídeo com lip-sync (HeyGen) ──► edição automática (FFmpeg) ──► download
 ```
+
+**🎬 Vídeo gravado** — você sobe um vídeo seu (aula, live, podcast…) e a plataforma **corta e edita sozinha**:
+
+```
+vídeo ──► transcrição (ElevenLabs) ──► escolha dos cortes (Claude) ──► tira pausas e vícios ──► edição automática ──► download
+```
+
+### Modo vídeo gravado
+
+- **Vários cortes ou vídeo inteiro**: escolha a duração (15–35s, 30–65s, 55–95s) e a quantidade (ou automático).
+- **Cortes escolhidos por IA**: com `ANTHROPIC_API_KEY`, o Claude lê a transcrição, escolhe os trechos que funcionam sozinhos e escreve **título** (para o post) e **gancho** (na tela) de cada corte. Sem a chave, os cortes seguem a ordem do vídeo, fechando em frases completas.
+- **Tira pausas e silêncios** (jump cut) e **vícios de linguagem** ("é…", "hã", "hum").
+- Cada corte passa pela mesma edição do modo IA: modelos (tela cheia, dividida, podcast…), legendas animadas, gancho, marca d'água e trilha.
+- Vídeo horizontal vira vertical automaticamente (enquadramento central).
 
 ## O que ela faz
 
@@ -72,10 +87,13 @@ server/
   pipeline.ts          fila e orquestração das etapas voz → avatar → edição
   providers/
     elevenlabs.ts      clone de voz + TTS com tempo de cada palavra
+    transcribe.ts      transcrição dos vídeos gravados (ElevenLabs Speech-to-Text)
     heygen.ts          upload do áudio, geração e download do vídeo do avatar
     mock.ts            modo demo
   editor/
     captions.ts        legendas ASS (karaokê) e SRT
+    autocut.ts         tira pausas/vícios e emenda os trechos (vídeo gravado)
+    clips.ts           escolhe os cortes (Claude ou por duração)
     layouts.ts         modelos de edição (tela dividida, podcast, apresentador…)
     render.ts          edição final com FFmpeg (um vídeo por modelo)
   assets/fonts/        Montserrat ExtraBold (SIL OFL) para as legendas
@@ -85,6 +103,8 @@ data/                  (gerado) perfil, uploads e vídeos — fora do git
 
 ## Custos e limites
 
+- Claude (opcional, só para escolher os cortes): uma chamada por vídeo gravado, cobrada pelo tamanho da transcrição.
+- ElevenLabs também cobra a transcrição por minuto de áudio.
 - ElevenLabs: clone de voz instantâneo exige plano *Starter* ou superior; cobra por caractere narrado.
 - HeyGen: API cobrada por créditos/minuto de vídeo; planos menores só geram 720p (ajuste `HEYGEN_MAX_HEIGHT=720`). A edição final sempre exporta em 1080p.
 - Para trocar de fornecedor (ex.: D-ID, Hedra, Synthesia), basta criar outro arquivo em `server/providers/` com as mesmas funções.

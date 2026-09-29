@@ -51,10 +51,37 @@ export type EditOptions = {
   music: { file?: string; volume: number };
 };
 
-export type StepKey = "voice" | "avatar" | "edit";
+/** Como o vídeo nasce: 100% IA (copy → clone) ou a partir de um vídeo gravado. */
+export type JobKind = "ai" | "upload";
+
+export type AutoOptions = {
+  /** Vídeo inteiro editado, ou vários cortes curtos escolhidos automaticamente. */
+  mode: "full" | "clips";
+  /** 0 = quantos a IA achar bons. */
+  clipCount: number;
+  clipLength: "short" | "medium" | "long";
+  removePauses: boolean;
+  removeFillers: boolean;
+};
+
+export type Clip = {
+  id: string;
+  title: string;
+  hook: string;
+  reason?: string;
+  /** Trecho no vídeo original, em segundos. */
+  start: number;
+  end: number;
+  /** Vídeo do trecho já sem pausas, e as palavras no tempo desse arquivo. */
+  file?: string;
+  words?: Word[];
+  duration?: number;
+};
+
+export type StepKey = "voice" | "avatar" | "transcribe" | "plan" | "edit";
 export type StepStatus = "pending" | "running" | "done" | "error";
 
-export type Render = { layout: Layout; file: string; thumb: string };
+export type Render = { layout: Layout; file: string; thumb: string; clip?: string };
 
 export type Word = { text: string; start: number; end: number };
 
@@ -63,16 +90,20 @@ export type Job = {
   title: string;
   copy: string;
   options: EditOptions;
+  kind?: JobKind;
+  source?: { file: string; name: string };
+  auto?: AutoOptions;
   status: "queued" | "running" | "done" | "error";
-  steps: Record<StepKey, { status: StepStatus; message?: string }>;
+  steps: Partial<Record<StepKey, { status: StepStatus; message?: string }>>;
   error?: string;
-  providers: { voice: "elevenlabs" | "mock"; avatar: "heygen" | "mock" };
+  providers: { voice?: "elevenlabs" | "mock"; avatar?: "heygen" | "mock"; transcribe?: "elevenlabs" | "mock"; clips?: "claude" | "auto" };
   outputs: {
     audio?: string;
     words?: Word[];
     raw?: string;
     final?: string;
     renders?: Render[];
+    clips?: Clip[];
     srt?: string;
     thumb?: string;
     duration?: number;
