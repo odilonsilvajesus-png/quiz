@@ -104,7 +104,8 @@ function normalizar(config) {
   c.visual.imagens ??= { modo: "auto", estilo: "" };
   c.conteudo.limites ??= { titulo_max_caracteres: 110, subtitulo_max_caracteres: 220 };
   c.conteudo.angulos ??= [];
-  c.conteudo.modelo_padrao ??= c.conteudo.estrutura?.length ? "proprio" : "quebra-de-crenca";
+  c.conteudo.modelo_padrao ??= c.conteudo.estrutura?.length ? "proprio" : "auto";
+  c.conteudo.cta = { palavra_chave: "", entrega: "", conversao: "", objetivo_padrao: "auto", ...c.conteudo.cta };
   return c;
 }
 
@@ -296,8 +297,19 @@ export function salvarImagemCliente(id, campo, dataUrl) {
   });
 }
 
-export function salvarConteudo(id, { modelo_padrao, angulos, cta_legenda, proibir_travessao }) {
+const OBJETIVOS = ["auto", "alcance", "autoridade", "lead", "conversao"];
+
+export function salvarConteudo(id, { modelo_padrao, angulos, cta_legenda, proibir_travessao, cta }) {
   alterarConfig(id, (c) => {
+    if (cta) {
+      const atual = c.conteudo.cta || {};
+      c.conteudo.cta = {
+        palavra_chave: String(cta.palavra_chave ?? atual.palavra_chave ?? "").trim().toUpperCase(),
+        entrega: String(cta.entrega ?? atual.entrega ?? "").trim(),
+        conversao: String(cta.conversao ?? atual.conversao ?? "").trim(),
+        objetivo_padrao: OBJETIVOS.includes(cta.objetivo_padrao) ? cta.objetivo_padrao : atual.objetivo_padrao || "auto",
+      };
+    }
     if (modelo_padrao) c.conteudo.modelo_padrao = modelo_padrao;
     if (Array.isArray(angulos)) c.conteudo.angulos = angulos.map((a) => a.trim()).filter(Boolean);
     if (cta_legenda !== undefined) c.conteudo.cta_legenda = cta_legenda;

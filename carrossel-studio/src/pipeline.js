@@ -5,7 +5,8 @@ import { pastaSaida, caminhoFoto } from "./cliente.js";
 import { coletar, ultimaColeta, salvarColeta } from "./coleta/index.js";
 import { aprofundar } from "./analise.js";
 import { ranquear } from "./ranking.js";
-import { escreverCarrossel } from "./copy.js";
+import { escreverCarrossel, escolherEstrutura } from "./copy.js";
+import { revisarCarrossel } from "./revisor.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
 import { historico, salvarHistorico, aprendizados } from "./carrosseis.js";
@@ -52,7 +53,15 @@ export function gerarCarrossel(cliente, referencia, opcoes = {}) {
 async function montarCarrossel(cliente, referencia, opcoes) {
   const { angulo, modelo: modeloId, estilo, indice = 0, log = console.log } = opcoes;
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
-  const modelo = resolverModelo(cliente, modeloId);
+  const observacao = (opcoes.observacao || "").trim();
+  let modelo = resolverModelo(cliente, modeloId);
+  let motivoEstrutura;
+  if (modelo.automatico) {
+    log("Escolhendo a estrutura pelo tipo do conteúdo...");
+    ({ modelo, motivo: motivoEstrutura } = await escolherEstrutura(cliente, referencia, { observacao }));
+  }
+  const objetivoEscolhido = opcoes.objetivo || cliente.conteudo.cta?.objetivo_padrao || "auto";
+  const objetivo = objetivoEscolhido === "auto" ? undefined : objetivoEscolhido;
   const estiloFinal = estilo || cliente.visual.template || "classico";
   const infoEstilo = (await listarEstilos()).find((e) => e.id === estiloFinal);
   const modoImagens = resolverModo(opcoes.imagens || cliente.visual.imagens?.modo, infoEstilo);
@@ -61,10 +70,13 @@ async function montarCarrossel(cliente, referencia, opcoes) {
   // Foto real do cliente como protagonista das imagens (opcional).
   const fotoPessoa = opcoes.fotoPessoa ? caminhoFoto(cliente.id, opcoes.fotoPessoa) : null;
   log(`Escrevendo carrossel (${modelo.nome}) a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
-  const copy = await escreverCarrossel(cliente, referencia, {
+  const opcoesCopy = {
     angulo, indice, modelo, angulosRecentes: recentes, rejeitados: aprendizados(cliente.id), comImagem: modoImagens !== "nenhuma",
-    estiloImagem, estilo: infoEstilo, obsImagem, comPessoa: Boolean(fotoPessoa), observacao: (opcoes.observacao || "").trim(),
-  });
+    estiloImagem, estilo: infoEstilo, obsImagem, comPessoa: Boolean(fotoPessoa), observacao, objetivo,
+  };
+  let copy = await escreverCarrossel(cliente, referencia, opcoesCopy);
+  const revisao = copy.demo ? null : await revisarComReescrita(cliente, referencia, copy, modelo, opcoesCopy, log);
+  if (revisao?.copy) copy = revisao.copy;
   // Cada slide guarda o próprio fundo, para re-renderizar igual mesmo se o modelo mudar depois.
   copy.slides = copy.slides.map((s, i) => ({ ...s, fundo: modelo.estrutura[i]?.fundo || "escuro" }));
 
@@ -78,9 +90,11 @@ async function montarCarrossel(cliente, referencia, opcoes) {
       trecho: referencia.texto.slice(0, 300),
       outlier: referencia.ranking?.outlier ?? null,
     },
-    modelo: { id: modelo.id, nome: modelo.nome },
+    modelo: { id: modelo.id, nome: modelo.nome, ...(motivoEstrutura ? { automatico: true, motivo: motivoEstrutura } : {}) },
+    objetivo: objetivoEscolhido,
     estilo: estiloFinal,
     ...copy,
+    ...(revisao ? { revisao: revisao.resultado } : {}),
   };
 
   const carimbo = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
@@ -100,6 +114,27 @@ async function montarCarrossel(cliente, referencia, opcoes) {
   salvarHistorico(cliente.id, hist);
 
   return { carrossel, ...render };
+}
+
+// Revisor sempre ligado: se o carrossel não passar, reescreve uma vez com os ajustes e revisa de novo.
+// Uma falha do revisor nunca derruba o carrossel.
+async function revisarComReescrita(cliente, referencia, copy, modelo, opcoesCopy, log) {
+  try {
+    log("Revisando o carrossel...");
+    const primeira = await revisarCarrossel(cliente, copy, modelo, opcoesCopy);
+    if (primeira.aprovado) return { resultado: { ...primeira, rodadas: 1 } };
+    log(`Nota ${primeira.media}: reescrevendo o que o revisor apontou...`);
+    const nova = await escreverCarrossel(cliente, referencia, {
+      ...opcoesCopy, revisao: { anterior: copy, ajustes: primeira.ajustes, bloqueios: primeira.bloqueios },
+    });
+    const segunda = await revisarCarrossel(cliente, nova, modelo, opcoesCopy);
+    return {
+      copy: nova,
+      resultado: { ...segunda, rodadas: 2, antes: { media: primeira.media, notas: primeira.notas, ajustes: primeira.ajustes, bloqueios: primeira.bloqueios } },
+    };
+  } catch (erro) {
+    return { resultado: { erro: `A revisão não rodou: ${erro.message}` } };
+  }
 }
 
 // Gera as imagens dos slides escolhidos. Uma falha não derruba o carrossel: vira pendência.

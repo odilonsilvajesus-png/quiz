@@ -1,0 +1,18 @@
+{
+  "id": "identificacao",
+  "nome": "Identificação",
+  "descricao": "Afirmação que o público assina embaixo e micro-dores reconhecíveis. Gera volume de comentários.",
+  "ordem": 4,
+  "viral": true,
+  "palavras_max": 35,
+  "quando_usar": "Rotina e dores do dia a dia do público, humor, 'quem nunca', desabafo coletivo.",
+  "estrutura": [
+    { "papel": "Capa: afirmação que o público assina", "fundo": "escuro", "instrucao": "SÓ a headline, de 4 a 12 palavras, com que o público concorda na hora. Subtítulo vazio." },
+    { "papel": "Reforço", "fundo": "claro", "instrucao": "Reforço com humor ou ironia leve. Funciona sozinho como capa." },
+    { "papel": "Micro-dor 1", "fundo": "escuro", "instrucao": "Uma situação bem específica do dia a dia do público (ex.: 'cliente que some depois do orçamento')." },
+    { "papel": "Micro-dor 2", "fundo": "claro", "instrucao": "Outra situação específica e reconhecível." },
+    { "papel": "Micro-dor 3", "fundo": "escuro", "instrucao": "Outra situação específica e reconhecível." },
+    { "papel": "Validação / virada", "fundo": "destaque", "instrucao": "Valida quem vive isso ('e mesmo assim você continua'). Nunca humilha ninguém." },
+    { "papel": "Pergunta final", "fundo": "claro", "instrucao": "Pergunta fácil de responder: uma palavra, um número de 0 a 10 ou uma escolha A ou B." }
+  ]
+}

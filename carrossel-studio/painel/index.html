@@ -224,6 +224,9 @@
   .detalhes button.pendente { border-color: rgba(245,185,92,.5); color: var(--aviso); }
   .painel-detalhe { margin: 0 20px 14px; background: var(--superficie-2); border-radius: 10px; padding: 14px; white-space: pre-wrap; font-size: 13.5px; line-height: 1.6; position: relative; }
   .painel-detalhe .copiar { position: absolute; top: 8px; right: 8px; }
+  .outras-capas { display: grid; gap: 8px; white-space: normal; }
+  .outras-capas > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 8px; background: var(--superficie); }
+  .outras-capas > div:first-child { flex-direction: column; align-items: flex-start; gap: 2px; background: none; padding: 0 0 4px; }
   .barra-acoes { display: flex; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--linha); background: #160E26; flex-wrap: wrap; align-items: center; }
   .barra-acoes .espaco { flex: 1; }
   .motivo { margin: 0 20px 14px; background: var(--perigo-fundo); color: #FBC2C7; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
@@ -560,7 +563,7 @@ async function modalNovoCliente() {
       <label class="rotulo" for="nInsta">Instagram do cliente</label><input id="nInsta" class="campo" placeholder="@perfil ou link">
       <label class="rotulo" for="nDesc">Profissão, nicho e método</label><input id="nDesc" class="campo" placeholder="Ex.: Nutricionista comportamental, mulheres 30+">
       <label class="rotulo" for="nModelo">Modelo de carrossel padrão</label>
-      <select id="nModelo" class="campo">${modelos.map((x) => `<option value="${x.id}">${esc(x.nome)}</option>`).join("")}</select>
+      <select id="nModelo" class="campo"><option value="auto">Automático (a IA escolhe a estrutura)</option>${modelos.map((x) => `<option value="${x.id}">${esc(x.nome)}</option>`).join("")}</select>
       <label class="rotulo">Cores principais</label>
       <div class="cores-rapidas">
         <label class="cor-rapida"><input type="color" id="nEscura" value="#1A1A1A">Fundo escuro</label>
@@ -841,6 +844,14 @@ function verConteudo(refId) {
 }
 
 // Cria um ou vários carrosséis (seleção). As opções valem para todos.
+const OBJETIVOS = [
+  ["auto", "A IA escolhe pelo conteúdo"],
+  ["alcance", "Alcance: seguir ou mandar para alguém"],
+  ["autoridade", "Autoridade: salvar o post"],
+  ["lead", "Lead: comentar a palavra-chave"],
+  ["conversao", "Conversão: próximo passo comercial"],
+];
+
 function modalCriar(refIds) {
   const c = cliente;
   const itens = refIds.map((id) => ideias.find((x) => x.id === id) || sugestoes.find((x) => x.id === id)).filter(Boolean);
@@ -866,7 +877,10 @@ function modalCriar(refIds) {
           <select id="gTema" class="campo">${opt([["", "A IA escolhe"], ...c.conteudo.angulos.map((a) => [a, a])], sugestaoUnica?.angulo || "")}</select></div>
         <div><label class="rotulo" for="gImagens">Imagens com IA</label>
           <select id="gImagens" class="campo">${opt([["auto", "Automático (conforme o estilo)"], ["nenhuma", "Sem imagens"], ["capa", "Só na capa"], ["todas", "Em todos os slides"]], c.visual.imagens?.modo || "auto")}</select></div>
+        <div><label class="rotulo" for="gObjetivo">Objetivo do post (define o CTA)</label>
+          <select id="gObjetivo" class="campo">${opt(OBJETIVOS, c.conteudo.cta?.objetivo_padrao || "auto")}</select></div>
       </div>
+      <div class="ajuda" id="avisoLead" hidden>Este cliente ainda não tem palavra-chave cadastrada. A IA sugere uma e marca como pendência. Cadastre em Voz e direcionamento → Temas, regras e chamada para ação.</div>
       <label class="rotulo" for="gObs">Observação para o texto (opcional)</label>
       <input id="gObs" class="campo" placeholder="Ex.: falar do Kit no final, tom mais leve, focar em mães">
       <label class="rotulo" for="gObsImg">Observação para as imagens (opcional)</label>
@@ -881,10 +895,13 @@ function modalCriar(refIds) {
         <div class="ajuda">A IA coloca a própria pessoa nas cenas: muda roupa, lugar e pose, mantendo o rosto.</div>` : `<div class="ajuda">Para usar a foto da própria pessoa nas imagens, envie fotos em Identidade visual.</div>`}
       <div class="acoes"><button class="btn primario" id="gerar">${ICONES.faisca} ${itens.length === 1 ? "Gerar carrossel" : `Gerar ${itens.length} carrosséis`}</button><span class="msg" id="msgGerar"></span></div>`,
   });
+  const avisarLead = () => { $("avisoLead").hidden = !($("gObjetivo").value === "lead" && !c.conteudo.cta?.palavra_chave); };
+  $("gObjetivo").onchange = avisarLead;
+  avisarLead();
   m.querySelector("#gerar").onclick = async () => {
     const opcoes = {
       modelo: $("gModelo").value, estilo: $("gEstilo").value, angulo: $("gTema").value, imagens: $("gImagens").value,
-      observacao: $("gObs").value, obsImagem: $("gObsImg").value,
+      observacao: $("gObs").value, obsImagem: $("gObsImg").value, objetivo: $("gObjetivo").value,
       fotoPessoa: m.querySelector('input[name="gFoto"]:checked')?.value || "",
     };
     const corpoModal = m.querySelector(".corpo-modal");
@@ -940,6 +957,25 @@ function desenharCarrosseis() {
     ${lista.length ? lista.map(cartaoCarrossel).join("") : `<div class="cartao vazio">${ICONES.camadas}<div>${vazio}</div></div>`}`;
 }
 
+const nota = (n) => Number(n).toLocaleString("pt-BR", { maximumFractionDigits: 1 });
+const NOME_NOTA = { gancho: "gancho", clareza: "clareza", tom_de_voz: "tom de voz", estrutura: "estrutura", cta: "CTA" };
+
+function textoRevisao(r) {
+  if (!r) return "";
+  if (r.erro) return r.erro;
+  const linhas = [
+    `Nota ${nota(r.media)} · ${Object.entries(r.notas).map(([k, v]) => `${NOME_NOTA[k] || k} ${nota(v)}`).join(" · ")}`,
+    r.resumo,
+  ];
+  if (r.bloqueios?.length) linhas.push("", "Bloqueios:", ...r.bloqueios.map((b) => `• ${b}`));
+  if (r.antes) {
+    linhas.push("", `A primeira versão teve nota ${nota(r.antes.media)} e foi reescrita com estes ajustes:`,
+      ...[...(r.antes.bloqueios || []), ...r.antes.ajustes.map((a) => `${a.onde}: ${a.problema}`)].map((t) => `• ${t}`));
+  }
+  if (r.ajustes?.length) linhas.push("", r.aprovado ? "Sugestões do revisor:" : "Ainda falta ajustar (dá para fazer em Editar):", ...r.ajustes.map((a) => `• ${a.onde}: ${a.problema} → ${a.sugestao}`));
+  return linhas.join("\n");
+}
+
 function cartaoCarrossel(g) {
   const k = g.carrossel;
   const estilo = status.estilos.find((e) => e.id === k.estilo)?.nome;
@@ -948,6 +984,8 @@ function cartaoCarrossel(g) {
     ["legenda", "Legenda", k.legenda],
     ["porque", "Por que funcionou", k.por_que_a_referencia_funcionou],
     ["arte", "Direção de arte", k.direcao_de_arte ? `${k.direcao_de_arte}\n\n${k.slides.map((s, i) => s.imagem_descricao ? `Slide ${i + 1}: ${s.imagem_descricao}` : "").filter(Boolean).join("\n")}` : ""],
+    ["revisao", k.revisao?.media != null ? `Revisão (nota ${nota(k.revisao.media)})` : "Revisão", textoRevisao(k.revisao)],
+    ["ganchos", "Outras capas", k.ganchos_alternativos?.length ? "sim" : ""],
     ["pendencias", `Pendências (${k.pendencias?.length || 0})`, (k.pendencias || []).join("\n")],
   ].filter(([, , t]) => t);
   const conteudoAberto = abas.find(([id]) => id === aberto);
@@ -981,7 +1019,8 @@ function cartaoCarrossel(g) {
           <h3>${esc(g.angulo)}</h3>
           <div class="chips">
             <span class="etiqueta">${esc(dataHora(g.data))}</span>
-            ${k.modelo?.nome ? `<span class="etiqueta">${esc(k.modelo.nome)}</span>` : ""}
+            ${k.modelo?.nome ? `<span class="etiqueta" title="${esc(k.modelo.motivo || "")}">${esc(k.modelo.nome)}${k.modelo.automatico ? " (auto)" : ""}</span>` : ""}
+            ${k.revisao?.media != null ? `<span class="etiqueta ${k.revisao.aprovado ? "ok" : "aviso-e"}" title="Nota do revisor (gancho ${nota(k.revisao.notas.gancho)})">nota ${nota(k.revisao.media)}</span>` : ""}
             ${estilo ? `<span class="etiqueta marca">${esc(estilo)}</span>` : ""}
             ${k.referencia?.perfil ? `<span class="etiqueta">ref. ${esc(k.referencia.perfil)}</span>` : ""}
             ${g.demo ? '<span class="etiqueta aviso-e">demonstração</span>' : ""}
@@ -995,7 +1034,10 @@ function cartaoCarrossel(g) {
       ${g.estado === "agendado" && g.falhou ? `<div class="motivo"><b>A publicação agendada falhou:</b> ${esc(g.falhou)}. Corrija e use "Postar agora ou reagendar".</div>` : ""}
       <div class="trilho">${g.imagens.map((src, i) => `<button data-ver-slide="${esc(g.pasta)}" data-i="${i}"><img src="${src}" loading="lazy" alt="Slide ${i + 1}"></button>`).join("")}</div>
       <div class="detalhes">${abas.map(([id, nome]) => `<button class="${aberto === id ? "ativo" : ""} ${id === "pendencias" ? "pendente" : ""}" data-detalhe="${esc(g.pasta)}" data-qual="${id}">${id === "pendencias" ? ICONES.alerta : ""}${nome}</button>`).join("")}</div>
-      ${conteudoAberto ? `<div class="painel-detalhe">${conteudoAberto[0] === "legenda" ? `<button class="btn pequeno copiar" data-copiar="${esc(g.pasta)}">${ICONES.copiar} Copiar</button>` : ""}${esc(conteudoAberto[2])}</div>` : ""}
+      ${conteudoAberto?.[0] === "ganchos" ? `<div class="painel-detalhe outras-capas">
+        <div><span class="ajuda" style="margin:0">Capa atual</span><b>${esc(k.slides[0].titulo.replace(/\*/g, ""))}</b></div>
+        ${k.ganchos_alternativos.map((t, i) => `<div><span>${esc(t.replace(/\*/g, ""))}</span><button class="btn pequeno" data-usar-gancho="${esc(g.pasta)}" data-i="${i}">Usar esta capa</button></div>`).join("")}
+      </div>` : conteudoAberto ? `<div class="painel-detalhe">${conteudoAberto[0] === "legenda" ? `<button class="btn pequeno copiar" data-copiar="${esc(g.pasta)}">${ICONES.copiar} Copiar</button>` : ""}${esc(conteudoAberto[2])}</div>` : ""}
       <div class="barra-acoes">${acoes}<span class="msg"></span></div>
       <div class="editor" data-editor="${esc(g.pasta)}" hidden></div>
     </div>`;
@@ -1274,7 +1316,7 @@ function abaVoz() {
         <span class="ajuda" style="margin:0">PDF, Word (.docx), TXT ou MD.</span><span class="msg" id="msgDoc"></span></div>
     </div>
     <div class="cartao" style="margin-top:20px">
-      <h2>4. Temas e regras de conteúdo</h2>
+      <h2>4. Temas, regras e chamada para ação</h2>
       <div class="metade" style="margin-top:12px">
         <div>
           <label class="rotulo" for="angulos">Temas ou ângulos (um por linha)</label>
@@ -1282,13 +1324,24 @@ function abaVoz() {
           <div class="ajuda">A IA escolhe um tema por carrossel. Eles também aparecem na hora de criar.</div>
         </div>
         <div>
-          <label class="rotulo" for="cta">Objetivo e CTA da legenda</label>
-          <textarea id="cta" class="campo" rows="4">${esc(c.conteudo.cta_legenda)}</textarea>
+          <label class="rotulo" for="objetivoPadrao">Objetivo padrão dos posts</label>
+          <select id="objetivoPadrao" class="campo">${OBJETIVOS.map(([v, n]) => `<option value="${v}" ${v === (c.conteudo.cta?.objetivo_padrao || "auto") ? "selected" : ""}>${esc(n)}</option>`).join("")}</select>
+          <div class="escolhas">
+            <div><label class="rotulo" for="palavraChave">Palavra-chave do comentário</label>
+              <input id="palavraChave" class="campo" placeholder="Ex.: AGENDA" value="${esc(c.conteudo.cta?.palavra_chave || "")}"></div>
+            <div><label class="rotulo" for="entregaCta">O que a pessoa recebe</label>
+              <input id="entregaCta" class="campo" placeholder="Ex.: o checklist no direct" value="${esc(c.conteudo.cta?.entrega || "")}"></div>
+          </div>
+          <label class="rotulo" for="conversaoCta">Próximo passo de conversão</label>
+          <input id="conversaoCta" class="campo" placeholder="Ex.: clique no link da bio e agende a avaliação" value="${esc(c.conteudo.cta?.conversao || "")}">
+          <div class="ajuda">A palavra-chave e a entrega entram nos posts de Lead. Vazio: a IA sugere uma e marca como pendência.</div>
+          <label class="rotulo" for="cta">Observações sobre o CTA da legenda</label>
+          <textarea id="cta" class="campo" rows="3">${esc(c.conteudo.cta_legenda)}</textarea>
           <label class="linha" style="margin-top:14px;font-weight:500"><input type="checkbox" id="travessao" ${c.conteudo.proibir_travessao ? "checked" : ""}> Nunca usar travessão</label>
           <div class="ajuda">${c.exemplos} carrossel(is) aprovado(s) como exemplo de tom. Os descartados também ensinam a IA pelo motivo.</div>
         </div>
       </div>
-      <div class="acoes"><button class="btn escuro" id="salvarRegras">Salvar temas e regras</button><span class="msg" id="msgRegras"></span></div>
+      <div class="acoes"><button class="btn escuro" id="salvarRegras">Salvar temas, regras e CTA</button><span class="msg" id="msgRegras"></span></div>
     </div>`;
 
   $("coletarVoz").onclick = (e) => acao(e.currentTarget, $("msgColeta"), async () => {
@@ -1334,6 +1387,10 @@ function abaVoz() {
   $("salvarRegras").onclick = (e) => acao(e.currentTarget, $("msgRegras"), async () => {
     cliente = await put(`/api/clientes/${c.id}/conteudo`, {
       angulos: $("angulos").value.split("\n"), cta_legenda: $("cta").value, proibir_travessao: $("travessao").checked,
+      cta: {
+        objetivo_padrao: $("objetivoPadrao").value, palavra_chave: $("palavraChave").value,
+        entrega: $("entregaCta").value, conversao: $("conversaoCta").value,
+      },
     });
   });
 }
@@ -1379,11 +1436,12 @@ function abaModelos() {
         <div class="cartao modelo ${m.id === c.conteudo.modelo_padrao ? "padrao" : ""}">
           <div class="cabecalho-cartao" style="margin:0"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta marca">Padrão</span>' : ""}</div>
           <div class="sub" style="margin:0;font-size:13px">${esc(m.descricao)}</div>
-          <div class="tira">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
-          <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>
+          ${m.automatico ? `<div class="chips">${c.modelos.filter((x) => x.viral).map((x) => `<span class="etiqueta marca">${esc(x.nome)}</span>`).join("")}</div>
+          <div class="ajuda" style="margin:0">A cada carrossel, a IA lê o conteúdo e escolhe a estrutura certa. A escolhida aparece no carrossel.</div>` : `<div class="tira">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
+          <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>`}
           <div class="acoes" style="margin-top:auto">
             ${m.id === c.conteudo.modelo_padrao ? "" : `<button class="btn escuro pequeno" data-padrao="${m.id}">Usar como padrão</button>`}
-            <button class="btn pequeno" data-ver="${m.id}">${ICONES.olho} Ver prévia</button>
+            ${m.automatico ? "" : `<button class="btn pequeno" data-ver="${m.id}">${ICONES.olho} Ver prévia</button>`}
           </div>
         </div>`).join("")}
     </div>
@@ -1636,7 +1694,7 @@ document.addEventListener("click", async (e) => {
     "[data-novo-cliente]", "[data-criar]", "[data-estado]", "[data-ver-slide]", "[data-detalhe]", "[data-copiar]", "[data-publicar]",
     "[data-editar]", "[data-salvar-edicao]", "[data-aprovar]", "[data-descartar]", "[data-restaurar]", "[data-cancelar-agendamento]",
     "[data-fonte]", "[data-recoletar]", "[data-limpar-criar]", "[data-plataforma]", "[data-perfil]", "[data-selecionar]",
-    "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]", "[data-custos]",
+    "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]", "[data-custos]", "[data-usar-gancho]",
   ].join(","));
   if (!alvo) return;
   const d = alvo.dataset;
@@ -1666,6 +1724,21 @@ document.addEventListener("click", async (e) => {
   if (d.publicar) return modalPublicar(d.publicar);
   if (d.editar) return abrirEditor(d.editar);
   if (d.salvarEdicao) return salvarEdicao(alvo, d.salvarEdicao);
+  if (d.usarGancho) {
+    // Troca a capa por uma das headlines alternativas; a antiga vira alternativa. Só redesenha, sem gastar IA.
+    const k = buscarGerado(d.usarGancho).carrossel;
+    const i = Number(d.i);
+    const alternativas = [...k.ganchos_alternativos];
+    const nova = alternativas[i];
+    alternativas[i] = k.slides[0].titulo;
+    alvo.textContent = "Redesenhando...";
+    await acao(alvo, null, () => put(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(d.usarGancho)}`, {
+      slides: [{ titulo: nova }], ganchos_alternativos: alternativas,
+    }));
+    gerados = await api(`/api/clientes/${cliente.id}/carrosseis`);
+    desenharCarrosseis();
+    return toast("Capa trocada.");
+  }
   if (d.descartar) return modalDescartar(d.descartar);
   if (d.restaurar) {
     await acao(alvo, null, () => post(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(d.restaurar)}/restaurar`));

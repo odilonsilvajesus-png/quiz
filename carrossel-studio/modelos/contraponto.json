@@ -1,0 +1,18 @@
+{
+  "id": "contraponto",
+  "nome": "Contraponto",
+  "descricao": "Quebra uma crença do mercado: o que todo mundo fala e por que está errado. Gera debate e autoridade.",
+  "ordem": 3,
+  "viral": true,
+  "palavras_max": 35,
+  "quando_usar": "Opinião contra o consenso do nicho, mito do mercado, 'pare de fazer X', crítica a uma prática comum.",
+  "estrutura": [
+    { "papel": "Capa: afirmação contra o mercado", "fundo": "escuro", "instrucao": "SÓ a headline, de 4 a 12 palavras, que contraria o que o nicho repete. Subtítulo vazio." },
+    { "papel": "O que todo mundo diz", "fundo": "claro", "instrucao": "A crença ou conselho popular do mercado, dito como o público ouve. Funciona sozinho como capa." },
+    { "papel": "Por que isso falha", "fundo": "escuro", "instrucao": "O motivo concreto de não funcionar, com uma cena ou consequência real." },
+    { "papel": "O custo de seguir isso", "fundo": "claro", "instrucao": "O que a pessoa perde (tempo, dinheiro, saúde, clientes) ao seguir o conselho comum." },
+    { "papel": "O que realmente funciona", "fundo": "destaque", "instrucao": "A tese do cliente, tirada do método ou da experiência dele." },
+    { "papel": "Como aplicar", "fundo": "claro", "instrucao": "Um jeito prático de começar hoje." },
+    { "papel": "CTA", "fundo": "escuro", "instrucao": "Chamada conforme o objetivo; aqui funciona bem pedir opinião ('concorda ou discorda?')." }
+  ]
+}

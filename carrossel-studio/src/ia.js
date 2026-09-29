@@ -21,11 +21,12 @@ export function provedor() {
 export const nomeProvedor = () => ({ openai: "GPT", anthropic: "Claude" })[provedor()] || null;
 
 // Resposta em JSON validada pelo schema Zod.
-export async function gerarEstruturado({ sistema, usuario, schema, nome }) {
+// `modeloOpenAI`: troca o modelo só nesta chamada (tarefas simples usam um modelo mais barato).
+export async function gerarEstruturado({ sistema, usuario, schema, nome, modeloOpenAI }) {
   if (provedor() === "openai") {
     const client = new OpenAI();
     const resposta = await client.responses.parse({
-      model: MODELO_OPENAI(),
+      model: modeloOpenAI || MODELO_OPENAI(),
       instructions: sistema,
       input: usuario,
       text: { format: zodTextFormat(schema, nome) },

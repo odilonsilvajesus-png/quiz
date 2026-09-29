@@ -3,6 +3,7 @@ import { z } from "zod";
 import { conteudoCompleto } from "./analise.js";
 import { textosDosDocumentos } from "./documentos.js";
 import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
+import { estruturasVirais } from "./modelos.js";
 
 export const temIA = () => Boolean(provedor());
 
@@ -18,13 +19,20 @@ function esquema(qtdSlides, comImagem, comDiagrama) {
     ? { direcao_de_arte: z.string().describe("Direção de arte única para todas as imagens do carrossel: personagem principal (idade, aparência, roupa), ambiente, luz, clima e tipo de foto.") }
     : {};
   return z.object({
+    planejamento: z.object({
+      quem: z.string().describe("Para quem exatamente é este post: perfil, momento de vida ou do negócio, dor"),
+      por_que: z.string().describe("Qual ganho a pessoa percebe até o 3º slide"),
+      ideia_central: z.string().describe("A ÚNICA ideia do carrossel, em uma frase"),
+    }).describe("Preencha ANTES de escrever os slides"),
     ...extras,
     angulo: z.string().describe("Ângulo/tema escolhido, exatamente como aparece na lista do cliente quando houver lista"),
     por_que_a_referencia_funcionou: z.string().describe("1 a 3 frases: o mecanismo de atenção da referência (gancho, tensão, identificação)"),
     slides: z
       .array(z.object(slide))
-      .describe(`Exatamente ${qtdSlides} slides, na ordem da estrutura`),
-    legenda: z.string().describe("Legenda do post para o Instagram, com CTA comercial no final"),
+      .describe(`Exatamente ${qtdSlides} slides, na ordem da estrutura. No slide 1 (capa), "subtitulo" é vazio.`),
+    ganchos_alternativos: z.array(z.string()).describe("3 outras headlines para a capa, de 4 a 12 palavras, cada uma com um mecanismo diferente (curiosidade, polêmica, identificação)"),
+    cta_botao: z.string().describe("Texto do botão do último slide, em caixa alta, até 22 caracteres, coerente com o CTA. Ex.: SALVE ESTE POST, COMENTE AGENDA"),
+    legenda: z.string().describe("Legenda do post para o Instagram, terminando com o mesmo CTA do último slide"),
     pendencias: z.array(z.string()).describe("Marcadores [ENTRE COLCHETES] usados que alguém precisa preencher. Vazio se nenhum."),
   });
 }
@@ -38,6 +46,53 @@ function regrasImagem(cliente, preferencia, direcaoEstilo, { regras, observacao,
 - Mostre ação, gesto e expressão concretos. Nada de imagem genérica, simbólica demais, de banco de imagens ou sem relação com a frase.
 - Respeite o posicionamento do cliente: nada que contradiga a base de conhecimento (ex.: se o cliente é contra dieta, não mostre balança, fita métrica ou prato de salada como solução).
 - Nunca peça texto, letras, números ou logotipos dentro da imagem.`;
+}
+
+// CTA pelo objetivo do post. Palavra-chave, entrega e próximo passo vêm do cadastro do cliente.
+function regrasCta(cliente, objetivo) {
+  const cta = cliente.conteudo.cta || {};
+  const palavra = cta.palavra_chave ? `a palavra ${cta.palavra_chave}` : "uma PALAVRA curta ligada ao tema, em caixa alta";
+  const entrega = cta.entrega || "[O QUE A PESSOA RECEBE] (liste em pendencias)";
+  const tipos = {
+    alcance: "ALCANCE: pedir para seguir o perfil ou mandar o post para alguém que precisa ler.",
+    autoridade: "AUTORIDADE: pedir para salvar o post para usar depois.",
+    lead: `LEAD (CTA duplo): salvar o post e comentar ${palavra} para receber ${entrega}.`,
+    conversao: `CONVERSÃO: levar ao próximo passo comercial: ${cta.conversao || "[PRÓXIMO PASSO: link na bio, direct ou formulário] (liste em pendencias)"}.`,
+  };
+  if (tipos[objetivo]) return `CTA deste post (obrigatório): ${tipos[objetivo]}`;
+  return `CTA: escolha UM objetivo que combine com o conteúdo e use o CTA dele:\n${Object.values(tipos).map((t) => `  - ${t}`).join("\n")}\n  Em estruturas de identificação ou contraponto, uma pergunta fácil de responder também funciona.`;
+}
+
+// Regras de copy viral que valem para todos os clientes e todos os modelos.
+function regrasVirais(modelo, objetivo, cliente) {
+  const maxPalavras = modelo.palavras_max || 35;
+  return `<regras_de_viralizacao>
+Antes de escrever, preencha "planejamento": para quem é, qual ganho a pessoa percebe até o 3º slide e a ÚNICA ideia central. Se houver duas ideias, fique com a mais forte.
+
+CAPA (slide 1):
+- Só a headline. "subtitulo" vazio. De 4 a 12 palavras.
+- A headline existe para fazer a pessoa ARRASTAR: curiosidade, polêmica, promessa concreta ou identificação imediata.
+- Específica, nunca genérica. Errado: "5 dicas para vender mais". Certo: "Seu cliente não sumiu. Ele desistiu no terceiro áudio."
+- Em "ganchos_alternativos", escreva 3 outras headlines para a capa, cada uma com um mecanismo diferente.
+
+SLIDE 2: precisa funcionar sozinho como capa, porque o Instagram reexibe o carrossel a partir dele. É um segundo gancho, nunca introdução.
+
+TEXTO:
+- No máximo ${maxPalavras} palavras por slide (título + subtítulo). Frases curtas, português do dia a dia.
+- Um destaque por slide.
+- A micro-dor específica vence a frase genérica: uma cena que o público reconhece na hora ("o cliente que some depois do orçamento" vence "clientes difíceis").
+- Traga algo do próprio cliente (experiência, opinião, história, método) tirado da base. Conteúdo que qualquer perfil do nicho postaria não serve.
+
+PROIBIDO:
+- Slide de "conclusão", "resumo" ou "obrigado por ler".
+- Promessa de resultado garantido ("vai", "garantido", "dobra"). Use "pode", "no caso de X".
+- Jargão técnico sem explicar, linguagem de guru, emoji nos slides.
+- Número, caso, depoimento ou história que não esteja na base do cliente.
+- Humilhar alguém, opinião partidária ou acusar pessoas.
+
+${regrasCta(cliente, objetivo)}
+- O último slide leva o CTA, e "cta_botao" é o texto curto do botão desse slide. A legenda termina com o mesmo CTA.
+</regras_de_viralizacao>`;
 }
 
 function promptSistema(cliente, modelo, opcoes = {}) {
@@ -78,8 +133,10 @@ Estes carrosséis já foram publicados e aprovados. Use-os como padrão de tom, 
 ${exemplos}
 </carrosseis_aprovados>` : ""}
 
+${regrasVirais(modelo, opcoes.objetivo, cliente)}
+
 Regras de formato:
-- Exatamente ${modelo.estrutura.length} slides, cada um com "titulo" (curto e direto, 1 a 3 linhas, até ${c.limites.titulo_max_caracteres} caracteres) e "subtitulo" (reforço em tom mais baixo, até ${c.limites.subtitulo_max_caracteres} caracteres).
+- Exatamente ${modelo.estrutura.length} slides, cada um com "titulo" (curto e direto, 1 a 3 linhas, até ${c.limites.titulo_max_caracteres} caracteres) e "subtitulo" (reforço em tom mais baixo, até ${c.limites.subtitulo_max_caracteres} caracteres). Na capa, "subtitulo" é vazio.
 - Em cada título, marque de 1 a 4 palavras-chave de destaque entre asteriscos, assim: "Você não precisa de *mais disciplina.*". Só uma marcação por título.
 - ${c.regra_de_ouro || "Um tema por carrossel."}
 ${c.angulos?.length ? `- Escolha o ângulo mais adequado desta lista: ${c.angulos.join("; ")}.` : ""}
@@ -88,7 +145,22 @@ ${c.proibir_travessao ? "- Nunca use travessão (— ou –). Use vírgula, pont
 ${opcoes.estilo?.formato_texto ? `- Formato do texto para o estilo visual "${opcoes.estilo.nome}": ${opcoes.estilo.formato_texto}\n` : ""}${opcoes.comImagem ? `${regrasImagem(cliente, opcoes.estiloImagem, opcoes.estilo?.direcao_imagem, { regras: cliente.visual.imagens?.regras, observacao: opcoes.obsImagem, comPessoa: opcoes.comPessoa })}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
 }
 
-function promptUsuario(referencia, { angulo, angulosRecentes = [], observacao }) {
+// Pedido de correção do revisor: a versão anterior e o que precisa mudar.
+function blocoRevisao(revisao) {
+  if (!revisao) return "";
+  const { anterior, ajustes = [], bloqueios = [] } = revisao;
+  return `
+
+<revisao>
+O revisor avaliou a versão abaixo e ela não passou. Reescreva o carrossel corrigindo TODOS os pontos apontados e mantendo o que já estava bom.
+${bloqueios.length ? `Bloqueios (obrigatório corrigir):\n${bloqueios.map((b) => `- ${b}`).join("\n")}\n` : ""}${ajustes.length ? `Ajustes:\n${ajustes.map((a) => `- ${a.onde}: ${a.problema} → ${a.sugestao}`).join("\n")}\n` : ""}
+Versão anterior:
+${anterior.slides.map((s, i) => `${i + 1}. ${s.titulo}${s.subtitulo ? ` / ${s.subtitulo}` : ""}`).join("\n")}
+Legenda: ${anterior.legenda}
+</revisao>`;
+}
+
+function promptUsuario(referencia, { angulo, angulosRecentes = [], observacao, revisao }) {
   const m = referencia.metricas || {};
   const r = referencia.ranking || {};
   const pauta = referencia.plataforma === "sugestao";
@@ -111,7 +183,7 @@ O que fez esse post performar está no CONTEÚDO REAL (a fala do vídeo e o text
 
 ${angulo ? `Use obrigatoriamente o ângulo: ${angulo}.` : pauta ? "" : "Escolha o ângulo que melhor aproveita o mecanismo de atenção dessa referência."}
 ${observacao ? `Observação do usuário para este carrossel (siga com prioridade): ${observacao}` : ""}
-${angulosRecentes.length ? `Evite repetir estes ângulos, usados recentemente: ${angulosRecentes.join("; ")}.` : ""}
+${angulosRecentes.length ? `Evite repetir estes ângulos, usados recentemente: ${angulosRecentes.join("; ")}.` : ""}${blocoRevisao(revisao)}
 
 Escreva o carrossel.`;
 }
@@ -123,8 +195,37 @@ function limpar(resultado, cliente) {
   return {
     ...resultado,
     slides: resultado.slides.map((s) => ({ ...s, titulo: semTravessao(s.titulo), subtitulo: semTravessao(s.subtitulo) })),
+    ganchos_alternativos: (resultado.ganchos_alternativos || []).map(semTravessao),
     legenda: semTravessao(resultado.legenda),
   };
+}
+
+// A capa leva só a headline.
+function capaSoHeadline(resultado) {
+  if (resultado.slides[0]) resultado.slides[0].subtitulo = "";
+  return resultado;
+}
+
+// Modo Automático: escolhe a estrutura viral pelo tipo do conteúdo, com um modelo barato (LEITURA_MODELO).
+export async function escolherEstrutura(cliente, referencia, { observacao } = {}) {
+  const opcoes = estruturasVirais();
+  if (!temIA()) return { modelo: opcoes[0], motivo: "Modo demonstração." };
+  const conteudo = referencia.plataforma === "sugestao" ? referencia.texto : conteudoCompleto(referencia);
+  const r = await gerarEstruturado({
+    nome: "estrutura",
+    modeloOpenAI: process.env.LEITURA_MODELO || undefined,
+    schema: z.object({
+      estrutura: z.enum(opcoes.map((m) => m.id)),
+      motivo: z.string().describe("Uma frase explicando a escolha"),
+    }),
+    sistema: `Você escolhe a estrutura de roteiro de um carrossel do Instagram pelo TIPO do conteúdo. Opções:
+${opcoes.map((m) => `- ${m.id} (${m.nome}): ${m.quando_usar}`).join("\n")}`,
+    usuario: `Cliente: ${cliente.nome}${cliente.descricao ? ` (${cliente.descricao})` : ""}
+
+Conteúdo que vai virar carrossel:
+${conteudo.slice(0, 6000)}${observacao ? `\n\nObservação do usuário: ${observacao}` : ""}`,
+  });
+  return { modelo: opcoes.find((m) => m.id === r.estrutura) || opcoes[0], motivo: r.motivo };
 }
 
 // opcoes.modelo: { nome, estrutura } escolhido na biblioteca de modelos (ver modelos.js).
@@ -155,7 +256,7 @@ export async function escreverCarrossel(cliente, referencia, opcoes = {}) {
   if (resultado.slides.length !== qtd) {
     throw new Error(`A IA devolveu ${resultado.slides.length} slides em vez de ${qtd}. Tente de novo.`);
   }
-  return limpar(resultado, cliente);
+  return capaSoHeadline(limpar(resultado, cliente));
 }
 
 // Gera o voz.md do cliente a partir dos posts reais dele: fala dos reels, texto dos carrosséis e legendas.

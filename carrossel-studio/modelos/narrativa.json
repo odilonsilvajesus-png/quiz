@@ -1,0 +1,18 @@
+{
+  "id": "narrativa",
+  "nome": "Narrativa",
+  "descricao": "Frase de efeito, história real e lição. Gera conexão e compartilhamento.",
+  "ordem": 1,
+  "viral": true,
+  "palavras_max": 35,
+  "quando_usar": "Frase de efeito, história real vivida pelo cliente, bastidor, 'comece aqui'.",
+  "estrutura": [
+    { "papel": "Capa: frase de efeito", "fundo": "escuro", "instrucao": "SÓ a headline, de 4 a 12 palavras: ditado, analogia de rua ou afirmação que divide. Subtítulo vazio." },
+    { "papel": "Tese", "fundo": "claro", "instrucao": "A ideia central em 1 ou 2 frases. Funciona sozinha como capa." },
+    { "papel": "História real", "fundo": "escuro", "instrucao": "Um caso ou momento real da base do cliente, com um detalhe concreto (lugar, hora, frase dita). Nunca inventado." },
+    { "papel": "Lição", "fundo": "claro", "instrucao": "O que essa história ensina, em linguagem simples." },
+    { "papel": "Frase mais forte", "fundo": "destaque", "instrucao": "Só a frase mais forte do post, sozinha. Subtítulo vazio ou mínimo." },
+    { "papel": "Aplicação", "fundo": "claro", "instrucao": "Como o público aplica isso hoje, na vida ou no negócio." },
+    { "papel": "CTA", "fundo": "escuro", "instrucao": "Chamada conforme o objetivo do post (ver regras de CTA)." }
+  ]
+}

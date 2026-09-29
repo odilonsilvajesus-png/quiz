@@ -20,7 +20,7 @@ import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
 import { criarZip } from "./zip.js";
 import { createRequire } from "node:module";
-import { listarModelos, modelosDoCliente, resolverModelo } from "./modelos.js";
+import { listarModelos, modelosDoCliente, resolverModelo, estruturasVirais } from "./modelos.js";
 import { montarHtml, listarEstilos, renderizar, exportarJpeg } from "./render.js";
 import { imagemExemplo, slidesComImagem, temGeradorImagem, resolverModo } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
@@ -96,6 +96,7 @@ function detalheCliente(id) {
       modelo_padrao: resolverModelo(c).id,
       cta_legenda: c.conteudo.cta_legenda || "",
       proibir_travessao: Boolean(c.conteudo.proibir_travessao),
+      cta: c.conteudo.cta,
     },
     visual: {
       paleta: c.visual.paleta,
@@ -107,6 +108,8 @@ function detalheCliente(id) {
       tem_foto_pessoa: Boolean(c.visual.foto_pessoa),
       template: c.visual.template,
       imagens: c.visual.imagens,
+      alternar_fundos: c.visual.alternar_fundos !== false,
+      usar_fechamento: c.visual.usar_fechamento !== false,
     },
     voz: c.voz,
     fotos: listarFotos(c.id).map((nome) => ({ nome, url: `/api/clientes/${c.id}/fotos/${nome}` })),
@@ -143,13 +146,15 @@ async function previa(id, dados) {
   };
   const infoEstilo = (await listarEstilos()).find((e) => e.id === (dados.template || c.visual.template));
   const modoImagens = resolverModo(dados.imagens?.modo || c.visual.imagens?.modo, infoEstilo);
-  const comImagem = new Set(slidesComImagem(modoImagens, resolverModelo(c, dados.modelo).estrutura.length));
-  const modelo = resolverModelo(c, dados.modelo);
+  // No Automático, a prévia mostra a primeira estrutura viral (Ensino).
+  const escolhido = resolverModelo(c, dados.modelo);
+  const modelo = escolhido.automatico ? estruturasVirais()[0] : escolhido;
+  const comImagem = new Set(slidesComImagem(modoImagens, modelo.estrutura.length));
   const estilo = dados.template || c.visual.template;
   const exemplo = c.exemplosCarrossel.find((e) => e.slides.length === modelo.estrutura.length);
   const slides = modelo.estrutura.map((s, i) => ({
     titulo: exemplo?.slides[i].titulo || `${s.papel} com *destaque*`,
-    subtitulo: exemplo?.slides[i].subtitulo || s.instrucao,
+    subtitulo: i === 0 ? "" : exemplo?.slides[i].subtitulo || s.instrucao,
     fundo: s.fundo,
     imagem: comImagem.has(i) ? "exemplo" : undefined,
   }));
@@ -161,7 +166,7 @@ async function previa(id, dados) {
 
 // Ajuste manual de um carrossel já gerado: textos e troca/remoção da imagem de cada slide
 // (ex.: subir um print real). Depois renderiza de novo.
-async function editarCarrossel(id, nomePasta, { slides = [], imagens = {} }) {
+async function editarCarrossel(id, nomePasta, { slides = [], imagens = {}, ganchos_alternativos: ganchos }) {
   const cliente = carregarCliente(id);
   const pasta = pastaCarrossel(id, nomePasta);
   const arquivo = path.join(pasta, "carrossel.json");
@@ -171,6 +176,7 @@ async function editarCarrossel(id, nomePasta, { slides = [], imagens = {} }) {
     if (typeof s.titulo === "string") carrossel.slides[i].titulo = s.titulo;
     if (typeof s.subtitulo === "string") carrossel.slides[i].subtitulo = s.subtitulo;
   });
+  if (Array.isArray(ganchos)) carrossel.ganchos_alternativos = ganchos.map(String).slice(0, 5);
   for (const [i, dataUrl] of Object.entries(imagens)) {
     const s = carrossel.slides[Number(i)];
     if (!s) continue;
@@ -310,7 +316,7 @@ const rotas = [
   rota("PUT", "/api/clientes/:id/referencias", async (m, _u, req) => salvarReferencias(m[1], await corpo(req))),
   rota("GET", "/api/clientes/:id/carrosseis", (m) => listarGerados(m[1])),
   rota("POST", "/api/clientes/:id/gerar", async (m, _u, req) => {
-    const { refId, angulo, modelo, estilo, imagens, indice, observacao, obsImagem, fotoPessoa } = await corpo(req);
+    const { refId, angulo, modelo, estilo, imagens, indice, observacao, obsImagem, fotoPessoa, objetivo } = await corpo(req);
     const cliente = carregarCliente(m[1]);
     let ref;
     if (String(refId).startsWith("sug:")) {
@@ -322,7 +328,7 @@ const rotas = [
     if (!ref) throw new Error("Referência não encontrada. Atualize a coleta.");
     await gerarCarrossel(cliente, ref, {
       angulo: angulo || undefined, modelo: modelo || undefined, estilo: estilo || undefined, imagens: imagens || undefined,
-      indice, observacao, obsImagem, fotoPessoa: fotoPessoa || undefined, log: () => {},
+      indice, observacao, obsImagem, fotoPessoa: fotoPessoa || undefined, objetivo: objetivo || undefined, log: () => {},
     });
     return listarGerados(cliente.id)[0];
   }),

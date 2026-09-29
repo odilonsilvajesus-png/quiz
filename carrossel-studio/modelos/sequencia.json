@@ -1,0 +1,18 @@
+{
+  "id": "sequencia",
+  "nome": "Sequência",
+  "descricao": "Frases curtas em sequência, com contraste ou virada. Ótimo para antes e depois e bastidores.",
+  "ordem": 2,
+  "viral": true,
+  "palavras_max": 12,
+  "quando_usar": "Antes e depois, jornada, gratidão, bastidor, evolução.",
+  "estrutura": [
+    { "papel": "Capa: primeira frase", "fundo": "escuro", "instrucao": "SÓ a headline, até 12 palavras, que abre a sequência. Subtítulo vazio." },
+    { "papel": "Frase 2", "fundo": "claro", "instrucao": "Uma frase curta (até 12 palavras). Subtítulo vazio." },
+    { "papel": "Frase 3", "fundo": "escuro", "instrucao": "Uma frase curta (até 12 palavras). Subtítulo vazio." },
+    { "papel": "Frase 4", "fundo": "claro", "instrucao": "Uma frase curta (até 12 palavras). Subtítulo vazio." },
+    { "papel": "Virada", "fundo": "destaque", "instrucao": "O contraste: o que mudou. Até 12 palavras. Subtítulo vazio." },
+    { "papel": "Frase final de impacto", "fundo": "escuro", "instrucao": "A frase que a pessoa vai querer mandar para alguém. Até 12 palavras." },
+    { "papel": "Assinatura / CTA", "fundo": "claro", "instrucao": "Assinatura curta do cliente ou CTA leve conforme o objetivo." }
+  ]
+}

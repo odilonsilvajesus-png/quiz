@@ -16,6 +16,8 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/cliente.js`: leitura/gravação do kit do cliente (`clientes/<id>/cliente.json`), paleta → fundos, normalização de formatos antigos.
 - `src/carrosseis.js`: estados do carrossel (rascunho, agendado, postado, descartado com motivo); o agendador roda no `servidor.js` a cada minuto e aprendizados para o prompt.
 - `src/analise.js`: conteúdo real dos posts (transcrição da fala dos reels e leitura do texto dos slides), usado nas referências e no tom de voz.
+- `src/copy.js`: escrita do carrossel. `regrasVirais` (capa só com headline, slide 2 como segundo gancho, limite de palavras, travas) e `regrasCta` (CTA pelo objetivo: alcance, autoridade, lead, conversão) valem para todos os clientes. `escolherEstrutura` é o modo Automático. Regras de um cliente específico (fé, marca pessoal) ficam nos documentos dele, nunca aqui.
+- `src/revisor.js`: revisor sempre ligado; notas de 0 a 10 e bloqueios. Abaixo de 7 no gancho ou 7,5 de média, o pipeline reescreve uma vez.
 - `src/custos.js`: custo de cada operação (texto, imagens, transcrição, Apify) em dólar e reais; `registrarUso` em cada chamada paga, `comMedicao` em volta de cada operação. Preços por modelo na tabela `PRECOS`: atualizar quando mudar o modelo ou o preço.
 - `src/tarefas.js`: tarefas demoradas (coleta, tom de voz) em segundo plano; o painel consulta o andamento.
 - `src/sugestoes.js`: pautas sugeridas pela IA a partir do conhecimento do cliente.

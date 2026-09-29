@@ -83,6 +83,8 @@ export async function montarHtml(cliente, carrossel, { cssExtra = "", pastaImage
     foto_pessoa: comoDataUri(cliente.visual.foto_pessoa, cliente.pasta),
     data: new Date(carrossel.criado_em || Date.now()).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }),
     nome_exibicao: cliente.nome,
+    // Botão do último slide: o CTA escrito para este carrossel. Cliente sem botão (cta_final vazio) continua sem.
+    cta_final: cliente.visual.cta_final ? (carrossel.cta_botao || cliente.visual.cta_final).slice(0, 26) : "",
     arroba: cliente.instagram || cliente.visual.assinatura,
   };
   const estrutura = cliente.conteudo.estrutura;

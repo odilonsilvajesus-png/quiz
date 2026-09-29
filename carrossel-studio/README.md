@@ -84,6 +84,13 @@ Na janela **Postar no Instagram**, escolha data e hora e clique em **Agendar pub
 Depois disso, **Postar no Instagram** publica o carrossel com a legenda (editável na hora) e ele vai para **Postados**, com o link do post.
 Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já postei, marcar como postado**.
 
+### Escrita viral e revisor
+- **Estruturas:** Ensino, Narrativa, Sequência, Contraponto e Identificação. No modelo **Automático**, a IA escolhe a estrutura pelo tipo do conteúdo (com o modelo barato do `LEITURA_MODELO`).
+- **Capa só com a headline** (4 a 12 palavras) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
+- **Slide 2** funciona sozinho como capa. Limite de palavras por slide, dor específica, nada inventado, sem promessa de resultado.
+- **CTA pelo objetivo** (Alcance, Autoridade, Lead, Conversão), escolhido na hora de criar. Palavra-chave, entrega e próximo passo ficam em **Voz e direcionamento → Temas, regras e chamada para ação**.
+- **Revisor** sempre ligado: dá nota de 0 a 10 para gancho, clareza, tom de voz, estrutura e CTA, e aponta bloqueios. Abaixo de 7 no gancho ou 7,5 de média, o carrossel é reescrito uma vez com os ajustes. A nota aparece no carrossel.
+
 ### Quanto custa cada carrossel
 Cada carrossel mostra **quanto custou** em reais (texto + imagens com IA). No topo do cliente e na página inicial aparece o **gasto do mês**; clicando, abre o detalhe por tipo (carrosséis, coletas, tom de voz, sugestões, mapa da marca).
 O cálculo usa o consumo que a OpenAI, o Claude e o Apify informam em cada chamada, o dólar PTAX do Banco Central e o IOF de 3,5% do cartão internacional (ajustável no `.env` com `COTACAO_DOLAR` e `IOF_PERCENTUAL`). É uma estimativa: a fatura oficial continua nos painéis de cada serviço.

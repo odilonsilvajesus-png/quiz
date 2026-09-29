@@ -13,7 +13,7 @@
   },
   "conteudo": {
     "formato": "carrossel",
-    "modelo_padrao": "quebra-de-crenca",
+    "modelo_padrao": "auto",
     "regra_de_ouro": "1 tema por carrossel.",
     "proibir_travessao": false,
     "limites": {

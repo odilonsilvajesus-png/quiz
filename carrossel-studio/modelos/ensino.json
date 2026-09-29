@@ -1,0 +1,20 @@
+{
+  "id": "ensino",
+  "nome": "Ensino",
+  "descricao": "Listas, passo a passo, certo vs. errado, comparação. Gancho, dor, prova e passos práticos.",
+  "ordem": 0,
+  "viral": true,
+  "palavras_max": 35,
+  "quando_usar": "Conteúdo que ensina: lista aplicável, passo a passo, certo vs. errado, comparação, erros comuns.",
+  "estrutura": [
+    { "papel": "Capa: gancho", "fundo": "escuro", "instrucao": "SÓ a headline, de 4 a 12 palavras: curiosidade, polêmica ou promessa concreta. Subtítulo vazio." },
+    { "papel": "Segundo gancho", "fundo": "claro", "instrucao": "Precisa funcionar sozinho como capa (o Instagram reexibe o carrossel a partir do slide 2). Nunca introdução." },
+    { "papel": "Dor", "fundo": "escuro", "instrucao": "A situação que o público reconhece na hora, com uma cena específica." },
+    { "papel": "Invalidar o esforço atual", "fundo": "claro", "instrucao": "Mostra por que o que a pessoa já tenta não resolve." },
+    { "papel": "Benefício + prova", "fundo": "destaque", "instrucao": "O 'depois'. Prova só se existir na base do cliente (número, caso, print); senão, marcador [ENTRE COLCHETES]." },
+    { "papel": "Passo 1", "fundo": "claro", "instrucao": "Um passo por slide, com o detalhe que só quem faz sabe." },
+    { "papel": "Passo 2", "fundo": "escuro", "instrucao": "Um passo por slide, com o detalhe que só quem faz sabe." },
+    { "papel": "Passo 3", "fundo": "claro", "instrucao": "Um passo por slide, com o detalhe que só quem faz sabe." },
+    { "papel": "CTA", "fundo": "destaque", "instrucao": "Chamada conforme o objetivo do post (ver regras de CTA)." }
+  ]
+}
