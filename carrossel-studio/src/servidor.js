@@ -30,7 +30,7 @@ if (fs.existsSync(path.join(RAIZ, ".env"))) process.loadEnvFile(path.join(RAIZ, 
 
 const PORTA = Number(process.env.PORTA || 3333);
 const TIPOS = {
-  ".html": "text/html; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml",
+  ".html": "text/html; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".webp": "image/webp",
   ".json": "application/json", ".txt": "text/plain; charset=utf-8", ".woff2": "font/woff2",
 };
 const require = createRequire(import.meta.url);
@@ -366,6 +366,9 @@ http
     const url = new URL(req.url, `http://${req.headers.host}`);
     try {
       if (url.pathname === "/") return arquivo(res, path.join(RAIZ, "painel", "index.html"), path.join(RAIZ, "painel"));
+      if (url.pathname.startsWith("/marca/")) {
+        return arquivo(res, path.join(RAIZ, "painel", "marca", path.basename(url.pathname)), path.join(RAIZ, "painel", "marca"));
+      }
       if (url.pathname.startsWith("/fontes/")) {
         return arquivo(res, path.join(PASTA_FONTE_PAINEL, path.basename(url.pathname)), PASTA_FONTE_PAINEL);
       }

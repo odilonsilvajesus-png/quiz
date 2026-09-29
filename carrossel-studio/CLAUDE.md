@@ -33,4 +33,5 @@ passos em português simples e dê comandos prontos para copiar.
 - A IA nunca inventa números, depoimentos, preços ou prints de prova social; usa marcadores `[ENTRE COLCHETES]`.
 - Imagens: sempre ligadas ao texto do slide (direção de arte única + cena de cada slide), sem texto dentro da imagem.
 - Textos da interface e mensagens de commit em português.
+- Visual do painel segue `painel/marca/MAPA_DA_MARCA.md` (tokens em `:root` do `painel/index.html`, logo em `painel/marca/`). O roxo e o logo da Viraliza são só da interface: nunca aplicar nos carrosséis dos clientes.
 - Antes de subir mudanças: testar gerando um carrossel no modo demonstração e conferir os PNGs.
