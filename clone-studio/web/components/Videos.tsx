@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { api, type EditOptions, type Job, type StepKey } from "../api";
+import { api, defaultOptions, LAYOUTS, type EditOptions, type Job, type Layout, type StepKey } from "../api";
 import { EditOptionsForm } from "./EditOptionsForm";
 
 const STEPS: { key: StepKey; label: string }[] = [
@@ -33,17 +33,23 @@ function JobCard({ job, refresh }: { job: Job; refresh: () => void }) {
   const version = encodeURIComponent(job.updatedAt);
   const ratio = { "9:16": "9 / 16", "1:1": "1 / 1", "16:9": "16 / 9" }[job.options.format];
   const current = STEPS.find((s) => job.steps[s.key].status === "running" || job.steps[s.key].status === "error");
+  // Jobs antigos só têm outputs.final; os novos têm um render por modelo de edição.
+  const renders = job.outputs.renders ?? (job.outputs.final ? [{ layout: "fullscreen" as Layout, file: job.outputs.final, thumb: job.outputs.thumb ?? "" }] : []);
+  const [selected, setSelected] = useState<Layout | null>(null);
+  const render = renders.find((r) => r.layout === selected) ?? renders[0];
+  const layoutQuery = job.outputs.renders ? `?layout=${render?.layout}` : "";
 
   const act = (fn: () => Promise<unknown>) => fn().then(refresh).catch((e: Error) => alert(e.message));
 
   return (
     <article className="card flex flex-col gap-4 p-4">
       <div className="relative overflow-hidden rounded-xl bg-zinc-950" style={{ aspectRatio: ratio, maxHeight: 520 }}>
-        {job.status === "done" && job.outputs.final ? (
+        {job.status === "done" && render ? (
           <video
+            key={render.file}
             className="size-full object-contain"
-            src={`/files/jobs/${job.id}/${job.outputs.final}?v=${version}`}
-            poster={job.outputs.thumb ? `/files/jobs/${job.id}/${job.outputs.thumb}?v=${version}` : undefined}
+            src={`/files/jobs/${job.id}/${render.file}?v=${version}`}
+            poster={render.thumb ? `/files/jobs/${job.id}/${render.thumb}?v=${version}` : undefined}
             controls
             playsInline
             preload="none"
@@ -57,6 +63,20 @@ function JobCard({ job, refresh }: { job: Job; refresh: () => void }) {
           </div>
         )}
       </div>
+
+      {job.status === "done" && renders.length > 1 && (
+        <div className="flex flex-wrap gap-1.5">
+          {renders.map((r) => (
+            <button
+              key={r.layout}
+              onClick={() => setSelected(r.layout)}
+              className={`rounded-lg px-2.5 py-1 text-xs font-medium transition ${r.layout === render?.layout ? "bg-brand-600 text-white" : "bg-zinc-800 text-zinc-400 hover:text-zinc-200"}`}
+            >
+              {LAYOUTS.find((l) => l.value === r.layout)?.label ?? r.layout}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div>
         <div className="flex items-start justify-between gap-2">
@@ -92,14 +112,32 @@ function JobCard({ job, refresh }: { job: Job; refresh: () => void }) {
       <div className="mt-auto flex flex-wrap gap-2">
         {job.status === "done" && (
           <>
-            <a className="btn-primary w-full" href={`/api/jobs/${job.id}/download/video`}>⬇ Baixar vídeo</a>
-            <a className="btn-ghost whitespace-nowrap" href={`/api/jobs/${job.id}/download/capa`} title="Baixar capa">Capa</a>
+            <a className="btn-primary w-full" href={`/api/jobs/${job.id}/download/video${layoutQuery}`}>
+              ⬇ Baixar {renders.length > 1 ? LAYOUTS.find((l) => l.value === render?.layout)?.label.toLowerCase() : "vídeo"}
+            </a>
+            {renders.length > 1 && (
+              <button
+                className="btn-ghost w-full"
+                onClick={() =>
+                  renders.forEach((r, i) =>
+                    setTimeout(() => {
+                      const a = document.createElement("a");
+                      a.href = `/api/jobs/${job.id}/download/video?layout=${r.layout}`;
+                      a.click();
+                    }, i * 600),
+                  )
+                }
+              >
+                ⬇ Baixar todos os {renders.length} modelos
+              </button>
+            )}
+            <a className="btn-ghost whitespace-nowrap" href={`/api/jobs/${job.id}/download/capa${layoutQuery}`} title="Baixar capa">Capa</a>
             <a className="btn-ghost" href={`/api/jobs/${job.id}/download/legendas`} title="Legendas .srt">SRT</a>
           </>
         )}
         {job.status === "error" && <button className="btn-primary flex-1" onClick={() => act(() => api.retry(job.id))}>Tentar de novo</button>}
         {!busy && job.steps.voice.status === "done" && job.steps.avatar.status === "done" && (
-          <button className="btn-ghost" onClick={() => setEditing(structuredClone(job.options))}>Reeditar</button>
+          <button className="btn-ghost" onClick={() => setEditing({ ...defaultOptions(), ...structuredClone(job.options) })}>Reeditar</button>
         )}
         <button
           className="btn-ghost"

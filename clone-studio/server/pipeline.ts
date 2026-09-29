@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { UPLOADS_DIR } from "./config.js";
-import { OUTPUT_SIZE, render } from "./editor/render.js";
+import { OUTPUT_SIZE, renderAll } from "./editor/render.js";
 import * as eleven from "./providers/elevenlabs.js";
 import * as heygen from "./providers/heygen.js";
 import * as mock from "./providers/mock.js";
@@ -94,14 +94,8 @@ async function run(id: string) {
 
     // 3) Edição: formato, legendas, gancho, marca d'água, trilha.
     step = "edit";
-    setStep(job, step, "running", "Editando… 0%");
-    let last = -1;
-    const out = await render(job, dir, (pct) => {
-      if (pct - last >= 5) {
-        last = pct;
-        setStep(job, step, "running", `Editando… ${pct}%`);
-      }
-    });
+    setStep(job, step, "running", "Editando…");
+    const out = await renderAll(job, dir, { name: profile.name, handle: profile.handle }, (msg) => setStep(job, step, "running", msg));
     Object.assign(job.outputs, out);
     setStep(job, step, "done");
     job.status = "done";

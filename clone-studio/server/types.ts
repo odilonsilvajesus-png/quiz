@@ -1,5 +1,10 @@
 export type Format = "9:16" | "1:1" | "16:9";
 
+/** Modelos de edição: cada um gera um vídeo final diferente a partir do mesmo clone. */
+export type Layout = "fullscreen" | "split" | "podcast" | "pip" | "frame";
+
+export type MediaFile = { file: string; name: string };
+
 export type Profile = {
   name: string;
   handle: string;
@@ -23,6 +28,13 @@ export type Profile = {
 
 export type EditOptions = {
   format: Format;
+  layouts: Layout[];
+  /** Cortes dinâmicos: alterna enquadramento aberto/fechado a cada frase. */
+  cuts: boolean;
+  /** Vídeos/imagens de apoio (parte de cima da tela dividida, fundo do apresentador). */
+  media: MediaFile[];
+  /** Título do podcast / manchete exibida nos modelos que têm cabeçalho. */
+  layoutTitle: string;
   background: string;
   captions: {
     enabled: boolean;
@@ -42,6 +54,8 @@ export type EditOptions = {
 export type StepKey = "voice" | "avatar" | "edit";
 export type StepStatus = "pending" | "running" | "done" | "error";
 
+export type Render = { layout: Layout; file: string; thumb: string };
+
 export type Word = { text: string; start: number; end: number };
 
 export type Job = {
@@ -58,6 +72,7 @@ export type Job = {
     words?: Word[];
     raw?: string;
     final?: string;
+    renders?: Render[];
     srt?: string;
     thumb?: string;
     duration?: number;

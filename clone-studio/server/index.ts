@@ -86,6 +86,18 @@ app.post("/api/music", upload.single("music"), (req, res) => {
   res.json({ file: req.file.filename, name: req.file.originalname });
 });
 
+/** Vídeos/imagens de apoio para tela dividida e apresentador. */
+app.post("/api/media", upload.array("media", 20), (req, res) => {
+  const files = (req.files as Express.Multer.File[]) ?? [];
+  if (!files.length) return res.status(400).json({ error: "Envie vídeos ou imagens." });
+  const bad = files.find((f) => !/^(video|image)\//.test(f.mimetype) && !/\.(mp4|mov|webm|mkv|jpe?g|png|webp)$/i.test(f.originalname));
+  if (bad) {
+    for (const f of files) fs.rmSync(f.path, { force: true });
+    return res.status(400).json({ error: `${bad.originalname} não é vídeo nem imagem.` });
+  }
+  res.json(files.map((f) => ({ file: f.filename, name: f.originalname })));
+});
+
 app.get("/api/jobs", (_req, res) => res.json(listJobs()));
 
 app.get("/api/jobs/:id", (req, res) => {
@@ -167,15 +179,18 @@ const DOWNLOADS: Record<string, (job: Job) => string | undefined> = {
 
 app.get("/api/jobs/:id/download/:kind", (req, res) => {
   const job = getJob(req.params.id);
-  const file = job && DOWNLOADS[req.params.kind]?.(job);
+  // ?layout=podcast escolhe qual modelo de edição baixar.
+  const render = job?.outputs.renders?.find((r) => r.layout === req.query.layout);
+  const file = render && job ? (req.params.kind === "capa" ? render.thumb : req.params.kind === "video" ? render.file : DOWNLOADS[req.params.kind]?.(job)) : job && DOWNLOADS[req.params.kind]?.(job);
   if (!job || !file) return res.status(404).json({ error: "Arquivo não disponível." });
   const slug = job.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w]+/g, "-").replace(/^-|-$/g, "").slice(0, 40).toLowerCase() || job.id;
-  res.download(path.join(jobDir(job.id), file), `${slug}${path.extname(file)}`);
+  const suffix = render && job.outputs.renders!.length > 1 ? `-${render.layout}` : "";
+  res.download(path.join(jobDir(job.id), file), `${slug}${suffix}${path.extname(file)}`);
 });
 
 app.use("/files/jobs", (req, res, next) => {
   // Só expõe arquivos de saída para pré-visualização.
-  if (!/^\/[\w-]+\/(final\.mp4|capa\.jpg|avatar\.mp4|voz\.mp3)$/.test(req.path)) return res.status(404).end();
+  if (!/^\/[\w-]+\/((final|capa)(-\w+)?\.(mp4|jpg)|avatar\.mp4|voz\.mp3)$/.test(req.path)) return res.status(404).end();
   next();
 }, express.static(path.dirname(jobDir("x"))));
 app.use("/files/uploads", express.static(UPLOADS_DIR));

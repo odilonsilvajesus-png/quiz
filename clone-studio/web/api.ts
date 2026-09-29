@@ -8,8 +8,23 @@ export type Profile = {
   avatar: { type: "avatar" | "talking_photo"; avatarId?: string; talkingPhotoId?: string; photoFile?: string };
 };
 
+export type Layout = "fullscreen" | "split" | "podcast" | "pip" | "frame";
+export type MediaFile = { file: string; name: string };
+
+export const LAYOUTS: { value: Layout; label: string; description: string; usesMedia?: boolean }[] = [
+  { value: "fullscreen", label: "Tela cheia", description: "Você ocupando a tela toda, estilo Reels clássico." },
+  { value: "split", label: "Tela dividida", description: "Vídeo de apoio em cima (gameplay, produto, prints) e você embaixo.", usesMedia: true },
+  { value: "podcast", label: "Podcast", description: "Estúdio: cartão com a câmera, onda sonora, nome e título do episódio." },
+  { value: "pip", label: "Apresentador", description: "Conteúdo em tela cheia e você numa janela no canto (react/aula).", usesMedia: true },
+  { value: "frame", label: "Moldura", description: "Você num cartão central sobre fundo desfocado, título em cima." },
+];
+
 export type EditOptions = {
   format: Format;
+  layouts: Layout[];
+  cuts: boolean;
+  media: MediaFile[];
+  layoutTitle: string;
   background: string;
   captions: {
     enabled: boolean;
@@ -37,7 +52,13 @@ export type Job = {
   steps: Record<StepKey, { status: "pending" | "running" | "done" | "error"; message?: string }>;
   error?: string;
   providers: { voice: string; avatar: string };
-  outputs: { final?: string; thumb?: string; srt?: string; duration?: number };
+  outputs: {
+    final?: string;
+    thumb?: string;
+    srt?: string;
+    duration?: number;
+    renders?: { layout: Layout; file: string; thumb: string }[];
+  };
   createdAt: string;
   updatedAt: string;
 };
@@ -82,6 +103,11 @@ export const api = {
     form.append("music", file);
     return call<{ file: string; name: string }>("/api/music", { method: "POST", body: form });
   },
+  uploadMedia: (files: File[]) => {
+    const form = new FormData();
+    files.forEach((f) => form.append("media", f));
+    return call<MediaFile[]>("/api/media", { method: "POST", body: form });
+  },
   jobs: () => call<Job[]>("/api/jobs"),
   createJob: (title: string, copy: string, options: EditOptions) =>
     call<Job>("/api/jobs", json("POST", { title, copy, options })),
@@ -92,6 +118,10 @@ export const api = {
 
 export const defaultOptions = (handle = ""): EditOptions => ({
   format: "9:16",
+  layouts: ["fullscreen"],
+  cuts: true,
+  media: [],
+  layoutTitle: "",
   background: "#0f172a",
   captions: {
     enabled: true,

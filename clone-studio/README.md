@@ -17,6 +17,21 @@ copy ──► voz clonada (ElevenLabs) ──► clone em vídeo com lip-sync (
 | **Edição** | Formato 9:16 / 1:1 / 16:9, legendas animadas com palavra destacada (estilo TikTok/Reels), título de gancho, marca d'água com seu @, trilha com *ducking* automático, volume normalizado para redes (-14 LUFS). |
 | **Entrega** | Pré-visualização no navegador e download do MP4, da capa (JPG) e das legendas (SRT). |
 
+### Modelos de edição
+
+Marque um ou vários — cada modelo vira um vídeo pronto a partir do **mesmo** clone (a voz e o avatar são gerados uma vez só):
+
+| Modelo | Como fica |
+|---|---|
+| **Tela cheia** | Você ocupando a tela toda (Reels/TikTok clássico). |
+| **Tela dividida** | Vídeo de apoio em cima (gameplay, produto, prints) e você embaixo; no 16:9 fica lado a lado. |
+| **Podcast** | Fundo desfocado, cartão com a câmera, onda sonora animada, seu nome/@ e o título do episódio. |
+| **Apresentador** | Conteúdo em tela cheia e você numa janela no canto (react, aula, análise). |
+| **Moldura** | Você num cartão centralizado sobre fundo desfocado, com título em cima. |
+
+- **Cortes dinâmicos**: alterna plano aberto e close a cada frase, como se fossem duas câmeras.
+- **Vídeos/imagens de apoio**: se alternam a cada frase; imagens ganham movimento de câmera.
+
 Extras:
 - **Vários vídeos de uma vez**: separe as copies com uma linha contendo `---`.
 - **Reeditar sem gastar créditos**: muda legendas, gancho, trilha etc. reaproveitando voz e avatar já gerados.
@@ -61,7 +76,8 @@ server/
     mock.ts            modo demo
   editor/
     captions.ts        legendas ASS (karaokê) e SRT
-    render.ts          edição final com FFmpeg
+    layouts.ts         modelos de edição (tela dividida, podcast, apresentador…)
+    render.ts          edição final com FFmpeg (um vídeo por modelo)
   assets/fonts/        Montserrat ExtraBold (SIL OFL) para as legendas
 web/                   interface React + Tailwind
 data/                  (gerado) perfil, uploads e vídeos — fora do git
