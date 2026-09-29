@@ -7,7 +7,8 @@ import { emParalelo } from "./imagens.js";
 import { registrarUso, custoTranscricao, custoTextoOpenAI } from "./custos.js";
 
 const MODELO_TRANSCRICAO = () => process.env.TRANSCRICAO_MODELO || "gpt-4o-transcribe";
-const MODELO_VISAO = () => process.env.OPENAI_MODEL || "gpt-5.5";
+// Ler o texto dos slides é tarefa simples: dá para usar um modelo mais barato que o da copy (LEITURA_MODELO).
+const MODELO_VISAO = () => process.env.LEITURA_MODELO || process.env.OPENAI_MODEL || "gpt-5.5";
 const LIMITE_VIDEO = 25 * 1024 * 1024; // limite de arquivo da transcrição
 
 export const podeAnalisar = () => Boolean(process.env.OPENAI_API_KEY);

@@ -12,10 +12,19 @@ const medidor = new AsyncLocalStorage();
 // Modelo fora da lista: o custo aparece como "sem preço" em vez de um número inventado.
 const PRECOS = {
   "gpt-5.5": { entrada: 5, cache: 0.5, saida: 30 },
+  "gpt-5.4": { entrada: 2.5, cache: 0.25, saida: 15 },
+  "gpt-5.4-mini": { entrada: 0.75, cache: 0.075, saida: 4.5 },
+  "gpt-5.4-nano": { entrada: 0.2, cache: 0.02, saida: 1.25 },
   "gpt-5": { entrada: 1.25, cache: 0.125, saida: 10 },
+  "gpt-5-mini": { entrada: 0.25, cache: 0.025, saida: 2 },
+  "gpt-5-nano": { entrada: 0.05, cache: 0.005, saida: 0.4 },
+  "gpt-4.1-mini": { entrada: 0.4, cache: 0.1, saida: 1.6 },
   "gpt-image-2": { texto: 5, texto_cache: 1.25, imagem: 8, imagem_cache: 2, saida: 30 },
   "gpt-image-1": { texto: 5, texto_cache: 1.25, imagem: 10, imagem_cache: 2.5, saida: 40 },
+  // Transcrição: preço por minuto oficial; o preço por token de áudio é proporcional a ele.
   "gpt-4o-transcribe": { minuto: 0.006, audio: 6, texto: 2.5, saida: 10 },
+  "gpt-4o-mini-transcribe": { minuto: 0.003, audio: 3, texto: 1.25, saida: 5 },
+  "gpt-transcribe": { minuto: 0.0045, audio: 4.5, texto: 2.5, saida: 10 },
   "claude-opus-5-5": { entrada: 4, cache: 0.2, cache_escrita: 5, saida: 20 },
 };
 
