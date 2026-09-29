@@ -123,9 +123,9 @@ export function NewVideo({ profile, status, onCreated }: { profile: Profile; sta
         <Section
           title="Seu vídeo"
           subtitle={
-            status.transcribe === "elevenlabs"
+            status.transcribe !== "mock"
               ? "A fala é transcrita para gerar legendas, tirar pausas e escolher os cortes."
-              : "Modo demo: sem ELEVENLABS_API_KEY não há transcrição — as pausas saem pelo silêncio e os cortes por duração, sem legendas."
+              : "Modo demo: sem chave da ElevenLabs ou da OpenAI não há transcrição — as pausas saem pelo silêncio e os cortes por duração, sem legendas."
           }
         >
           <div className="space-y-5">
@@ -188,9 +188,9 @@ export function NewVideo({ profile, status, onCreated }: { profile: Profile; sta
                     format={(v) => (v === 0 ? "automático" : String(v))}
                   />
                   <p className="hint sm:col-span-2">
-                    {status.clips === "claude"
-                      ? "A IA (Claude) lê a transcrição, escolhe os trechos com mais potencial e escreve título e gancho de cada corte."
-                      : "Sem ANTHROPIC_API_KEY os cortes seguem a ordem do vídeo, fechando em frases completas. Com a chave, a IA escolhe os melhores trechos."}
+                    {status.clips !== "auto"
+                      ? `A IA (${status.clips === "claude" ? "Claude" : "GPT"}) lê a transcrição, escolhe os trechos com mais potencial e escreve título e gancho de cada corte.`
+                      : "Sem chave de IA (OpenAI ou Anthropic) os cortes seguem a ordem do vídeo, fechando em frases completas. Com a chave, a IA escolhe os melhores trechos."}
                   </p>
                 </div>
               )}

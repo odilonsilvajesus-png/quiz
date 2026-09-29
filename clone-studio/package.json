@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently -k -n api,web -c blue,magenta \"tsx watch server/index.ts\" \"vite\"",
     "build": "vite build",
-    "start": "NODE_ENV=production tsx server/index.ts",
+    "start": "tsx server/index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p server/tsconfig.json"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
     "express": "^4.21.2",
     "ffmpeg-static": "^5.2.0",
     "multer": "^2.0.2",
+    "openai": "^7.24.0",
     "tsx": "^4.20.6",
     "zod": "^4.6.5"
   },

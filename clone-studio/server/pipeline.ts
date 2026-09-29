@@ -139,9 +139,9 @@ async function prepareUpload(job: Job, dir: string, current: { step: StepKey }):
     setStep(job, "transcribe", "running", "Extraindo o áudio…");
     await extractAudio(src, path.join(dir, "audio.mp3"));
     job.outputs.audio = "audio.mp3";
-    if (job.providers.transcribe === "elevenlabs") {
+    if (job.providers.transcribe && job.providers.transcribe !== "mock") {
       setStep(job, "transcribe", "running", "Transcrevendo a fala…");
-      job.outputs.words = (await stt.transcribe(path.join(dir, "audio.mp3"))).words;
+      job.outputs.words = (await stt.transcribe(job.providers.transcribe, path.join(dir, "audio.mp3"))).words;
     } else {
       job.outputs.words = [];
     }
@@ -151,8 +151,8 @@ async function prepareUpload(job: Job, dir: string, current: { step: StepKey }):
   current.step = "plan";
   const words = job.outputs.words ?? [];
   if (!job.outputs.clips?.every((c) => c.file && fs.existsSync(path.join(dir, c.file)))) {
-    setStep(job, "plan", "running", auto.mode === "clips" ? (job.providers.clips === "claude" ? "IA escolhendo os melhores trechos…" : "Separando os cortes…") : "Preparando o vídeo…");
-    const clips = job.outputs.clips?.length ? job.outputs.clips : await planClips(words, duration, auto, job.title, job.providers.clips === "claude");
+    setStep(job, "plan", "running", auto.mode === "clips" ? (job.providers.clips === "auto" ? "Separando os cortes…" : "IA escolhendo os melhores trechos…") : "Preparando o vídeo…");
+    const clips = job.outputs.clips?.length ? job.outputs.clips : await planClips(words, duration, auto, job.title, job.providers.clips ?? "auto");
     job.outputs.clips = clips;
     saveJob(job);
     const speech = words.length ? [] : await speechIntervals(path.join(dir, "audio.mp3"), duration);

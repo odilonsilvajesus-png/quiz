@@ -80,8 +80,8 @@ export type Job = {
 export type Status = {
   voice: "elevenlabs" | "mock";
   avatar: "heygen" | "mock";
-  transcribe: "elevenlabs" | "mock";
-  clips: "claude" | "auto";
+  transcribe: "elevenlabs" | "openai" | "mock";
+  clips: "claude" | "openai" | "auto";
 };
 export type Voice = { id: string; name: string; category: string };
 export type Avatar = { id: string; name: string; preview: string; type: "avatar" | "talking_photo" };

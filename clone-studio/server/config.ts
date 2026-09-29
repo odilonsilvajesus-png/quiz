@@ -24,6 +24,11 @@ export const config = {
   anthropic: {
     apiKey: process.env.ANTHROPIC_API_KEY ?? "",
   },
+  openai: {
+    apiKey: process.env.OPENAI_API_KEY ?? "",
+    model: process.env.OPENAI_MODEL ?? "gpt-4o",
+    sttModel: process.env.OPENAI_STT_MODEL ?? "whisper-1",
+  },
   heygen: {
     apiKey: process.env.HEYGEN_API_KEY ?? "",
     maxHeight: Number(process.env.HEYGEN_MAX_HEIGHT ?? 1080),
@@ -32,5 +37,10 @@ export const config = {
 
 export const voiceProvider = () => (config.elevenlabs.apiKey ? "elevenlabs" : "mock") as "elevenlabs" | "mock";
 export const avatarProvider = () => (config.heygen.apiKey ? "heygen" : "mock") as "heygen" | "mock";
-export const transcribeProvider = () => (config.elevenlabs.apiKey ? "elevenlabs" : "mock") as "elevenlabs" | "mock";
-export const clipsProvider = () => (config.anthropic.apiKey ? "claude" : "auto") as "claude" | "auto";
+export type TranscribeProvider = "elevenlabs" | "openai" | "mock";
+export type ClipsProvider = "claude" | "openai" | "auto";
+
+export const transcribeProvider = (): TranscribeProvider =>
+  config.elevenlabs.apiKey ? "elevenlabs" : config.openai.apiKey ? "openai" : "mock";
+export const clipsProvider = (): ClipsProvider =>
+  config.anthropic.apiKey ? "claude" : config.openai.apiKey ? "openai" : "auto";

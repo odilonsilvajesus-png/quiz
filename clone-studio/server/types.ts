@@ -96,7 +96,7 @@ export type Job = {
   status: "queued" | "running" | "done" | "error";
   steps: Partial<Record<StepKey, { status: StepStatus; message?: string }>>;
   error?: string;
-  providers: { voice?: "elevenlabs" | "mock"; avatar?: "heygen" | "mock"; transcribe?: "elevenlabs" | "mock"; clips?: "claude" | "auto" };
+  providers: { voice?: "elevenlabs" | "mock"; avatar?: "heygen" | "mock"; transcribe?: "elevenlabs" | "openai" | "mock"; clips?: "claude" | "openai" | "auto" };
   outputs: {
     audio?: string;
     words?: Word[];

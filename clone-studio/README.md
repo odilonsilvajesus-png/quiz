@@ -11,13 +11,13 @@ copy ──► voz clonada (ElevenLabs) ──► clone em vídeo com lip-sync (
 **🎬 Vídeo gravado** — você sobe um vídeo seu (aula, live, podcast…) e a plataforma **corta e edita sozinha**:
 
 ```
-vídeo ──► transcrição (ElevenLabs) ──► escolha dos cortes (Claude) ──► tira pausas e vícios ──► edição automática ──► download
+vídeo ──► transcrição (ElevenLabs ou OpenAI) ──► escolha dos cortes (Claude ou GPT) ──► tira pausas e vícios ──► edição automática ──► download
 ```
 
 ### Modo vídeo gravado
 
 - **Vários cortes ou vídeo inteiro**: escolha a duração (15–35s, 30–65s, 55–95s) e a quantidade (ou automático).
-- **Cortes escolhidos por IA**: com `ANTHROPIC_API_KEY`, o Claude lê a transcrição, escolhe os trechos que funcionam sozinhos e escreve **título** (para o post) e **gancho** (na tela) de cada corte. Sem a chave, os cortes seguem a ordem do vídeo, fechando em frases completas.
+- **Cortes escolhidos por IA**: com `ANTHROPIC_API_KEY` (Claude) ou `OPENAI_API_KEY` (GPT), a IA lê a transcrição, escolhe os trechos que funcionam sozinhos e escreve **título** (para o post) e **gancho** (na tela) de cada corte. Sem a chave, os cortes seguem a ordem do vídeo, fechando em frases completas.
 - **Tira pausas e silêncios** (jump cut) e **vícios de linguagem** ("é…", "hã", "hum").
 - Cada corte passa pela mesma edição do modo IA: modelos (tela cheia, dividida, podcast…), legendas animadas, gancho, marca d'água e trilha.
 - Vídeo horizontal vira vertical automaticamente (enquadramento central).
@@ -54,6 +54,8 @@ Extras:
 - **Modo demo**: sem chaves de API, tudo funciona com voz silenciosa e sua foto animada — ótimo para testar a edição.
 
 ## Como rodar
+
+> Passo a passo completo para Windows/Mac com VS Code e Claude: **[INSTALACAO.md](INSTALACAO.md)**.
 
 Requisitos: Node.js 20+ (o FFmpeg já vem incluso via `ffmpeg-static`).
 
