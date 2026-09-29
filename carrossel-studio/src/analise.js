@@ -12,7 +12,7 @@ const LIMITE_VIDEO = 25 * 1024 * 1024; // limite de arquivo da transcrição
 export const podeAnalisar = () => Boolean(process.env.OPENAI_API_KEY);
 
 async function baixar(url) {
-  const resp = await fetch(url);
+  const resp = await fetch(url, { signal: AbortSignal.timeout(90_000) });
   if (!resp.ok) throw new Error(`não consegui baixar a mídia (${resp.status})`);
   return Buffer.from(await resp.arrayBuffer());
 }
@@ -53,7 +53,8 @@ async function lerSlides(client, urls) {
 
 // Preenche post.analise = { transcricao?, slides?, erro? }. Não lança erro: falha vira aviso no post.
 export async function analisarPost(post) {
-  const client = new OpenAI();
+  // Tempo limite por chamada: um vídeo ou imagem travado não pode segurar a coleta inteira.
+  const client = new OpenAI({ timeout: 180_000, maxRetries: 1 });
   const analise = {};
   try {
     if (post.midia?.video) analise.transcricao = await transcrever(client, post.midia.video);
@@ -73,7 +74,12 @@ export async function aprofundar(posts, { limite = 12, log = () => {} } = {}) {
   const pendentes = posts.filter((p) => p.plataforma === "instagram" && p.midia && !p.analise).slice(0, limite);
   if (!pendentes.length) return 0;
   log(`Analisando o conteúdo real de ${pendentes.length} post(s): fala dos reels e texto dos carrosséis...`);
-  const resultados = await emParalelo(pendentes.map((p) => () => analisarPost(p)), 3);
+  let feitos = 0;
+  const resultados = await emParalelo(pendentes.map((p) => async () => {
+    const r = await analisarPost(p);
+    log(`Analisando o conteúdo real: ${++feitos} de ${pendentes.length} posts (fala dos reels e texto dos carrosséis)...`);
+    return r;
+  }), 3);
   resultados.forEach((r, i) => { pendentes[i].analise = r.ok ? r.valor : { erro: r.erro.message }; });
   return pendentes.length;
 }

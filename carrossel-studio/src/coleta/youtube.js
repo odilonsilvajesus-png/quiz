@@ -6,7 +6,7 @@ async function chamar(recurso, params) {
   for (const [k, v] of Object.entries({ ...params, key: process.env.YOUTUBE_API_KEY })) {
     url.searchParams.set(k, v);
   }
-  const resp = await fetch(url);
+  const resp = await fetch(url, { signal: AbortSignal.timeout(60_000) });
   if (!resp.ok) {
     throw new Error(`YouTube API ${recurso} respondeu ${resp.status}: ${await resp.text()}`);
   }

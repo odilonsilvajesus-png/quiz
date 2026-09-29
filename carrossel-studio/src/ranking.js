@@ -52,7 +52,8 @@ export function ranquear(posts, { limite = 20 } = {}) {
       // Enquanto o conteúdo real não foi analisado, posts com mídia contam como diferentes (mesma legenda,
       // reels diferentes). Depois da análise, a comparação usa a fala/texto dos slides.
       const conteudo = p.analise?.transcricao || p.analise?.slides || (p.midia ? p.id : p.texto) || "";
-      const chave = `${p.perfil}|${conteudo.slice(0, 160).toLowerCase()}`;
+      // Compara o conteúdo inteiro: posts diferentes costumam começar igual (mesma abertura, mesma capa).
+      const chave = `${p.perfil}|${conteudo.toLowerCase().replace(/\s+/g, " ").trim()}`;
       if (vistos.has(chave)) return false;
       vistos.add(chave);
       return true;

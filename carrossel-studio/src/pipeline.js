@@ -17,16 +17,24 @@ import { listarEstilos } from "./render.js";
 const slug = (t) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
 
-export async function referenciasRanqueadas(cliente, { recoletar = false, limite = 30, log = () => {} } = {}) {
-  const coleta = (!recoletar && ultimaColeta(cliente.id)) || (await coletar(cliente, { log }));
-  const posts = ranquear(coleta.posts, { limite });
-  // Os melhores posts ganham análise do conteúdo real (fala dos reels, texto dos slides). Fica salvo na coleta.
+const LIMITE_IDEIAS = 60;
+
+// Coleta de novo e analisa o conteúdo real dos melhores posts (fala dos reels, texto dos slides).
+export async function atualizarColeta(cliente, { log = () => {} } = {}) {
+  const coleta = await coletar(cliente, { log });
+  const posts = ranquear(coleta.posts, { limite: LIMITE_IDEIAS });
   if (await aprofundar(posts, { log })) {
     const porId = new Map(posts.map((p) => [p.id, p.analise]));
     for (const p of coleta.posts) if (porId.get(p.id)) p.analise = porId.get(p.id);
     salvarColeta(cliente.id, coleta);
   }
-  return { ...coleta, posts };
+  return coleta;
+}
+
+// Ideias ranqueadas da última coleta. Só coleta se ainda não houver nenhuma (ou se pedirem).
+export async function referenciasRanqueadas(cliente, { recoletar = false, limite = LIMITE_IDEIAS, log = () => {} } = {}) {
+  const coleta = (!recoletar && ultimaColeta(cliente.id)) || (await atualizarColeta(cliente, { log }));
+  return { ...coleta, posts: ranquear(coleta.posts, { limite }) };
 }
 
 export async function gerarCarrossel(cliente, referencia, opcoes = {}) {

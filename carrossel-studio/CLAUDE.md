@@ -16,6 +16,7 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/cliente.js`: leitura/gravação do kit do cliente (`clientes/<id>/cliente.json`), paleta → fundos, normalização de formatos antigos.
 - `src/carrosseis.js`: estados do carrossel (rascunho, agendado, postado, descartado com motivo); o agendador roda no `servidor.js` a cada minuto e aprendizados para o prompt.
 - `src/analise.js`: conteúdo real dos posts (transcrição da fala dos reels e leitura do texto dos slides), usado nas referências e no tom de voz.
+- `src/tarefas.js`: tarefas demoradas (coleta, tom de voz) em segundo plano; o painel consulta o andamento.
 - `src/sugestoes.js`: pautas sugeridas pela IA a partir do conhecimento do cliente.
 - `src/documentos.js`: documentos do cliente (PDF, DOCX, TXT, MD) → texto que entra no prompt da copy e das sugestões.
 - `src/marca.js`: leitura do mapa da marca (imagem ou PDF) com IA → paleta, fonte e diretrizes.

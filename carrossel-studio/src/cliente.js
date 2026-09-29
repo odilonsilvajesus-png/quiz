@@ -182,13 +182,14 @@ function normalizarYoutube(ref) {
 
 const semRepetir = (lista, normalizar) => [...new Set((lista || []).map(normalizar).filter(Boolean))];
 
-export function salvarReferencias(id, { instagram, youtube, perfil_cliente, periodo_dias }) {
+export function salvarReferencias(id, { instagram, youtube, perfil_cliente, periodo_dias, posts_por_perfil }) {
   const c = alterarConfig(id, (c) => {
     c.referencias = {
       ...c.referencias,
       instagram: semRepetir(instagram, normalizarInstagram),
       youtube: semRepetir(youtube, normalizarYoutube),
       periodo_dias: Number(periodo_dias) || c.referencias?.periodo_dias || 90,
+      posts_por_perfil: Math.min(100, Number(posts_por_perfil) || c.referencias?.posts_por_perfil || 30),
     };
     if (perfil_cliente !== undefined) c.instagram = perfil_cliente ? normalizarInstagram(perfil_cliente) : "";
   });

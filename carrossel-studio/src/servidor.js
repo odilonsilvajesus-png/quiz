@@ -11,7 +11,10 @@ import { listarSugestoes, gerarSugestoes, limparSugestoes, sugestaoComoReferenci
 import { aprofundar, podeAnalisar } from "./analise.js";
 import { listarDocumentos, adicionarDocumento, removerDocumento, guardarTexto } from "./documentos.js";
 import { lerMapaDaMarca, podeLerMapa } from "./marca.js";
-import { referenciasRanqueadas, gerarCarrossel } from "./pipeline.js";
+import { gerarCarrossel, atualizarColeta } from "./pipeline.js";
+import { ultimaColeta } from "./coleta/index.js";
+import { ranquear } from "./ranking.js";
+import { iniciarTarefa, estadoTarefa } from "./tarefas.js";
 import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
 import { criarZip } from "./zip.js";
@@ -212,18 +215,28 @@ async function publicar(id, nomePasta, { legenda } = {}) {
   return carrosseis.marcarPostado(id, nomePasta, resultado);
 }
 
+// Ideias da última coleta, sem coletar nem analisar nada aqui (isso é tarefa da coleta em segundo plano).
+function ideias(id) {
+  carregarCliente(id);
+  const coleta = ultimaColeta(id);
+  if (!coleta) return { sem_coleta: true, avisos: [], posts: [] };
+  return { ...coleta, posts: ranquear(coleta.posts, { limite: 60 }) };
+}
+
 // Tom de voz a partir dos posts reais do cliente: fala dos reels, texto dos carrosséis e legendas.
-async function gerarVoz(id) {
+async function gerarVoz(id, log = () => {}) {
   const cliente = carregarCliente(id);
   if (!cliente.instagram) throw new Error("Preencha o Instagram do cliente na aba Perfil e referências primeiro.");
   if (!process.env.APIFY_TOKEN) throw new Error("A coleta do tom de voz usa o Apify. Preencha APIFY_TOKEN no .env.");
-  const posts = await coletarPostsDoCliente(cliente.instagram, 30);
+  log(`Coletando os posts de ${cliente.instagram}...`);
+  const posts = await coletarPostsDoCliente(cliente.instagram, 30, log);
   if (posts.length < 5) throw new Error(`Só encontrei ${posts.length} posts em ${cliente.instagram}. Preciso de pelo menos 5.`);
   // Analisa os 12 posts mais engajados: é neles que o jeito de falar dela mais aparece.
   const selecionados = posts
     .sort((a, b) => b.metricas.curtidas + 2 * b.metricas.comentarios - (a.metricas.curtidas + 2 * a.metricas.comentarios))
     .slice(0, 12);
-  await aprofundar(selecionados, { limite: 12 });
+  await aprofundar(selecionados, { limite: 12, log });
+  log("Escrevendo a descrição do tom de voz...");
   const texto = await descreverVoz(cliente, selecionados);
   salvarVoz(id, texto);
   const analisados = selecionados.filter((p) => p.analise?.transcricao || p.analise?.slides).length;
@@ -272,11 +285,19 @@ const rotas = [
   rota("PUT", "/api/clientes/:id/carrosseis/([\\w.-]+)", async (m, _u, req) => editarCarrossel(m[1], m[2], await corpo(req))),
   rota("PUT", "/api/clientes/:id/conteudo", async (m, _u, req) => (salvarConteudo(m[1], await corpo(req)), detalheCliente(m[1]))),
   rota("PUT", "/api/clientes/:id/voz", async (m, _u, req) => (salvarVoz(m[1], (await corpo(req)).texto), { ok: true })),
-  rota("POST", "/api/clientes/:id/voz/gerar", (m) => gerarVoz(m[1])),
+  rota("POST", "/api/clientes/:id/voz/gerar", (m) => (carregarCliente(m[1]), iniciarTarefa(`voz:${m[1]}`, (log) => gerarVoz(m[1], log)))),
+  rota("GET", "/api/clientes/:id/voz/gerar", (m) => estadoTarefa(`voz:${m[1]}`)),
   rota("PUT", "/api/clientes/:id/direcionamento", async (m, _u, req) => (salvarDirecionamento(m[1], (await corpo(req)).texto), { ok: true })),
   rota("POST", "/api/clientes/:id/previa", async (m, _u, req) => previa(m[1], await corpo(req))),
-  rota("GET", "/api/clientes/:id/referencias", (m, url) =>
-    referenciasRanqueadas(carregarCliente(m[1]), { recoletar: url.searchParams.has("recoletar"), log: () => {} })),
+  rota("GET", "/api/clientes/:id/referencias", (m) => ideias(m[1])),
+  rota("POST", "/api/clientes/:id/coleta", (m) => {
+    const cliente = carregarCliente(m[1]);
+    return iniciarTarefa(`coleta:${cliente.id}`, async (log) => {
+      const coleta = await atualizarColeta(cliente, { log });
+      return { posts: coleta.posts.length };
+    });
+  }),
+  rota("GET", "/api/clientes/:id/coleta", (m) => estadoTarefa(`coleta:${m[1]}`)),
   rota("PUT", "/api/clientes/:id/referencias", async (m, _u, req) => salvarReferencias(m[1], await corpo(req))),
   rota("GET", "/api/clientes/:id/carrosseis", (m) => listarGerados(m[1])),
   rota("POST", "/api/clientes/:id/gerar", async (m, _u, req) => {
@@ -287,7 +308,7 @@ const rotas = [
       const sugestao = listarSugestoes(cliente.id).find((s) => s.id === refId);
       ref = sugestao && sugestaoComoReferencia(sugestao);
     } else {
-      ref = (await referenciasRanqueadas(cliente, { log: () => {} })).posts.find((p) => p.id === refId);
+      ref = ideias(cliente.id).posts.find((p) => p.id === refId);
     }
     if (!ref) throw new Error("Referência não encontrada. Atualize a coleta.");
     await gerarCarrossel(cliente, ref, {

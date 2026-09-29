@@ -573,19 +573,65 @@ function limparCriar() {
   desenharCriar();
 }
 
+// Consulta uma tarefa em segundo plano até terminar. Devolve o resultado ou lança o erro dela.
+async function esperarTarefa(caminho, aoAtualizar, continuar = () => true) {
+  for (;;) {
+    const t = await api(caminho);
+    if (!t.rodando) {
+      if (t.erro) throw new Error(t.erro);
+      return t.resultado;
+    }
+    if (!continuar()) return null;
+    aoAtualizar?.(t);
+    await new Promise((r) => setTimeout(r, 2500));
+  }
+}
+const tempo = (s) => (s < 60 ? `${s}s` : `${Math.floor(s / 60)}min ${String(s % 60).padStart(2, "0")}s`);
+
 async function abaCriar(_sub, recoletar = false) {
   const c = cliente;
-  $("aba").innerHTML = `<div class="progresso"><div class="girando"></div><span class="msg">${recoletar ? "Coletando as referências e analisando a fala dos reels e o texto dos carrosséis. Pode levar alguns minutos..." : "Carregando ideias..."}</span></div>`;
-  const [dados, lista, sugs] = await Promise.all([
-    api(`/api/clientes/${c.id}/referencias${recoletar ? "?recoletar=1" : ""}`),
-    api(`/api/clientes/${c.id}/carrosseis`),
-    api(`/api/clientes/${c.id}/sugestoes`),
-  ]);
-  gerados = lista;
-  ideias = dados.posts;
-  sugestoes = sugs;
-  filtro.avisos = (dados.avisos || []).filter((a) => !a.includes("não configurad"));
-  desenharCriar();
+  $("aba").innerHTML = `<div class="progresso"><div class="girando"></div><span class="msg">Carregando ideias...</span></div>`;
+  try {
+    if (recoletar) await post(`/api/clientes/${c.id}/coleta`);
+    const estado = await api(`/api/clientes/${c.id}/coleta`);
+    if (estado.rodando) return acompanharColeta(c);
+    const [dados, lista, sugs] = await Promise.all([
+      api(`/api/clientes/${c.id}/referencias`),
+      api(`/api/clientes/${c.id}/carrosseis`),
+      api(`/api/clientes/${c.id}/sugestoes`),
+    ]);
+    if (dados.sem_coleta && !estado.erro) {
+      await post(`/api/clientes/${c.id}/coleta`);
+      return acompanharColeta(c);
+    }
+    gerados = lista;
+    ideias = dados.posts;
+    sugestoes = sugs;
+    filtro.avisos = (dados.avisos || []).filter((a) => !a.includes("não configurad"));
+    if (estado.erro) filtro.avisos.unshift(`A última coleta não deu certo: ${estado.erro}`);
+    filtro.resumo = dados.por_perfil ? { por_perfil: dados.por_perfil, periodo: dados.periodo_dias, em: dados.coletado_em } : null;
+    desenharCriar();
+  } catch (erro) {
+    $("aba").innerHTML = `<div class="cartao vazio">${ICONES.alerta}<div><b>Não consegui carregar as ideias.</b><br>${esc(erro.message)}</div>
+      <button class="btn primario" data-recoletar>${ICONES.atualizar} Tentar de novo</button></div>`;
+  }
+}
+
+// Mostra o andamento da coleta (roda no servidor; dá para trocar de aba e voltar).
+async function acompanharColeta(c) {
+  $("aba").innerHTML = `<div class="cartao progresso" data-coleta="${esc(c.id)}"><div class="girando"></div>
+    <b>Coletando as referências de ${esc(c.nome)}</b>
+    <span class="msg" id="etapaColeta">Começando...</span>
+    <span class="ajuda" style="margin:0">Pode levar de 2 a 15 minutos, conforme o número de perfis. Você pode usar as outras abas enquanto isso.</span></div>`;
+  const aqui = () => Boolean(document.querySelector(`[data-coleta="${CSS.escape(c.id)}"]`));
+  try {
+    await esperarTarefa(`/api/clientes/${c.id}/coleta`, (t) => {
+      if ($("etapaColeta")) $("etapaColeta").textContent = `${t.etapa} · ${tempo(t.segundos)}`;
+    }, aqui);
+  } catch {
+    // o erro aparece como aviso em abaCriar
+  }
+  if (aqui()) abaCriar();
 }
 
 function ideiasFiltradas() {
@@ -660,6 +706,7 @@ function desenharCriar() {
   $("aba").innerHTML = cabecalho + `
     ${semReferencias ? `<div class="aviso">${ICONES.alerta}<span>Nenhuma referência cadastrada para ${esc(c.nome)}. <a href="#/c/${c.id}/perfil">Cadastrar referências</a></span></div>` : ""}
     ${filtro.avisos.map((a) => `<div class="aviso">${ICONES.alerta}<span>${esc(a)}</span></div>`).join("")}
+    ${filtro.resumo ? `<p class="ajuda">Última coleta em ${new Date(filtro.resumo.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}, posts dos últimos ${filtro.resumo.periodo} dias: ${Object.entries(filtro.resumo.por_perfil).map(([p, n]) => `${esc(p)} ${n}`).join(" · ")}. Mostrando as ${ideias.length} melhores.</p>` : ""}
     ${status.analise ? "" : `<div class="aviso">${ICONES.alerta}<span>Sem OPENAI_API_KEY as ideias usam só a legenda. Com a chave, o sistema transcreve a fala dos reels e lê o texto dos carrosséis.</span></div>`}
     <div class="cartao filtros-cartao">
       <div class="linha" style="flex-wrap:wrap;gap:10px">
@@ -1065,6 +1112,9 @@ function abaPerfil() {
         <div class="linha"><input id="novoYt" class="campo" placeholder="@canal ou link do canal" autocomplete="off"><button class="btn" data-add="yt">${ICONES.mais} Adicionar</button></div>
         <label class="rotulo" for="periodo">Analisar posts dos últimos</label>
         <select id="periodo" class="campo">${[30, 60, 90, 180, 365].map((d) => `<option value="${d}" ${d === (c.referencias.periodo_dias || 90) ? "selected" : ""}>${d} dias</option>`).join("")}</select>
+        <label class="rotulo" for="postsPerfil">Posts por perfil</label>
+        <select id="postsPerfil" class="campo">${[30, 50, 100].map((n) => `<option value="${n}" ${n === (c.referencias.posts_por_perfil || 30) ? "selected" : ""}>até ${n} posts</option>`).join("")}</select>
+        <p class="ajuda">Mais posts dão mais ideias, mas a coleta demora mais e custa mais no Apify.</p>
         <div class="acoes"><button class="btn primario" id="salvarRefs">${ICONES.atualizar} Salvar e coletar</button><span class="msg" id="msgRefs"></span></div>
       </div>
     </div>`;
@@ -1105,11 +1155,10 @@ function abaPerfil() {
   });
   $("salvarRefs").onclick = (e) => acao(e.currentTarget, $("msgRefs"), async () => {
     for (const t of ["ig", "yt"]) if ($(t === "ig" ? "novoIg" : "novoYt").value.trim()) adicionar(t);
-    await put(`/api/clientes/${c.id}/referencias`, { instagram: edicao.ig, youtube: edicao.yt, periodo_dias: $("periodo").value });
-    $("msgRefs").textContent = "Salvo. Coletando posts, pode levar alguns minutos...";
-    await api(`/api/clientes/${c.id}/referencias?recoletar=1`);
+    await put(`/api/clientes/${c.id}/referencias`, { instagram: edicao.ig, youtube: edicao.yt, periodo_dias: $("periodo").value, posts_por_perfil: $("postsPerfil").value });
+    await post(`/api/clientes/${c.id}/coleta`);
     cliente = await api(`/api/clientes/${c.id}`);
-  }, { ok: "Salvo e coletado. Veja as ideias na aba Criar." });
+  }, { ok: "Salvo. A coleta começou e o andamento aparece na aba Criar." });
 }
 
 // ---------- aba voz e direcionamento ----------
@@ -1182,7 +1231,10 @@ function abaVoz() {
 
   $("coletarVoz").onclick = (e) => acao(e.currentTarget, $("msgColeta"), async () => {
     $("msgColeta").textContent = "Coletando os posts, transcrevendo os reels e lendo os carrosséis. Pode levar alguns minutos...";
-    const r = await post(`/api/clientes/${c.id}/voz/gerar`);
+    await post(`/api/clientes/${c.id}/voz/gerar`);
+    const r = await esperarTarefa(`/api/clientes/${c.id}/voz/gerar`, (t) => {
+      $("msgColeta").textContent = `${t.etapa} (${tempo(t.segundos)})`;
+    });
     $("voz").value = r.texto;
     cliente.voz = r.texto;
     return r;

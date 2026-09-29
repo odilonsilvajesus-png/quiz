@@ -2,28 +2,67 @@
 // A API oficial da Meta só entrega métricas completas de contas que você administra.
 const ATOR = "apify~instagram-scraper";
 
-function normalizarHandle(ref) {
+export function normalizarHandle(ref) {
   const m = ref.match(/instagram\.com\/([\w.]+)/);
   return (m ? m[1] : ref).replace(/^@/, "").trim();
 }
 
-export async function coletarPerfis(refs, { limite = 30, periodoDias = 90 } = {}) {
-  const handles = refs.map(normalizarHandle);
-  const url = `https://api.apify.com/v2/acts/${ATOR}/run-sync-get-dataset-items?token=${process.env.APIFY_TOKEN}`;
-  const resp = await fetch(url, {
-    method: "POST",
+const API = () => process.env.APIFY_URL || "https://api.apify.com/v2";
+const TEMPO_MAXIMO = 10 * 60; // segundos que o Apify pode rodar antes de parar e devolver o que já coletou
+const FINAIS = ["SUCCEEDED", "FAILED", "ABORTED", "TIMED-OUT"];
+
+async function pedir(caminho, opcoes = {}) {
+  const sep = caminho.includes("?") ? "&" : "?";
+  const resp = await fetch(`${API()}${caminho}${sep}token=${process.env.APIFY_TOKEN}`, {
+    ...opcoes,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      directUrls: handles.map((h) => `https://www.instagram.com/${h}/`),
-      resultsType: "posts",
-      resultsLimit: limite,
-      onlyPostsNewerThan: `${periodoDias} days`,
-    }),
+    signal: AbortSignal.timeout(90_000),
+  }).catch((erro) => {
+    throw new Error(erro.name === "TimeoutError"
+      ? "o Apify demorou demais para responder."
+      : "não consegui falar com o Apify. Confira a internet e tente de novo.");
   });
   if (!resp.ok) {
-    throw new Error(`Apify respondeu ${resp.status}: ${await resp.text()}`);
+    const texto = await resp.text();
+    if (resp.status === 401) throw new Error("APIFY_TOKEN inválido. Confira a chave no .env.");
+    if (resp.status === 402) throw new Error("Os créditos do Apify acabaram. Veja em apify.com → Billing.");
+    throw new Error(`Apify respondeu ${resp.status}: ${texto.slice(0, 300)}`);
   }
-  const itens = await resp.json();
+  return resp.json();
+}
+
+// Roda o ator em segundo plano no Apify e acompanha até terminar (o modo "esperar a resposta" corta em 5 minutos).
+async function rodarAtor(entrada, log) {
+  let run = (await pedir(`/acts/${ATOR}/runs?timeout=${TEMPO_MAXIMO}`, { method: "POST", body: JSON.stringify(entrada) })).data;
+  const inicio = Date.now();
+  const limite = inicio + (TEMPO_MAXIMO + 120) * 1000;
+  while (!FINAIS.includes(run.status)) {
+    if (Date.now() > limite) {
+      await pedir(`/actor-runs/${run.id}/abort`, { method: "POST" }).catch(() => {});
+      break;
+    }
+    log(`Instagram: o Apify está coletando os posts (${Math.round((Date.now() - inicio) / 1000)}s)...`);
+    try {
+      run = (await pedir(`/actor-runs/${run.id}?waitForFinish=20`)).data;
+    } catch (erro) {
+      log(`Instagram: aguardando o Apify (${erro.message})...`);
+      await new Promise((r) => setTimeout(r, 5000));
+    }
+  }
+  const itens = await pedir(`/datasets/${run.defaultDatasetId}/items?clean=true&format=json`);
+  if (run.status === "FAILED" && !itens.length) throw new Error("A coleta do Instagram falhou no Apify. Tente de novo em alguns minutos.");
+  if (run.status !== "SUCCEEDED") log(`Instagram: o Apify parou antes do fim (${run.status}); usando os ${itens.length} itens coletados.`);
+  return itens;
+}
+
+export async function coletarPerfis(refs, { limite = 30, periodoDias = 90, log = () => {} } = {}) {
+  const handles = refs.map(normalizarHandle);
+  const itens = await rodarAtor({
+    directUrls: handles.map((h) => `https://www.instagram.com/${h}/`),
+    resultsType: "posts",
+    resultsLimit: limite,
+    onlyPostsNewerThan: `${periodoDias} days`,
+  }, log);
 
   return itens
     .filter((p) => p.ownerUsername && p.caption !== undefined)
@@ -54,6 +93,6 @@ export async function coletarPerfis(refs, { limite = 30, periodoDias = 90 } = {}
 }
 
 // Posts do próprio cliente, usados para entender o tom de voz (fala, slides e legendas).
-export async function coletarPostsDoCliente(handle, limite = 30) {
-  return coletarPerfis([handle], { limite, periodoDias: 365 });
+export async function coletarPostsDoCliente(handle, limite = 30, log = () => {}) {
+  return coletarPerfis([handle], { limite, periodoDias: 365, log });
 }
