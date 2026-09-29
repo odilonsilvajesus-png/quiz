@@ -5,8 +5,10 @@ import path from "node:path";
 import {
   RAIZ, PASTA_SAIDA, FONTES, carregarCliente, listarClientes, criarCliente, fundosDaPaleta,
   salvarReferencias, salvarPerfil, salvarVisual, salvarImagemCliente, salvarConteudo, salvarVoz, gravarDataUrl,
-  salvarDirecionamento, adicionarExemplo, salvarPublicacao,
+  salvarDirecionamento, adicionarExemplo, salvarPublicacao, listarFotos, caminhoFoto, adicionarFoto, removerFoto,
 } from "./cliente.js";
+import { listarSugestoes, gerarSugestoes, limparSugestoes, sugestaoComoReferencia } from "./sugestoes.js";
+import { aprofundar, podeAnalisar } from "./analise.js";
 import { referenciasRanqueadas, gerarCarrossel } from "./pipeline.js";
 import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
@@ -17,7 +19,7 @@ import { montarHtml, listarEstilos, renderizar, exportarJpeg } from "./render.js
 import { imagemExemplo, slidesComImagem, temGeradorImagem, resolverModo } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
 import { descreverVoz } from "./copy.js";
-import { coletarLegendas } from "./coleta/instagram.js";
+import { coletarPostsDoCliente } from "./coleta/instagram.js";
 
 if (fs.existsSync(path.join(RAIZ, ".env"))) process.loadEnvFile(path.join(RAIZ, ".env"));
 
@@ -96,6 +98,7 @@ function detalheCliente(id) {
       imagens: c.visual.imagens,
     },
     voz: c.voz,
+    fotos: listarFotos(c.id).map((nome) => ({ nome, url: `/api/clientes/${c.id}/fotos/${nome}` })),
     direcionamento: c.baseConhecimento,
     exemplos: c.exemplosCarrossel.length,
     publicacao: {
@@ -162,8 +165,15 @@ async function editarCarrossel(id, nomePasta, { slides = [], imagens = {} }) {
   return listarGerados(id).find((g) => g.pasta === nomePasta);
 }
 
+function salvarLegenda(id, nomePasta, legenda) {
+  const arquivoJson = path.join(pastaCarrossel(id, nomePasta), "carrossel.json");
+  const carrossel = JSON.parse(fs.readFileSync(arquivoJson, "utf8"));
+  carrossel.legenda = legenda;
+  fs.writeFileSync(arquivoJson, JSON.stringify(carrossel, null, 2));
+}
+
 // Publica no Instagram do cliente e move o carrossel para "Postados".
-async function publicar(id, nomePasta, { legenda }) {
+async function publicar(id, nomePasta, { legenda } = {}) {
   const cliente = carregarCliente(id);
   const { ig_user_id: igUserId, token } = cliente.publicacao || {};
   if (!igUserId || !token) throw new Error("Conecte o Instagram deste cliente na aba Perfil e referências.");
@@ -180,15 +190,38 @@ async function publicar(id, nomePasta, { legenda }) {
   return carrosseis.marcarPostado(id, nomePasta, resultado);
 }
 
+// Tom de voz a partir dos posts reais do cliente: fala dos reels, texto dos carrosséis e legendas.
 async function gerarVoz(id) {
   const cliente = carregarCliente(id);
-  if (!cliente.instagram) throw new Error("Preencha o Instagram do cliente na aba Referências primeiro.");
+  if (!cliente.instagram) throw new Error("Preencha o Instagram do cliente na aba Perfil e referências primeiro.");
   if (!process.env.APIFY_TOKEN) throw new Error("A coleta do tom de voz usa o Apify. Preencha APIFY_TOKEN no .env.");
-  const legendas = await coletarLegendas(cliente.instagram);
-  if (legendas.length < 5) throw new Error(`Só encontrei ${legendas.length} legendas longas em ${cliente.instagram}. Preciso de pelo menos 5.`);
-  const texto = await descreverVoz(cliente, legendas);
+  const posts = await coletarPostsDoCliente(cliente.instagram, 30);
+  if (posts.length < 5) throw new Error(`Só encontrei ${posts.length} posts em ${cliente.instagram}. Preciso de pelo menos 5.`);
+  // Analisa os 12 posts mais engajados: é neles que o jeito de falar dela mais aparece.
+  const selecionados = posts
+    .sort((a, b) => b.metricas.curtidas + 2 * b.metricas.comentarios - (a.metricas.curtidas + 2 * a.metricas.comentarios))
+    .slice(0, 12);
+  await aprofundar(selecionados, { limite: 12 });
+  const texto = await descreverVoz(cliente, selecionados);
   salvarVoz(id, texto);
-  return { texto, legendas: legendas.length };
+  const analisados = selecionados.filter((p) => p.analise?.transcricao || p.analise?.slides).length;
+  return { texto, posts: selecionados.length, analisados };
+}
+
+// Verifica a cada minuto se há carrossel agendado para publicar. Só funciona com o painel aberto.
+async function publicarAgendados() {
+  for (const c of listarClientes()) {
+    for (const item of carrosseis.agendamentosVencidos(c.id)) {
+      carrosseis.atualizar(c.id, item.pasta, { publicando: true });
+      try {
+        await publicar(c.id, item.pasta);
+        console.log(`Agendamento publicado: ${c.nome} · ${item.angulo}`);
+      } catch (erro) {
+        carrosseis.atualizar(c.id, item.pasta, { publicando: undefined, falhou: erro.message });
+        console.error(`Agendamento falhou (${c.nome} · ${item.angulo}): ${erro.message}`);
+      }
+    }
+  }
 }
 
 const C = "([\\w-]+)";
@@ -199,6 +232,7 @@ const rotas = [
     ia: nomeProvedor(),
     imagens: temGeradorImagem(),
     hospedagem: temHospedagem(),
+    analise: podeAnalisar(),
     estilos: await listarEstilos(),
     apify: Boolean(process.env.APIFY_TOKEN),
     youtube: Boolean(process.env.YOUTUBE_API_KEY),
@@ -223,13 +257,19 @@ const rotas = [
   rota("PUT", "/api/clientes/:id/referencias", async (m, _u, req) => salvarReferencias(m[1], await corpo(req))),
   rota("GET", "/api/clientes/:id/carrosseis", (m) => listarGerados(m[1])),
   rota("POST", "/api/clientes/:id/gerar", async (m, _u, req) => {
-    const { refId, angulo, modelo, estilo, imagens, indice } = await corpo(req);
+    const { refId, angulo, modelo, estilo, imagens, indice, observacao, obsImagem, fotoPessoa } = await corpo(req);
     const cliente = carregarCliente(m[1]);
-    const { posts } = await referenciasRanqueadas(cliente, { log: () => {} });
-    const ref = posts.find((p) => p.id === refId);
+    let ref;
+    if (String(refId).startsWith("sug:")) {
+      const sugestao = listarSugestoes(cliente.id).find((s) => s.id === refId);
+      ref = sugestao && sugestaoComoReferencia(sugestao);
+    } else {
+      ref = (await referenciasRanqueadas(cliente, { log: () => {} })).posts.find((p) => p.id === refId);
+    }
     if (!ref) throw new Error("Referência não encontrada. Atualize a coleta.");
     await gerarCarrossel(cliente, ref, {
-      angulo: angulo || undefined, modelo: modelo || undefined, estilo: estilo || undefined, imagens: imagens || undefined, indice, log: () => {},
+      angulo: angulo || undefined, modelo: modelo || undefined, estilo: estilo || undefined, imagens: imagens || undefined,
+      indice, observacao, obsImagem, fotoPessoa: fotoPessoa || undefined, log: () => {},
     });
     return listarGerados(cliente.id)[0];
   }),
@@ -243,6 +283,21 @@ const rotas = [
     const pasta = pastaCarrossel(m[1], m[2]);
     const arquivos = fs.readdirSync(pasta).filter((f) => /^slide-\d+\.png$/.test(f)).sort().map((f) => path.join(pasta, f));
     return new Resposta("application/zip", criarZip(arquivos), `${m[2]}.zip`);
+  }),
+  rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/agendar", async (m, _u, req) => {
+    const { quando, legenda } = await corpo(req);
+    if (typeof legenda === "string") salvarLegenda(m[1], m[2], legenda);
+    return carrosseis.agendar(m[1], m[2], quando);
+  }),
+  rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/cancelar-agendamento", (m) => carrosseis.cancelarAgendamento(m[1], m[2])),
+  rota("GET", "/api/clientes/:id/sugestoes", (m) => listarSugestoes(m[1])),
+  rota("POST", "/api/clientes/:id/sugestoes", async (m, _u, req) => gerarSugestoes(carregarCliente(m[1]), await corpo(req))),
+  rota("DELETE", "/api/clientes/:id/sugestoes", (m) => (limparSugestoes(m[1]), [])),
+  rota("POST", "/api/clientes/:id/fotos", async (m, _u, req) => (adicionarFoto(m[1], (await corpo(req)).dataUrl), detalheCliente(m[1]))),
+  rota("DELETE", "/api/clientes/:id/fotos/([\\w.-]+)", (m) => (removerFoto(m[1], m[2]), detalheCliente(m[1]))),
+  rota("GET", "/api/clientes/:id/fotos/([\\w.-]+)", (m) => {
+    const arq = caminhoFoto(m[1], m[2]);
+    return new Resposta(TIPOS[path.extname(arq).toLowerCase()] || "image/jpeg", fs.readFileSync(arq));
   }),
   rota("PUT", "/api/clientes/:id/publicacao", async (m, _u, req) => {
     const dados = await corpo(req);
@@ -289,4 +344,12 @@ http
       json(res, 500, { erro: erro.message });
     }
   })
-  .listen(PORTA, () => console.log(`Painel rodando em http://localhost:${PORTA}`));
+  .listen(PORTA, () => {
+    console.log(`Painel rodando em http://localhost:${PORTA}`);
+    // Se o painel foi fechado no meio de uma publicação, libera o agendamento para tentar de novo.
+    for (const c of listarClientes()) {
+      for (const h of carrosseis.historico(c.id)) if (h.publicando) carrosseis.atualizar(c.id, h.pasta, { publicando: undefined });
+    }
+    publicarAgendados();
+    setInterval(publicarAgendados, 60_000);
+  });

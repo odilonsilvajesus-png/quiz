@@ -38,6 +38,13 @@ export async function coletarPerfis(refs, { limite = 30, periodoDias = 90 } = {}
       tipo: p.type === "Sidecar" ? "carrossel" : p.type === "Video" ? "reels" : "imagem",
       publicado_em: p.timestamp,
       thumbnail: p.displayUrl || "",
+      // Mídia real do post, usada para transcrever a fala dos reels e ler o texto dos slides.
+      midia: {
+        video: p.videoUrl || null,
+        imagens: (p.images?.length ? p.images : (p.childPosts || []).map((c) => c.displayUrl)).filter(Boolean).length
+          ? (p.images?.length ? p.images : (p.childPosts || []).map((c) => c.displayUrl)).filter(Boolean)
+          : [p.displayUrl].filter(Boolean),
+      },
       metricas: {
         visualizacoes: Number(p.videoViewCount || p.videoPlayCount || 0),
         curtidas: Math.max(0, Number(p.likesCount || 0)),
@@ -46,8 +53,7 @@ export async function coletarPerfis(refs, { limite = 30, periodoDias = 90 } = {}
     }));
 }
 
-// Usado para gerar a voz do cliente a partir das legendas dele.
-export async function coletarLegendas(handle, limite = 40) {
-  const posts = await coletarPerfis([handle], { limite, periodoDias: 365 });
-  return posts.map((p) => p.texto).filter((t) => t.trim().length > 40);
+// Posts do próprio cliente, usados para entender o tom de voz (fala, slides e legendas).
+export async function coletarPostsDoCliente(handle, limite = 30) {
+  return coletarPerfis([handle], { limite, periodoDias: 365 });
 }

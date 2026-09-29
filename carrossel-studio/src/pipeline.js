@@ -1,8 +1,9 @@
 // Fluxo completo: referência ranqueada -> copy na voz do cliente -> PNGs com a identidade visual.
 import fs from "node:fs";
 import path from "node:path";
-import { pastaSaida } from "./cliente.js";
-import { coletar, ultimaColeta } from "./coleta/index.js";
+import { pastaSaida, caminhoFoto } from "./cliente.js";
+import { coletar, ultimaColeta, salvarColeta } from "./coleta/index.js";
+import { aprofundar } from "./analise.js";
 import { ranquear } from "./ranking.js";
 import { escreverCarrossel } from "./copy.js";
 import { renderizar } from "./render.js";
@@ -16,9 +17,16 @@ import { listarEstilos } from "./render.js";
 const slug = (t) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
 
-export async function referenciasRanqueadas(cliente, { recoletar = false, limite = 20, log } = {}) {
+export async function referenciasRanqueadas(cliente, { recoletar = false, limite = 30, log = () => {} } = {}) {
   const coleta = (!recoletar && ultimaColeta(cliente.id)) || (await coletar(cliente, { log }));
-  return { ...coleta, posts: ranquear(coleta.posts, { limite }) };
+  const posts = ranquear(coleta.posts, { limite });
+  // Os melhores posts ganham análise do conteúdo real (fala dos reels, texto dos slides). Fica salvo na coleta.
+  if (await aprofundar(posts, { log })) {
+    const porId = new Map(posts.map((p) => [p.id, p.analise]));
+    for (const p of coleta.posts) if (porId.get(p.id)) p.analise = porId.get(p.id);
+    salvarColeta(cliente.id, coleta);
+  }
+  return { ...coleta, posts };
 }
 
 export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
@@ -29,9 +37,13 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
   const infoEstilo = (await listarEstilos()).find((e) => e.id === estiloFinal);
   const modoImagens = resolverModo(opcoes.imagens || cliente.visual.imagens?.modo, infoEstilo);
   const estiloImagem = cliente.visual.imagens?.estilo || "";
+  const obsImagem = (opcoes.obsImagem || "").trim();
+  // Foto real do cliente como protagonista das imagens (opcional).
+  const fotoPessoa = opcoes.fotoPessoa ? caminhoFoto(cliente.id, opcoes.fotoPessoa) : null;
   log(`Escrevendo carrossel (${modelo.nome}) a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
   const copy = await escreverCarrossel(cliente, referencia, {
-    angulo, indice, modelo, angulosRecentes: recentes, rejeitados: aprendizados(cliente.id), comImagem: modoImagens !== "nenhuma", estiloImagem, estilo: infoEstilo,
+    angulo, indice, modelo, angulosRecentes: recentes, rejeitados: aprendizados(cliente.id), comImagem: modoImagens !== "nenhuma",
+    estiloImagem, estilo: infoEstilo, obsImagem, comPessoa: Boolean(fotoPessoa), observacao: (opcoes.observacao || "").trim(),
   });
   // Cada slide guarda o próprio fundo, para re-renderizar igual mesmo se o modelo mudar depois.
   copy.slides = copy.slides.map((s, i) => ({ ...s, fundo: modelo.estrutura[i]?.fundo || "escuro" }));
@@ -53,7 +65,10 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
 
   const carimbo = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
   const pasta = pastaSaida(cliente.id, "carrosseis", `${carimbo}-${slug(copy.angulo)}`);
-  await gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo: modoImagens, estilo: estiloImagem, direcaoEstilo: infoEstilo?.direcao_imagem, log });
+  if (obsImagem) carrossel.observacao_imagens = obsImagem;
+  await gerarImagensDoCarrossel(cliente, carrossel, pasta, {
+    modo: modoImagens, estilo: estiloImagem, direcaoEstilo: infoEstilo?.direcao_imagem, fotoPessoa, obsImagem, log,
+  });
   log(`Renderizando ${copy.slides.length} slides...`);
   const render = await renderizar(cliente, carrossel, pasta);
 
@@ -68,7 +83,7 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
 }
 
 // Gera as imagens dos slides escolhidos. Uma falha não derruba o carrossel: vira pendência.
-async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo, direcaoEstilo, log }) {
+async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo, direcaoEstilo, fotoPessoa, obsImagem, log }) {
   // A IA devolve a descrição em "imagem"; o campo passa a guardar só o arquivo gerado.
   for (const s of carrossel.slides) {
     if (s.imagem) s.imagem_descricao = s.imagem;
@@ -92,6 +107,9 @@ async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo
       estilo,
       paleta: cliente.visual.paleta,
       referencia,
+      fotoPessoa,
+      regras: cliente.visual.imagens?.regras,
+      observacao: obsImagem,
       destino: path.join(pasta, arquivo),
     }).then(() => arquivo);
   };

@@ -214,6 +214,7 @@ export function salvarVisual(id, v) {
       c.visual.imagens = {
         modo: ["auto", "nenhuma", "capa", "todas"].includes(v.imagens.modo) ? v.imagens.modo : c.visual.imagens.modo,
         estilo: String(v.imagens.estilo ?? c.visual.imagens.estilo ?? ""),
+        regras: String(v.imagens.regras ?? c.visual.imagens.regras ?? ""),
       };
     }
     if (v.assinatura !== undefined) c.visual.assinatura = v.assinatura;
@@ -231,6 +232,28 @@ export function gravarDataUrl(dataUrl, pasta, nome) {
   const arquivo = `${nome}.${ext}`;
   fs.writeFileSync(path.join(pasta, arquivo), Buffer.from(m[2], "base64"));
   return arquivo;
+}
+
+// Banco de fotos reais do cliente (assets/fotos/), usadas pela IA para colocar a pessoa nas imagens.
+const pastaFotos = (id) => path.join(PASTA_CLIENTES, id, "assets", "fotos");
+
+export function listarFotos(id) {
+  const pasta = pastaFotos(id);
+  return fs.existsSync(pasta) ? fs.readdirSync(pasta).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort() : [];
+}
+
+export function caminhoFoto(id, nome) {
+  if (!/^[\w.-]+$/.test(nome || "") || !listarFotos(id).includes(nome)) throw new Error("Foto não encontrada.");
+  return path.join(pastaFotos(id), nome);
+}
+
+export function adicionarFoto(id, dataUrl) {
+  lerConfig(id);
+  return gravarDataUrl(dataUrl, pastaFotos(id), `foto-${Date.now()}`);
+}
+
+export function removerFoto(id, nome) {
+  fs.rmSync(caminhoFoto(id, nome));
 }
 
 // Logo ou foto do cliente (PNG sem fundo), guardados em assets/.

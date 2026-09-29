@@ -20,11 +20,16 @@ export function slidesComImagem(modo, total) {
   return [];
 }
 
-function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia }) {
+function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia, comPessoa, regras, observacao }) {
   return [
-    comReferencia
-      ? "Use a imagem de referência só para manter a mesma personagem, o mesmo cenário, a mesma luz e o mesmo estilo. Crie uma cena NOVA:"
+    comPessoa
+      ? "A PRIMEIRA imagem de referência é uma foto real da pessoa: ela é a protagonista. Mantenha o rosto, os traços, o tom de pele e o cabelo idênticos; mude roupa, pose, cenário e luz conforme a cena. Não altere a identidade da pessoa."
       : "",
+    comReferencia
+      ? `Use ${comPessoa ? "a última imagem de referência" : "a imagem de referência"} só para manter o mesmo cenário, a mesma luz e o mesmo estilo${comPessoa ? "" : " (e a mesma personagem)"}. Crie uma cena NOVA:`
+      : "",
+    regras ? `REGRAS OBRIGATÓRIAS (nunca desrespeite): ${regras}.` : "",
+    observacao ? `Observação: ${observacao}.` : "",
     `Cena: ${descricao}`,
     direcaoEstilo ? `Composição exigida pelo layout: ${direcaoEstilo}` : "",
     direcao ? `Direção de arte do carrossel (mantenha a mesma personagem, ambiente e luz): ${direcao}` : "",
@@ -37,25 +42,31 @@ function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comRe
   ].filter(Boolean).join(" ");
 }
 
-// Com `referencia` (caminho de uma imagem já gerada), usa a edição de imagem para manter a continuidade.
-// Se a edição falhar, gera do zero.
-export async function gerarImagem({ descricao, direcao, direcaoEstilo, estilo, paleta, referencia, destino }) {
+const tipoImagem = (arquivo) => ({ ".png": "image/png", ".webp": "image/webp" })[arquivo.slice(arquivo.lastIndexOf(".")).toLowerCase()] || "image/jpeg";
+const paraUpload = (arquivo, nome) => toFile(fs.createReadStream(arquivo), nome, { type: tipoImagem(arquivo) });
+
+// `fotoPessoa`: foto real do cliente, que vira a protagonista (edição de imagem com alta fidelidade).
+// `referencia`: imagem já gerada do carrossel, para manter cenário e luz. Se a edição falhar, gera do zero.
+export async function gerarImagem({ descricao, direcao, direcaoEstilo, estilo, paleta, referencia, fotoPessoa, regras, observacao, destino }) {
   const client = new OpenAI();
   const base = { model: MODELO(), size: TAMANHO, quality: QUALIDADE(), output_format: "jpeg", n: 1 };
+  const comum = { descricao, direcao, direcaoEstilo, estilo, paleta, regras, observacao };
   let resposta;
-  if (referencia) {
+  const entradas = [fotoPessoa, referencia].filter(Boolean);
+  if (entradas.length) {
     try {
+      const imagens = await Promise.all(entradas.map((arq, i) => paraUpload(arq, `referencia-${i + 1}${arq.slice(arq.lastIndexOf("."))}`)));
       resposta = await client.images.edit({
         ...base,
-        image: await toFile(fs.createReadStream(referencia), "referencia.jpg", { type: "image/jpeg" }),
+        image: imagens.length === 1 ? imagens[0] : imagens,
         input_fidelity: "high",
-        prompt: montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia: true }),
+        prompt: montarPrompt({ ...comum, comPessoa: Boolean(fotoPessoa), comReferencia: Boolean(referencia) }),
       });
     } catch (erro) {
       console.warn(`Aviso: edição com referência falhou (${erro.message}). Gerando sem referência.`);
     }
   }
-  resposta ??= await client.images.generate({ ...base, prompt: montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta }) });
+  resposta ??= await client.images.generate({ ...base, prompt: montarPrompt(comum) });
   const b64 = resposta.data?.[0]?.b64_json;
   if (!b64) throw new Error("A OpenAI não devolveu a imagem.");
   fs.writeFileSync(destino, Buffer.from(b64, "base64"));

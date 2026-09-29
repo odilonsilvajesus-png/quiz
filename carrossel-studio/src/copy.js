@@ -1,5 +1,6 @@
 // Escreve o carrossel na voz do cliente a partir de uma referência que performou bem.
 import { z } from "zod";
+import { conteudoCompleto } from "./analise.js";
 import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
 
 export const temIA = () => Boolean(provedor());
@@ -29,8 +30,8 @@ function esquema(qtdSlides, comImagem, comDiagrama) {
 
 // As imagens nascem do texto: uma direção de arte para o carrossel inteiro e, em cada slide,
 // a cena que aquele texto descreve. Nada genérico ou de banco de imagens.
-function regrasImagem(cliente, preferencia, direcaoEstilo) {
-  return `Imagens (serão geradas por IA a partir do que você escrever):${direcaoEstilo ? `\n- Tipo de imagem que este estilo visual pede: ${direcaoEstilo}` : ""}
+function regrasImagem(cliente, preferencia, direcaoEstilo, { regras, observacao, comPessoa } = {}) {
+  return `Imagens (serão geradas por IA a partir do que você escrever):${regras ? `\n- REGRAS OBRIGATÓRIAS DO CLIENTE PARA IMAGENS (nunca desrespeite): ${regras}` : ""}${observacao ? `\n- Observação para as imagens deste carrossel: ${observacao}` : ""}${comPessoa ? `\n- A protagonista das imagens é a PRÓPRIA ${cliente.nome}, a partir de uma foto real dela. Descreva cenas com ela (roupa, lugar, gesto, expressão), sem descrever o rosto.` : ""}${direcaoEstilo ? `\n- Tipo de imagem que este estilo visual pede: ${direcaoEstilo}` : ""}
 - Preencha "direcao_de_arte" com UM conceito visual para o carrossel inteiro, tirado do tema e do público de ${cliente.nome}: a mesma personagem principal em todos os slides (idade, aparência, roupa), o mesmo ambiente, a mesma luz e o mesmo clima emocional.${preferencia ? ` Preferência visual do cliente: ${preferencia}.` : ""}
 - Em cada slide, preencha "imagem" com a cena que ILUSTRA LITERALMENTE aquele texto: se o slide fala de comer escondida à noite, mostre a personagem comendo escondida à noite. A imagem precisa fazer sentido mesmo para quem ler só aquele slide.
 - Mostre ação, gesto e expressão concretos. Nada de imagem genérica, simbólica demais, de banco de imagens ou sem relação com a frase.
@@ -79,22 +80,32 @@ Regras de formato:
 ${c.angulos?.length ? `- Escolha o ângulo mais adequado desta lista: ${c.angulos.join("; ")}.` : ""}
 ${c.proibir_travessao ? "- Nunca use travessão (— ou –). Use vírgula, ponto, dois pontos ou hífen simples." : ""}
 - Legenda: ${c.cta_legenda || "termine com um CTA claro."}
-${opcoes.estilo?.formato_texto ? `- Formato do texto para o estilo visual "${opcoes.estilo.nome}": ${opcoes.estilo.formato_texto}\n` : ""}${opcoes.comImagem ? `${regrasImagem(cliente, opcoes.estiloImagem, opcoes.estilo?.direcao_imagem)}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
+${opcoes.estilo?.formato_texto ? `- Formato do texto para o estilo visual "${opcoes.estilo.nome}": ${opcoes.estilo.formato_texto}\n` : ""}${opcoes.comImagem ? `${regrasImagem(cliente, opcoes.estiloImagem, opcoes.estilo?.direcao_imagem, { regras: cliente.visual.imagens?.regras, observacao: opcoes.obsImagem, comPessoa: opcoes.comPessoa })}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
 }
 
-function promptUsuario(referencia, { angulo, angulosRecentes = [] }) {
-  const m = referencia.metricas;
+function promptUsuario(referencia, { angulo, angulosRecentes = [], observacao }) {
+  const m = referencia.metricas || {};
   const r = referencia.ranking || {};
-  return `<referencia>
+  const pauta = referencia.plataforma === "sugestao";
+  const blocoReferencia = pauta
+    ? `<pauta_sugerida>
+${referencia.texto}
+</pauta_sugerida>
+
+Escreva um carrossel a partir desta pauta, criada com base no conhecimento do próprio cliente.`
+    : `<referencia>
 Plataforma: ${referencia.plataforma} (${referencia.tipo})
 Perfil: ${referencia.perfil}
 Desempenho: ${m.curtidas} curtidas, ${m.comentarios} comentários${m.visualizacoes ? `, ${m.visualizacoes} visualizações` : ""}${r.outlier ? ` (${r.outlier}x acima da média do próprio perfil)` : ""}
 
-Conteúdo:
-${referencia.texto}
+${conteudoCompleto(referencia)}
 </referencia>
 
-${angulo ? `Use obrigatoriamente o ângulo: ${angulo}.` : "Escolha o ângulo que melhor aproveita o mecanismo de atenção dessa referência."}
+O que fez esse post performar está no CONTEÚDO REAL (a fala do vídeo e o texto dos slides), não na legenda. Baseie-se principalmente nele; use a legenda só como apoio.`;
+  return `${blocoReferencia}
+
+${angulo ? `Use obrigatoriamente o ângulo: ${angulo}.` : pauta ? "" : "Escolha o ângulo que melhor aproveita o mecanismo de atenção dessa referência."}
+${observacao ? `Observação do usuário para este carrossel (siga com prioridade): ${observacao}` : ""}
 ${angulosRecentes.length ? `Evite repetir estes ângulos, usados recentemente: ${angulosRecentes.join("; ")}.` : ""}
 
 Escreva o carrossel.`;
@@ -142,17 +153,19 @@ export async function escreverCarrossel(cliente, referencia, opcoes = {}) {
   return limpar(resultado, cliente);
 }
 
-// Gera o voz.md do cliente a partir de legendas reais dele.
-export async function descreverVoz(cliente, legendas) {
+// Gera o voz.md do cliente a partir dos posts reais dele: fala dos reels, texto dos carrosséis e legendas.
+export async function descreverVoz(cliente, posts) {
   if (!temIA()) throw new Error("Configure OPENAI_API_KEY no .env para gerar a voz automaticamente.");
-  return gerarTexto(`Abaixo estão ${legendas.length} legendas reais do Instagram de ${cliente.nome}.
+  return gerarTexto(`Abaixo estão ${posts.length} posts reais do Instagram de ${cliente.nome}. Cada um traz, quando disponível, a FALA do vídeo (transcrição do reels), o TEXTO dos slides do carrossel e a LEGENDA.
+O tom de voz está principalmente em como ${cliente.nome} FALA nos vídeos e ESCREVE nos slides; a legenda é complementar.
 Escreva um guia de voz em Markdown, em português do Brasil, para um redator imitar o jeito de escrever de ${cliente.nome}. Inclua:
-- Tom (formal/informal, acolhedor/firme, técnico/simples) com exemplos tirados das legendas
+- Tom (formal/informal, acolhedor/firme, técnico/simples) com exemplos tirados do material
 - Vocabulário e expressões que ela repete
 - Tamanho e ritmo das frases, uso de perguntas, emojis e pontuação
 - Como ela abre e fecha os textos, e que tipo de CTA usa
 - O que ela evita
-Descreva só o que aparece nas legendas, sem inventar.
+- Diferenças entre o jeito de falar (vídeo) e de escrever (slides e legenda), se houver
+Descreva só o que aparece no material, sem inventar.
 
-${legendas.map((l, i) => `<legenda n="${i + 1}">\n${l}\n</legenda>`).join("\n")}`);
+${posts.map((p, i) => `<post n="${i + 1}" tipo="${p.tipo}">\n${conteudoCompleto(p)}\n</post>`).join("\n")}`);
 }

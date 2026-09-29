@@ -49,6 +49,10 @@ export async function coletar(cliente, { log = console.log } = {}) {
   return resultado;
 }
 
+export function salvarColeta(clienteId, coleta) {
+  fs.writeFileSync(path.join(pastaSaida(clienteId), "coleta.json"), JSON.stringify(coleta, null, 2));
+}
+
 export function ultimaColeta(clienteId) {
   const arquivo = path.join(pastaSaida(clienteId), "coleta.json");
   return fs.existsSync(arquivo) ? JSON.parse(fs.readFileSync(arquivo, "utf8")) : null;

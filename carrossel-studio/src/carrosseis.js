@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { PASTA_SAIDA, pastaSaida } from "./cliente.js";
 
-export const ESTADOS = ["rascunho", "postado", "descartado"];
+export const ESTADOS = ["rascunho", "agendado", "postado", "descartado"];
 
 const arquivoHistorico = (clienteId) => path.join(pastaSaida(clienteId), "historico.json");
 
@@ -42,7 +42,24 @@ export const restaurar = (clienteId, nomePasta) =>
   atualizar(clienteId, nomePasta, { estado: "rascunho", motivo: undefined, descartado_em: undefined });
 
 export const marcarPostado = (clienteId, nomePasta, { permalink = "", id = "" } = {}) =>
-  atualizar(clienteId, nomePasta, { estado: "postado", postado_em: new Date().toISOString(), permalink, instagram_id: id });
+  atualizar(clienteId, nomePasta, {
+    estado: "postado", postado_em: new Date().toISOString(), permalink, instagram_id: id, falhou: undefined, publicando: undefined,
+  });
+
+// Agenda a publicação. O painel precisa estar rodando no horário marcado para publicar.
+export function agendar(clienteId, nomePasta, quando) {
+  const data = new Date(quando);
+  if (Number.isNaN(data.getTime())) throw new Error("Escolha a data e a hora da publicação.");
+  if (data.getTime() < Date.now() - 60_000) throw new Error("Escolha um horário no futuro.");
+  return atualizar(clienteId, nomePasta, { estado: "agendado", agendado_para: data.toISOString(), falhou: undefined, publicando: undefined });
+}
+
+export const cancelarAgendamento = (clienteId, nomePasta) =>
+  atualizar(clienteId, nomePasta, { estado: "rascunho", agendado_para: undefined, falhou: undefined, publicando: undefined });
+
+// Agendamentos que já passaram do horário e ainda não foram tentados.
+export const agendamentosVencidos = (clienteId) =>
+  historico(clienteId).filter((h) => h.estado === "agendado" && !h.falhou && !h.publicando && new Date(h.agendado_para) <= new Date());
 
 // Motivos de descarte recentes, usados no prompt para a IA não repetir os mesmos erros.
 export function aprendizados(clienteId, limite = 15) {
@@ -69,7 +86,7 @@ export function listar(clienteId) {
 }
 
 export function contagem(clienteId) {
-  const n = { rascunho: 0, postado: 0, descartado: 0 };
+  const n = { rascunho: 0, agendado: 0, postado: 0, descartado: 0 };
   for (const h of historico(clienteId)) n[h.estado] = (n[h.estado] || 0) + 1;
   return n;
 }

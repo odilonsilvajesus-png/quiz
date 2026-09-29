@@ -50,12 +50,24 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 
 | Aba | Para quê |
 |---|---|
-| **Criar** | Ideias das referências que mais engajaram (filtro Instagram/YouTube). **Criar carrossel** abre uma janela para escolher modelo, estilo, tema e imagens. |
-| **Carrosséis** | Separado em **Rascunhos**, **Postados** e **Descartados**. Em cada rascunho: **Postar no Instagram**, **Editar**, **Baixar** (ZIP), **Aprovar como exemplo** e **Descartar**. |
+| **Criar** | **Das referências:** ideias que mais engajaram, com o conteúdo real (fala transcrita dos reels e texto lido dos carrosséis). Filtros por plataforma, formato e perfil de referência, seleção de várias ideias para criar em lote e **Limpar seleção**. **Sugestões da IA:** pautas criadas a partir do conhecimento do próprio cliente. |
+| **Carrosséis** | Separado em **Rascunhos**, **Agendados**, **Postados** e **Descartados**. Em cada rascunho: **Postar no Instagram** (agora ou agendado), **Editar**, **Baixar** (ZIP), **Aprovar como exemplo** e **Descartar**. |
 | **Perfil e referências** | Dados do cliente, referências (Instagram e YouTube) e a **conexão para postar direto no Instagram**. |
 | **Voz e direcionamento** | Tom de voz coletado das legendas, direcionamento manual e temas/regras. |
 | **Modelos** | Estruturas de texto, com prévia. |
 | **Identidade visual** | Estilo, imagens com IA, cores, fontes, foto e logo, com prévia ao vivo. |
+
+### Conteúdo real das referências (não só a legenda)
+Com `OPENAI_API_KEY`, os posts mais bem ranqueados de cada coleta são analisados: a **fala dos reels é transcrita** e o **texto de cada slide dos carrosséis é lido** pela IA. A cópia do carrossel se baseia nesse conteúdo real, com a legenda só como apoio. Posts que repetem a mesma legenda deixam de ser tratados como iguais. O botão com o olho, em cada ideia, mostra a transcrição, os slides e a legenda.
+O mesmo vale para o **tom de voz**: a coleta analisa a fala dos reels, os carrosséis e as legendas da própria cliente.
+
+### Imagens: regras, observações e a foto da própria pessoa
+- **Regras obrigatórias** (Identidade visual): o que a IA nunca pode mostrar, por exemplo "público evangélico, nunca usar cruz". Valem para todas as imagens do cliente.
+- **Observação para as imagens** (na janela de criar): vale só para aquele carrossel.
+- **Fotos da pessoa** (Identidade visual): envie fotos nítidas do cliente. Ao criar, escolha uma foto e a IA coloca a própria pessoa nas cenas, mudando roupa, cenário e pose e mantendo o rosto.
+
+### Agendar publicação
+Na janela **Postar no Instagram**, escolha data e hora e clique em **Agendar publicação**. O carrossel vai para **Agendados** e o Viraliza publica sozinho no horário. **O painel (`npm run painel`) precisa estar aberto no computador nesse horário.** Se algo falhar, o motivo aparece no carrossel e dá para postar agora ou reagendar.
 
 ### Postar direto no Instagram
 1. O Instagram do cliente precisa ser conta **Profissional** (Business ou Criador).

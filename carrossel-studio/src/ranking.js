@@ -43,7 +43,19 @@ export function ranquear(posts, { limite = 20 } = {}) {
     }
   }
 
+  // Perfis que repetem a mesma legenda em vários posts: fica só o de melhor desempenho,
+  // a não ser que a análise mostre que o conteúdo real é diferente.
+  const vistos = new Set();
   return ranqueados
     .sort((a, b) => b.ranking.outlier - a.ranking.outlier || b.ranking.interacoes - a.ranking.interacoes)
+    .filter((p) => {
+      // Enquanto o conteúdo real não foi analisado, posts com mídia contam como diferentes (mesma legenda,
+      // reels diferentes). Depois da análise, a comparação usa a fala/texto dos slides.
+      const conteudo = p.analise?.transcricao || p.analise?.slides || (p.midia ? p.id : p.texto) || "";
+      const chave = `${p.perfil}|${conteudo.slice(0, 160).toLowerCase()}`;
+      if (vistos.has(chave)) return false;
+      vistos.add(chave);
+      return true;
+    })
     .slice(0, limite);
 }

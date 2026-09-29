@@ -14,7 +14,9 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/servidor.js`: servidor HTTP do painel e rotas `/api/...`.
 - `painel/index.html`: painel inteiro (HTML + JS puro, rotas por hash `#/c/<cliente>/<aba>`).
 - `src/cliente.js`: leitura/gravação do kit do cliente (`clientes/<id>/cliente.json`), paleta → fundos, normalização de formatos antigos.
-- `src/carrosseis.js`: estados do carrossel (rascunho, postado, descartado com motivo) e aprendizados para o prompt.
+- `src/carrosseis.js`: estados do carrossel (rascunho, agendado, postado, descartado com motivo); o agendador roda no `servidor.js` a cada minuto e aprendizados para o prompt.
+- `src/analise.js`: conteúdo real dos posts (transcrição da fala dos reels e leitura do texto dos slides), usado nas referências e no tom de voz.
+- `src/sugestoes.js`: pautas sugeridas pela IA a partir do conhecimento do cliente.
 - `src/publicar.js`: publicação no Instagram (Graph API) com imagens hospedadas no ImgBB.
 - `src/pipeline.js`: referência → copy (`src/copy.js`) → imagens (`src/imagens.js`) → PNGs (`src/render.js`).
 - `src/ia.js`: provedor de texto (OpenAI por padrão, Claude com `IA_PROVEDOR=anthropic`).
