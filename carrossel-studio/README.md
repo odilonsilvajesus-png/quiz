@@ -1,4 +1,6 @@
-# Carrossel Studio
+# Viraliza Studio
+
+_Antes chamado Carrossel Studio._
 
 Sistema que:
 
@@ -41,18 +43,31 @@ O modelo padrão é o `gpt-5.5`. Para trocar, defina `OPENAI_MODEL` no `.env`. P
 Rode `npm run painel` e abra **http://localhost:3333**. Tudo é feito pelo painel.
 
 ### Página inicial: clientes
-Lista todos os clientes. Clique em **+ Cadastrar cliente** para criar um novo (nome, Instagram, nicho, modelo padrão e cores principais).
+Menu lateral com todos os clientes e o botão **Novo cliente**. Os cartões mostram referências, rascunhos e postados de cada um.
 
 ### Painel de cada cliente
-Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) e cinco abas:
+Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) e seis abas:
 
 | Aba | Para quê |
 |---|---|
-| **Conteúdo** | Ranking das referências que mais engajaram. Escolha o modelo e o tema e clique em **Gerar carrossel**. **Aprovar como exemplo** ensina a IA com os carrosséis bons. |
-| **Perfil e referências** | Nome, Instagram e nicho do cliente. Perfis do Instagram e canais do YouTube de referência (cole o @ ou o link). **Salvar e coletar** já busca os posts. |
-| **Voz e direcionamento** | **1. Tom de voz coletado pelo sistema** a partir das legendas do Instagram do cliente (editável). **2. Informações e direcionamento**: o que você levantou sobre o cliente; a IA segue com prioridade. **3. Temas e regras**: temas, CTA da legenda, proibir travessão. |
-| **Modelos de carrossel** | Biblioteca de estruturas (Quebra de crença, Lista de dicas, Mito x Verdade, Storytelling, Passo a passo, Erros comuns, e o modelo próprio do cliente quando existe). Escolha o padrão e veja a prévia. |
-| **Identidade visual** | **Estilo do carrossel** (Clássico, Editorial, Tweet, Cinematográfico, Dividido, Papelaria editorial, Minimalista de texto, Parábola ilustrada, Ensaio quadriculado), **foto do cliente** (PNG sem fundo, usada na capa da Papelaria), **imagens com IA** (nenhuma, só capa ou todos os slides, com estilo das imagens), paleta de 6 cores (com paletas prontas), fonte, assinatura, logo e textos. Prévia ao vivo antes de salvar. |
+| **Criar** | Ideias das referências que mais engajaram (filtro Instagram/YouTube). **Criar carrossel** abre uma janela para escolher modelo, estilo, tema e imagens. |
+| **Carrosséis** | Separado em **Rascunhos**, **Postados** e **Descartados**. Em cada rascunho: **Postar no Instagram**, **Editar**, **Baixar** (ZIP), **Aprovar como exemplo** e **Descartar**. |
+| **Perfil e referências** | Dados do cliente, referências (Instagram e YouTube) e a **conexão para postar direto no Instagram**. |
+| **Voz e direcionamento** | Tom de voz coletado das legendas, direcionamento manual e temas/regras. |
+| **Modelos** | Estruturas de texto, com prévia. |
+| **Identidade visual** | Estilo, imagens com IA, cores, fontes, foto e logo, com prévia ao vivo. |
+
+### Postar direto no Instagram
+1. O Instagram do cliente precisa ser conta **Profissional** (Business ou Criador).
+2. Em developers.facebook.com, crie um app do tipo "Empresa", adicione o produto **Instagram** e gere o **token** da conta do cliente (com permissão para publicar conteúdo). Copie também o **ID da conta**.
+3. Na aba **Perfil e referências**, cole o ID e o token e clique em **Salvar e testar conexão**.
+4. No `.env`, preencha `IMGBB_API_KEY` (grátis em api.imgbb.com). O Instagram só publica imagens com link público, então os slides sobem para o ImgBB por 1 dia antes de irem para o Instagram.
+
+Depois disso, **Postar no Instagram** publica o carrossel com a legenda (editável na hora) e ele vai para **Postados**, com o link do post.
+Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já postei, marcar como postado**.
+
+### Descartar ensina a IA
+Ao descartar, o sistema pede o motivo (ex.: "fora do tom", "imagem não combina"). Os motivos recentes entram no prompt dos próximos carrosséis para a IA não repetir os mesmos erros. Carrosséis descartados podem ser restaurados.
 
 Os arquivos saem em `saida/<cliente>/carrosseis/<data>-<tema>/`: `slide-01.png` …, `legenda.txt`, `carrossel.json` (editável) e `carrossel.html`.
 

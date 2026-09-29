@@ -5,11 +5,15 @@ import path from "node:path";
 import {
   RAIZ, PASTA_SAIDA, FONTES, carregarCliente, listarClientes, criarCliente, fundosDaPaleta,
   salvarReferencias, salvarPerfil, salvarVisual, salvarImagemCliente, salvarConteudo, salvarVoz, gravarDataUrl,
-  salvarDirecionamento, adicionarExemplo,
+  salvarDirecionamento, adicionarExemplo, salvarPublicacao,
 } from "./cliente.js";
-import { referenciasRanqueadas, gerarCarrossel, historico } from "./pipeline.js";
+import { referenciasRanqueadas, gerarCarrossel } from "./pipeline.js";
+import * as carrosseis from "./carrosseis.js";
+import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
+import { criarZip } from "./zip.js";
+import { createRequire } from "node:module";
 import { listarModelos, modelosDoCliente, resolverModelo } from "./modelos.js";
-import { montarHtml, listarEstilos, renderizar } from "./render.js";
+import { montarHtml, listarEstilos, renderizar, exportarJpeg } from "./render.js";
 import { imagemExemplo, slidesComImagem, temGeradorImagem, resolverModo } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
 import { descreverVoz } from "./copy.js";
@@ -18,12 +22,20 @@ import { coletarLegendas } from "./coleta/instagram.js";
 if (fs.existsSync(path.join(RAIZ, ".env"))) process.loadEnvFile(path.join(RAIZ, ".env"));
 
 const PORTA = Number(process.env.PORTA || 3333);
-const TIPOS = { ".html": "text/html; charset=utf-8", ".png": "image/png", ".json": "application/json", ".txt": "text/plain; charset=utf-8" };
+const TIPOS = {
+  ".html": "text/html; charset=utf-8", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml",
+  ".json": "application/json", ".txt": "text/plain; charset=utf-8", ".woff2": "font/woff2",
+};
+const require = createRequire(import.meta.url);
+const PASTA_FONTE_PAINEL = path.join(path.dirname(require.resolve("@fontsource/inter/package.json")), "files");
+const { pastaCarrossel } = carrosseis;
+const listarGerados = carrosseis.listar;
 
 class Resposta {
-  constructor(tipo, conteudo) {
+  constructor(tipo, conteudo, baixarComo) {
     this.tipo = tipo;
     this.conteudo = conteudo;
+    this.baixarComo = baixarComo;
   }
 }
 
@@ -48,27 +60,6 @@ async function corpo(req) {
   return dados ? JSON.parse(dados) : {};
 }
 
-function pastaCarrossel(clienteId, nome) {
-  if (!/^[\w.-]+$/.test(nome || "")) throw new Error("Carrossel inválido.");
-  return path.join(PASTA_SAIDA, clienteId, "carrosseis", nome);
-}
-
-function listarGerados(clienteId) {
-  return historico(clienteId)
-    .slice()
-    .reverse()
-    .map((h) => {
-      const pasta = pastaCarrossel(clienteId, h.pasta);
-      if (!fs.existsSync(path.join(pasta, "carrossel.json"))) return null;
-      const carrossel = JSON.parse(fs.readFileSync(path.join(pasta, "carrossel.json"), "utf8"));
-      const imagens = fs.readdirSync(pasta).filter((f) => f.endsWith(".png")).sort();
-      // ?v= muda quando o slide é renderizado de novo, para o navegador não mostrar a versão antiga.
-      const versao = (f) => Math.round(fs.statSync(path.join(pasta, f)).mtimeMs);
-      return { ...h, carrossel, imagens: imagens.map((f) => `/saida/${clienteId}/carrosseis/${h.pasta}/${f}?v=${versao(f)}`) };
-    })
-    .filter(Boolean);
-}
-
 function resumoCliente(c) {
   return {
     id: c.id,
@@ -78,7 +69,7 @@ function resumoCliente(c) {
     paleta: c.visual.paleta,
     fonte: c.visual.fonte,
     referencias: (c.referencias.instagram?.length || 0) + (c.referencias.youtube?.length || 0),
-    carrosseis: historico(c.id).length,
+    contagem: carrosseis.contagem(c.id),
   };
 }
 
@@ -107,6 +98,11 @@ function detalheCliente(id) {
     voz: c.voz,
     direcionamento: c.baseConhecimento,
     exemplos: c.exemplosCarrossel.length,
+    publicacao: {
+      conectado: Boolean(c.publicacao?.ig_user_id && c.publicacao?.token),
+      ig_user_id: c.publicacao?.ig_user_id || "",
+      conta: c.publicacao?.conta || "",
+    },
     modelos: modelosDoCliente(c),
   };
 }
@@ -166,6 +162,24 @@ async function editarCarrossel(id, nomePasta, { slides = [], imagens = {} }) {
   return listarGerados(id).find((g) => g.pasta === nomePasta);
 }
 
+// Publica no Instagram do cliente e move o carrossel para "Postados".
+async function publicar(id, nomePasta, { legenda }) {
+  const cliente = carregarCliente(id);
+  const { ig_user_id: igUserId, token } = cliente.publicacao || {};
+  if (!igUserId || !token) throw new Error("Conecte o Instagram deste cliente na aba Perfil e referências.");
+  if (!temHospedagem()) throw new Error("Preencha IMGBB_API_KEY no .env para enviar as imagens ao Instagram.");
+  const pasta = pastaCarrossel(id, nomePasta);
+  const arquivoJson = path.join(pasta, "carrossel.json");
+  const carrossel = JSON.parse(fs.readFileSync(arquivoJson, "utf8"));
+  if (typeof legenda === "string") {
+    carrossel.legenda = legenda;
+    fs.writeFileSync(arquivoJson, JSON.stringify(carrossel, null, 2));
+  }
+  const arquivos = await exportarJpeg(pasta, { largura: cliente.visual.largura, altura: cliente.visual.altura });
+  const resultado = await publicarCarrossel({ igUserId, token, arquivos, legenda: carrossel.legenda });
+  return carrosseis.marcarPostado(id, nomePasta, resultado);
+}
+
 async function gerarVoz(id) {
   const cliente = carregarCliente(id);
   if (!cliente.instagram) throw new Error("Preencha o Instagram do cliente na aba Referências primeiro.");
@@ -184,6 +198,7 @@ const rotas = [
   rota("GET", "/api/status", async () => ({
     ia: nomeProvedor(),
     imagens: temGeradorImagem(),
+    hospedagem: temHospedagem(),
     estilos: await listarEstilos(),
     apify: Boolean(process.env.APIFY_TOKEN),
     youtube: Boolean(process.env.YOUTUBE_API_KEY),
@@ -218,6 +233,25 @@ const rotas = [
     });
     return listarGerados(cliente.id)[0];
   }),
+  rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/descartar", async (m, _u, req) =>
+    carrosseis.descartar(m[1], m[2], (await corpo(req)).motivo)),
+  rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/restaurar", (m) => carrosseis.restaurar(m[1], m[2])),
+  rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/marcar-postado", async (m, _u, req) =>
+    carrosseis.marcarPostado(m[1], m[2], { permalink: (await corpo(req)).permalink || "" })),
+  rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/publicar", async (m, _u, req) => publicar(m[1], m[2], await corpo(req))),
+  rota("GET", "/api/clientes/:id/carrosseis/([\\w.-]+)/zip", (m) => {
+    const pasta = pastaCarrossel(m[1], m[2]);
+    const arquivos = fs.readdirSync(pasta).filter((f) => /^slide-\d+\.png$/.test(f)).sort().map((f) => path.join(pasta, f));
+    return new Resposta("application/zip", criarZip(arquivos), `${m[2]}.zip`);
+  }),
+  rota("PUT", "/api/clientes/:id/publicacao", async (m, _u, req) => {
+    const dados = await corpo(req);
+    salvarPublicacao(m[1], dados);
+    const c = carregarCliente(m[1]);
+    if (!c.publicacao?.ig_user_id || !c.publicacao?.token) return detalheCliente(m[1]);
+    salvarPublicacao(m[1], { conta: await testarConexao({ igUserId: c.publicacao.ig_user_id, token: c.publicacao.token }) });
+    return detalheCliente(m[1]);
+  }),
   rota("POST", "/api/clientes/:id/aprovar", async (m, _u, req) => {
     const pasta = pastaCarrossel(m[1], (await corpo(req)).pasta);
     const carrossel = JSON.parse(fs.readFileSync(path.join(pasta, "carrossel.json"), "utf8"));
@@ -230,6 +264,9 @@ http
     const url = new URL(req.url, `http://${req.headers.host}`);
     try {
       if (url.pathname === "/") return arquivo(res, path.join(RAIZ, "painel", "index.html"), path.join(RAIZ, "painel"));
+      if (url.pathname.startsWith("/fontes/")) {
+        return arquivo(res, path.join(PASTA_FONTE_PAINEL, path.basename(url.pathname)), PASTA_FONTE_PAINEL);
+      }
       if (url.pathname.startsWith("/saida/")) {
         return arquivo(res, path.join(PASTA_SAIDA, decodeURIComponent(url.pathname.slice(7))), PASTA_SAIDA);
       }
@@ -238,7 +275,10 @@ http
         if (!m || req.method !== metodo) continue;
         const resultado = await fn(m, url, req);
         if (resultado instanceof Resposta) {
-          res.writeHead(200, { "Content-Type": resultado.tipo });
+          res.writeHead(200, {
+            "Content-Type": resultado.tipo,
+            ...(resultado.baixarComo ? { "Content-Disposition": `attachment; filename="${resultado.baixarComo}"` } : {}),
+          });
           return res.end(resultado.conteudo);
         }
         return json(res, 200, resultado);

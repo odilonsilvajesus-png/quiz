@@ -120,3 +120,26 @@ export async function renderizar(cliente, carrossel, pastaDestino) {
   }
   return { pasta: pastaDestino, imagens, html: arquivoHtml };
 }
+
+// O Instagram só aceita JPEG na publicação: gera cópias em JPEG a partir do HTML já renderizado.
+export async function exportarJpeg(pasta, { largura = 1080, altura = 1350 } = {}) {
+  const html = fs.readFileSync(path.join(pasta, "carrossel.html"), "utf8");
+  const destino = path.join(pasta, "instagram");
+  fs.mkdirSync(destino, { recursive: true });
+  const navegador = await abrirNavegador();
+  const arquivos = [];
+  try {
+    const pagina = await navegador.newPage({ viewport: { width: largura, height: altura } });
+    await pagina.setContent(html, { waitUntil: "load" });
+    await pagina.evaluate(() => document.fonts.ready);
+    const slides = await pagina.$$(".slide");
+    for (let i = 0; i < slides.length; i++) {
+      const arquivo = path.join(destino, `slide-${String(i + 1).padStart(2, "0")}.jpg`);
+      await slides[i].screenshot({ path: arquivo, type: "jpeg", quality: 92 });
+      arquivos.push(arquivo);
+    }
+  } finally {
+    await navegador.close();
+  }
+  return arquivos;
+}

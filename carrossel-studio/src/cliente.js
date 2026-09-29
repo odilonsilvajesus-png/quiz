@@ -252,6 +252,18 @@ export function salvarConteudo(id, { modelo_padrao, angulos, cta_legenda, proibi
 
 export const salvarVoz = (id, texto) => escreverArquivo(id, "voz.md", texto);
 
+// Conexão com o Instagram do cliente para publicar. Fica só no computador (clientes/ não vai para o Git).
+export function salvarPublicacao(id, { ig_user_id, token, conta }) {
+  alterarConfig(id, (c) => {
+    c.publicacao = {
+      ...c.publicacao,
+      ...(ig_user_id !== undefined ? { ig_user_id: String(ig_user_id).trim() } : {}),
+      ...(token ? { token: String(token).trim() } : {}),
+      ...(conta !== undefined ? { conta } : {}),
+    };
+  });
+}
+
 export function salvarDirecionamento(id, texto) {
   const c = lerConfig(id);
   escreverArquivo(id, c.base_conhecimento || "base-conhecimento.md", texto);

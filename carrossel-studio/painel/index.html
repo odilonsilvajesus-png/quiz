@@ -3,147 +3,309 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Carrossel Studio</title>
+<title>Viraliza Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23FF4D8D'/%3E%3Cstop offset='1' stop-color='%236D28D9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M10 9l6 14 6-14' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
-  :root { --fundo:#F6F4F0; --cartao:#FFFFFF; --texto:#1C1B19; --suave:#6B6760; --borda:#E4E0D8; --acento:#D0654A; --ok:#2F7D4F; --alerta:#B7791F; --erro:#B42318; }
+  @font-face { font-family: "Inter"; font-weight: 400; src: url(/fontes/inter-latin-400-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; src: url(/fontes/inter-latin-500-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; src: url(/fontes/inter-latin-600-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; src: url(/fontes/inter-latin-700-normal.woff2) format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 800; src: url(/fontes/inter-latin-800-normal.woff2) format("woff2"); }
+
+  :root {
+    --bg: #F6F5FA; --superficie: #FFFFFF; --superficie-2: #F1F0F7; --tinta: #16141F; --tinta-2: #5E5A72; --tinta-3: #8F8BA3;
+    --linha: #E8E6F0; --marca: #7C3AED; --marca-2: #FF4D8D; --gradiente: linear-gradient(135deg, #FF4D8D 0%, #A43CF0 50%, #6D28D9 100%);
+    --ok: #12A150; --ok-fundo: #E8F7EE; --aviso: #C27803; --aviso-fundo: #FFF6E5; --perigo: #D92D20; --perigo-fundo: #FDECEA;
+    --raio: 14px; --raio-p: 10px; --sombra: 0 1px 2px rgba(22,20,31,.04), 0 6px 24px rgba(22,20,31,.06);
+    --sombra-forte: 0 20px 60px rgba(22,20,31,.22);
+  }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--fundo); color: var(--texto); font-size:14px; }
+  html, body { margin: 0; }
+  body { font-family: "Inter", system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--tinta); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
-  header { display:flex; flex-wrap:wrap; gap:12px 16px; align-items:center; justify-content:space-between; padding:14px 24px; border-bottom:1px solid var(--borda); background:var(--cartao); position:sticky; top:0; z-index:5; }
-  .marca { font-weight:700; font-size:17px; text-decoration:none; }
-  .trilha { color:var(--suave); }
-  .trilha b { color:var(--texto); }
-  select, button, input, textarea { font: inherit; }
-  input, select, textarea { padding:8px 10px; border:1px solid var(--borda); border-radius:8px; background:#fff; color:var(--texto); min-width:0; }
-  textarea { width:100%; resize:vertical; line-height:1.5; }
-  button { padding:8px 14px; border-radius:8px; border:1px solid var(--texto); background:var(--texto); color:#fff; cursor:pointer; white-space:nowrap; }
-  button.sec { background:#fff; color:var(--texto); border-color:var(--borda); }
-  button.link { background:none; border:0; color:var(--acento); padding:0; }
-  button:disabled { opacity:.5; cursor:wait; }
-  .selos { display:flex; gap:8px; flex-wrap:wrap; }
-  .selo { font-size:12px; padding:4px 10px; border-radius:99px; border:1px solid var(--borda); }
-  .selo.on { color:var(--ok); border-color:var(--ok); }
-  .selo.off { color:var(--alerta); border-color:var(--alerta); }
-  main { padding:24px; max-width:1400px; margin:0 auto; }
-  @media (max-width: 700px) { main { padding:16px; } header { padding:12px 16px; } }
-  h1 { font-size:22px; margin:0 0 4px; }
-  h2 { font-size:16px; margin:0 0 12px; }
-  h3 { font-size:15px; margin:0 0 6px; }
-  .sub { color:var(--suave); margin:0 0 20px; }
-  .cartao { background:var(--cartao); border:1px solid var(--borda); border-radius:12px; padding:16px; }
-  .grade { display:grid; gap:16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-  .duas { display:grid; gap:20px; grid-template-columns: minmax(300px, 420px) 1fr; align-items:start; }
-  .metade { display:grid; gap:20px; grid-template-columns: 1fr 1fr; align-items:start; }
-  .duas > *, .metade > * { min-width:0; }
-  h2 button { font-size:13px; font-weight:400; padding:6px 12px; }
-  @media (max-width: 950px) { .duas, .metade { grid-template-columns: 1fr; } }
-  label { display:block; font-size:12px; font-weight:600; color:var(--suave); margin:14px 0 6px; text-transform:uppercase; letter-spacing:.04em; }
-  label:first-child { margin-top:0; }
-  .campo { width:100%; }
-  .linha { display:flex; gap:8px; align-items:center; }
-  .linha > input { flex:1; }
-  .ajuda { font-size:13px; color:var(--suave); margin:4px 0 10px; line-height:1.45; }
-  .acoes { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:16px; }
-  .msg { font-size:13px; color:var(--suave); }
-  .msg.erro { color:var(--erro); }
-  .aviso { background:#FFF7E6; border:1px solid #F3D9A4; padding:10px 12px; border-radius:8px; font-size:13px; margin-bottom:12px; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  svg.i { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  [hidden] { display: none !important; }
 
-  /* clientes */
-  .card-cliente { text-decoration:none; display:flex; flex-direction:column; overflow:hidden; padding:0; transition: box-shadow .15s; }
-  .card-cliente:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); }
-  .faixa { display:flex; height:38px; }
-  .faixa i { flex:1; }
-  .card-cliente .corpo { padding:14px 16px 16px; }
-  .card-cliente .nums { font-size:12px; color:var(--suave); margin-top:10px; }
-  .descricao { color:var(--suave); font-size:13px; margin:4px 0 0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .card-novo { display:flex; align-items:center; justify-content:center; min-height:150px; border-style:dashed; cursor:pointer; color:var(--suave); font-weight:600; background:transparent; }
-  .card-novo:hover { color:var(--texto); border-color:var(--suave); }
-  .cores-rapidas { display:flex; gap:12px; }
-  .cores-rapidas div { flex:1; }
+  /* ---------- estrutura ---------- */
+  .app { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100vh; }
+  .lateral { background: #121019; color: #EDEBF5; padding: 22px 16px; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .logo { display: flex; align-items: center; gap: 11px; text-decoration: none; padding: 2px 8px; }
+  .logo-marca { width: 36px; height: 36px; border-radius: 11px; background: var(--gradiente); display: grid; place-items: center; box-shadow: 0 6px 18px rgba(164,60,240,.45); }
+  .logo-marca svg { width: 20px; height: 20px; stroke: #fff; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .logo b { display: block; font-size: 16px; letter-spacing: -.01em; }
+  .logo small { display: block; font-size: 11px; color: #9C98B3; letter-spacing: .04em; }
+  .menu-titulo { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #7E7A96; padding: 0 10px; margin-bottom: 6px; }
+  .menu a, .menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border-radius: 10px; text-decoration: none; color: #CFCCE0; background: none; border: 0; cursor: pointer; text-align: left; font-weight: 500; }
+  .menu a:hover, .menu button:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .menu a.ativo { background: rgba(255,255,255,.1); color: #fff; }
+  .menu .bola { width: 22px; height: 22px; border-radius: 7px; flex: none; }
+  .menu .nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .menu .novo { color: #FF8AB6; }
+  .conexoes { margin-top: auto; display: grid; gap: 6px; padding: 12px; background: rgba(255,255,255,.04); border-radius: 12px; }
+  .conexao { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #B7B3CC; }
+  .conexao i { width: 8px; height: 8px; border-radius: 50%; background: #5B5870; }
+  .conexao.on i { background: #22C55E; box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
+  .principal { min-width: 0; padding: 28px 36px 60px; }
+  @media (max-width: 960px) {
+    .app { grid-template-columns: 1fr; }
+    .lateral { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 12px 16px; gap: 10px; }
+    .lateral .bloco-clientes, .conexoes { display: none; }
+    .principal { padding: 20px 16px 48px; }
+  }
 
-  /* cliente */
-  .topo-cliente { display:flex; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap; }
-  .bolinhas { display:flex; }
-  .bolinhas i { width:22px; height:22px; border-radius:50%; border:2px solid var(--cartao); margin-left:-6px; }
-  .bolinhas i:first-child { margin-left:0; }
-  .abas { display:flex; gap:4px; border-bottom:1px solid var(--borda); margin-bottom:20px; overflow-x:auto; }
-  .abas a { padding:10px 14px; text-decoration:none; color:var(--suave); border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; font-weight:500; }
-  .abas a.ativa { color:var(--texto); border-bottom-color:var(--acento); }
+  /* ---------- componentes ---------- */
+  h1 { font-size: 26px; letter-spacing: -.02em; margin: 0; }
+  h2 { font-size: 17px; letter-spacing: -.01em; margin: 0 0 4px; }
+  h3 { font-size: 15px; margin: 0; }
+  .sub { color: var(--tinta-2); margin: 4px 0 0; }
+  .cartao { background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio); box-shadow: var(--sombra); padding: 20px; }
+  .cartao + .cartao { margin-top: 16px; }
+  .grade > .cartao + .cartao { margin-top: 0; }
+  .cabecalho-cartao { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 15px; border-radius: 10px; border: 1px solid var(--linha); background: var(--superficie); cursor: pointer; font-weight: 600; font-size: 13.5px; white-space: nowrap; text-decoration: none; transition: background .15s, border-color .15s, transform .05s; }
+  .btn:hover { background: var(--superficie-2); }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: .55; cursor: wait; }
+  .btn.primario { background: var(--gradiente); color: #fff; border-color: transparent; box-shadow: 0 6px 16px rgba(164,60,240,.28); }
+  .btn.primario:hover { filter: brightness(1.06); }
+  .btn.escuro { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+  .btn.perigo { color: var(--perigo); }
+  .btn.perigo:hover { background: var(--perigo-fundo); border-color: #F6C9C4; }
+  .btn.pequeno { padding: 6px 11px; font-size: 12.5px; }
+  .btn.icone { padding: 8px; }
+  label.rotulo { display: block; font-size: 12.5px; font-weight: 600; color: var(--tinta-2); margin: 16px 0 6px; }
+  label.rotulo:first-child { margin-top: 0; }
+  .campo, select.campo, textarea.campo { width: 100%; padding: 10px 12px; border: 1px solid var(--linha); border-radius: 10px; background: #fff; outline: none; min-width: 0; }
+  .campo:focus { border-color: #B79BF5; box-shadow: 0 0 0 4px rgba(124,58,237,.12); }
+  textarea.campo { resize: vertical; line-height: 1.55; }
+  .ajuda { font-size: 12.5px; color: var(--tinta-3); margin-top: 6px; line-height: 1.5; }
+  .linha { display: flex; gap: 8px; align-items: center; }
+  .linha > .campo { flex: 1; }
+  .acoes { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+  .msg { font-size: 13px; color: var(--tinta-2); }
+  .msg.erro { color: var(--perigo); }
+  .aviso { display: flex; gap: 10px; align-items: flex-start; background: var(--aviso-fundo); color: #7A4B00; border: 1px solid #F8DDA8; padding: 11px 13px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; }
+  .aviso a { font-weight: 600; }
+  .etiqueta { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--superficie-2); color: var(--tinta-2); white-space: nowrap; }
+  .etiqueta.marca { background: #F1E8FE; color: #6D28D9; }
+  .etiqueta.ok { background: var(--ok-fundo); color: var(--ok); }
+  .etiqueta.aviso-e { background: var(--aviso-fundo); color: var(--aviso); }
+  .etiqueta.perigo { background: var(--perigo-fundo); color: var(--perigo); }
+  .vazio { text-align: center; color: var(--tinta-3); padding: 48px 20px; }
+  .vazio svg.i { width: 34px; height: 34px; stroke-width: 1.5; margin-bottom: 8px; color: #C9C5DA; }
+  .grade { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+  .duas { display: grid; gap: 20px; grid-template-columns: minmax(320px, 440px) minmax(0, 1fr); align-items: start; }
+  .metade { display: grid; gap: 20px; grid-template-columns: 1fr 1fr; align-items: start; }
+  .duas > *, .metade > * { min-width: 0; }
+  @media (max-width: 1100px) { .duas, .metade { grid-template-columns: 1fr; } }
 
-  /* conteúdo */
-  .ref { background:var(--cartao); border:1px solid var(--borda); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
-  .ref .topo { display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--suave); }
-  .score { font-weight:700; color:var(--acento); font-size:14px; }
-  .ref p { margin:8px 0; line-height:1.4; white-space:pre-line; max-height:5.6em; overflow:hidden; }
-  .ref .escolhas { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
-  .ref .escolhas select { width:100%; font-size:13px; }
-  .gerado { margin-bottom:16px; }
-  .meta { font-size:12px; color:var(--suave); margin-bottom:10px; }
-  .slides { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
-  .slides a img { height:220px; aspect-ratio:1080/1350; border-radius:6px; display:block; border:1px solid var(--borda); }
-  details { margin-top:10px; font-size:13px; }
-  details pre { white-space:pre-wrap; background:var(--fundo); padding:10px; border-radius:8px; font-family:inherit; }
-  .vazio { color:var(--suave); }
+  /* ---------- início ---------- */
+  .topo-pagina { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .card-cliente { text-decoration: none; padding: 0; overflow: hidden; display: flex; flex-direction: column; transition: transform .15s, box-shadow .15s; }
+  .card-cliente:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(22,20,31,.1); }
+  .card-cliente .faixa { display: flex; height: 64px; }
+  .card-cliente .faixa i { flex: 1; }
+  .card-cliente .corpo { padding: 16px 18px 18px; }
+  .card-cliente .descricao { color: var(--tinta-2); font-size: 13px; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 38px; }
+  .card-cliente .numeros { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .card-novo { display: grid; place-items: center; min-height: 190px; border: 2px dashed #D9D5E6; border-radius: var(--raio); background: transparent; cursor: pointer; color: var(--tinta-2); font-weight: 600; }
+  .card-novo:hover { border-color: #B79BF5; color: var(--marca); background: #FBF9FF; }
+  .card-novo span { display: grid; justify-items: center; gap: 8px; }
+  .cores-rapidas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cor-rapida { border: 1px solid var(--linha); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: var(--tinta-2); }
+  .cor-rapida input { width: 32px; height: 32px; border: 0; padding: 0; background: none; cursor: pointer; }
 
-  /* chips */
-  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
-  .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 6px 4px 10px; border-radius:99px; background:var(--fundo); border:1px solid var(--borda); font-size:13px; }
-  .chip button { border:0; background:transparent; color:var(--suave); padding:0 4px; font-size:16px; line-height:1; }
+  /* ---------- cliente ---------- */
+  .cabecalho-cliente { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
+  .avatar { width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 22px; flex: none; box-shadow: 0 8px 20px rgba(22,20,31,.15); overflow: hidden; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .cabecalho-cliente .titulo { flex: 1; min-width: 220px; }
+  .cabecalho-cliente .arroba { color: var(--tinta-2); display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+  .indicadores { display: flex; gap: 10px; flex-wrap: wrap; }
+  .indicador { background: var(--superficie); border: 1px solid var(--linha); border-radius: 12px; padding: 10px 16px; min-width: 104px; box-shadow: var(--sombra); }
+  .indicador b { display: block; font-size: 20px; letter-spacing: -.02em; }
+  .indicador span { font-size: 12px; color: var(--tinta-2); }
+  .abas { display: flex; gap: 4px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 12px; padding: 4px; margin-bottom: 22px; overflow-x: auto; box-shadow: var(--sombra); }
+  .abas a { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 9px; text-decoration: none; color: var(--tinta-2); font-weight: 600; white-space: nowrap; font-size: 13.5px; }
+  .abas a:hover { color: var(--tinta); background: var(--superficie-2); }
+  .abas a.ativa { background: var(--tinta); color: #fff; }
+  .abas a .contador { background: rgba(255,255,255,.18); padding: 0 7px; border-radius: 99px; font-size: 11.5px; }
+  .abas a:not(.ativa) .contador { background: var(--superficie-2); }
 
-  /* modelos */
-  .modelo { display:flex; flex-direction:column; gap:10px; }
-  .modelo.padrao { border-color:var(--acento); box-shadow:0 0 0 1px var(--acento); }
-  .tira { display:flex; gap:4px; }
-  .tira span { flex:1; aspect-ratio:1080/1350; border-radius:4px; display:flex; align-items:flex-end; padding:4px; font-size:9px; line-height:1.15; overflow:hidden; }
-  .etiqueta { font-size:11px; font-weight:700; color:var(--acento); text-transform:uppercase; letter-spacing:.05em; }
-  .modelo ol { margin:0; padding-left:18px; color:var(--suave); font-size:13px; line-height:1.5; }
+  /* ---------- ideias ---------- */
+  .barra { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .filtros { display: inline-flex; background: var(--superficie); border: 1px solid var(--linha); border-radius: 10px; padding: 3px; }
+  .filtros button { border: 0; background: none; padding: 7px 13px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--tinta-2); display: flex; align-items: center; gap: 6px; }
+  .filtros button.ativo { background: var(--superficie-2); color: var(--tinta); }
+  .ideia { display: flex; flex-direction: column; gap: 12px; }
+  .ideia .topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .ideia .autor { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 13px; font-weight: 600; }
+  .ideia .autor span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .plataforma { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; flex: none; color: #fff; }
+  .plataforma.instagram { background: linear-gradient(45deg, #F9A43A, #E1306C 50%, #8134AF); }
+  .plataforma.youtube { background: #FF0033; }
+  .plataforma svg.i { width: 15px; height: 15px; }
+  .score { font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 99px; background: var(--gradiente); color: #fff; white-space: nowrap; }
+  .score.baixo { background: var(--superficie-2); color: var(--tinta-2); }
+  .ideia p { margin: 0; color: var(--tinta); white-space: pre-line; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; min-height: 5.8em; }
+  .metricas { display: flex; gap: 14px; color: var(--tinta-2); font-size: 12.5px; flex-wrap: wrap; }
+  .metricas span { display: inline-flex; align-items: center; gap: 5px; }
+  .metricas svg.i { width: 14px; height: 14px; }
+  .ideia .rodape-ideia { display: flex; gap: 8px; align-items: center; margin-top: auto; }
+  .ideia .rodape-ideia .btn.primario { flex: 1; }
 
-  /* visual */
-  .cor { display:grid; grid-template-columns: 1fr 44px 96px; gap:8px; align-items:center; margin-bottom:8px; }
-  .cor span { font-size:13px; }
-  .cor input[type=color] { width:44px; height:36px; padding:2px; cursor:pointer; }
-  .presets { display:flex; flex-wrap:wrap; gap:8px; }
-  .preset { display:flex; border-radius:8px; overflow:hidden; border:1px solid var(--borda); cursor:pointer; padding:0; background:none; }
-  .preset i { width:18px; height:28px; }
-  .estilos { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .estilo { text-align:left; background:#fff; color:var(--texto); border:1px solid var(--borda); border-radius:10px; padding:10px 12px; white-space:normal; }
-  .estilo b { display:block; font-size:14px; margin-bottom:2px; pointer-events:none; }
-  .estilo span { font-size:12px; color:var(--suave); line-height:1.35; display:block; pointer-events:none; }
-  .estilo.ativo { border-color:var(--acento); box-shadow:0 0 0 1px var(--acento); }
-  @media (max-width: 500px) { .estilos { grid-template-columns:1fr; } }
-  .editor { margin-top:14px; border-top:1px solid var(--borda); padding-top:14px; display:grid; gap:14px; }
-  .editor .slide-ed { display:grid; grid-template-columns: 110px 1fr; gap:12px; align-items:start; }
-  .editor .slide-ed img { width:110px; aspect-ratio:1080/1350; border-radius:6px; border:1px solid var(--borda); }
-  .editor textarea { font-size:13px; }
-  .editor .miudo { font-size:12px; color:var(--suave); display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:6px; }
-  iframe.previa { width:100%; height:640px; border:1px solid var(--borda); border-radius:12px; background:repeating-conic-gradient(#eee 0% 25%, #fafafa 0% 50%) 50% / 20px 20px; }
-  .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--texto); color:#fff; padding:10px 16px; border-radius:8px; font-size:13px; z-index:10; opacity:0; transition:opacity .2s; pointer-events:none; }
-  .toast.on { opacity:1; }
+  /* ---------- carrosséis ---------- */
+  .carrossel { padding: 0; overflow: hidden; }
+  .carrossel .cabeca { display: flex; justify-content: space-between; gap: 14px; padding: 18px 20px 12px; flex-wrap: wrap; }
+  .carrossel .cabeca h3 { font-size: 16.5px; letter-spacing: -.01em; }
+  .carrossel .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .trilho { display: flex; gap: 10px; overflow-x: auto; padding: 4px 20px 16px; scroll-snap-type: x mandatory; }
+  .trilho button { border: 0; padding: 0; background: none; cursor: zoom-in; flex: none; scroll-snap-align: start; border-radius: 10px; }
+  .trilho img { height: 250px; aspect-ratio: 1080/1350; border-radius: 10px; display: block; box-shadow: 0 2px 10px rgba(22,20,31,.12); transition: transform .15s; }
+  .trilho button:hover img { transform: translateY(-2px); }
+  .detalhes { display: flex; gap: 6px; padding: 0 20px 14px; flex-wrap: wrap; }
+  .detalhes button { border: 1px solid var(--linha); background: var(--superficie); border-radius: 99px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--tinta-2); display: flex; align-items: center; gap: 6px; }
+  .detalhes button.ativo { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+  .detalhes button.pendente { border-color: #F8DDA8; color: var(--aviso); }
+  .painel-detalhe { margin: 0 20px 14px; background: var(--superficie-2); border-radius: 10px; padding: 14px; white-space: pre-wrap; font-size: 13.5px; line-height: 1.6; position: relative; }
+  .painel-detalhe .copiar { position: absolute; top: 8px; right: 8px; }
+  .barra-acoes { display: flex; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--linha); background: #FCFBFE; flex-wrap: wrap; align-items: center; }
+  .barra-acoes .espaco { flex: 1; }
+  .motivo { margin: 0 20px 14px; background: var(--perigo-fundo); color: #8A1C12; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+  .postado-info { margin: 0 20px 14px; background: var(--ok-fundo); color: #0B6B35; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .editor { border-top: 1px solid var(--linha); padding: 16px 20px; display: grid; gap: 14px; background: #FCFBFE; }
+  .editor .slide-ed { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; }
+  .editor .slide-ed img { width: 96px; aspect-ratio: 1080/1350; border-radius: 8px; }
+  .editor .campo { font-size: 13px; }
+  .editor .miudo { font-size: 12px; color: var(--tinta-2); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+
+  /* ---------- referências ---------- */
+  .chips-ref { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 30px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 6px 5px 11px; border-radius: 99px; background: var(--superficie-2); font-size: 13px; font-weight: 500; }
+  .chip button { border: 0; background: rgba(22,20,31,.06); width: 20px; height: 20px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; padding: 0; }
+  .chip button:hover { background: var(--perigo-fundo); color: var(--perigo); }
+  .chip button svg.i { width: 12px; height: 12px; }
+  .passos { margin: 8px 0 0; padding-left: 18px; color: var(--tinta-2); font-size: 13px; line-height: 1.7; }
+
+  /* ---------- modelos e visual ---------- */
+  .modelo { display: flex; flex-direction: column; gap: 12px; }
+  .modelo.padrao { border-color: #C9B2F7; box-shadow: 0 0 0 3px rgba(124,58,237,.12), var(--sombra); }
+  .tira { display: flex; gap: 4px; }
+  .tira span { flex: 1; aspect-ratio: 1080/1350; border-radius: 5px; display: flex; align-items: flex-end; padding: 4px; font-size: 8.5px; line-height: 1.15; overflow: hidden; }
+  .modelo ol { margin: 8px 0 0; padding-left: 18px; color: var(--tinta-2); font-size: 13px; line-height: 1.55; }
+  details summary { cursor: pointer; font-weight: 600; font-size: 13px; color: var(--tinta-2); }
+  .estilos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .estilo { text-align: left; background: #fff; border: 1px solid var(--linha); border-radius: 12px; padding: 11px 12px; cursor: pointer; }
+  .estilo b { display: block; font-size: 13.5px; margin-bottom: 2px; pointer-events: none; }
+  .estilo span { font-size: 12px; color: var(--tinta-2); line-height: 1.4; display: block; pointer-events: none; }
+  .estilo.ativo { border-color: var(--marca); box-shadow: 0 0 0 3px rgba(124,58,237,.14); background: #FBF9FF; }
+  .cor { display: grid; grid-template-columns: 1fr 42px 100px; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 13px; }
+  .cor input[type=color] { width: 42px; height: 38px; padding: 3px; border: 1px solid var(--linha); border-radius: 9px; background: #fff; cursor: pointer; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; }
+  .preset { display: flex; border-radius: 9px; overflow: hidden; border: 1px solid var(--linha); cursor: pointer; padding: 0; background: none; }
+  .preset i { width: 18px; height: 30px; }
+  iframe.previa { width: 100%; height: 680px; border: 1px solid var(--linha); border-radius: var(--raio); background: repeating-conic-gradient(#EFEDF5 0% 25%, #F8F7FB 0% 50%) 50% / 22px 22px; }
+  .coluna-fixa { position: sticky; top: 20px; }
+
+  /* ---------- modal, visualizador e avisos ---------- */
+  .fundo-modal { position: fixed; inset: 0; background: rgba(18,16,25,.55); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 20px; z-index: 50; }
+  .modal { background: var(--superficie); border-radius: 18px; box-shadow: var(--sombra-forte); width: min(560px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; }
+  .modal.largo { width: min(760px, 100%); }
+  .modal .topo-modal { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 20px 22px 0; }
+  .modal .corpo-modal { padding: 16px 22px 22px; }
+  .modal .fechar { border: 0; background: var(--superficie-2); border-radius: 10px; padding: 7px; cursor: pointer; }
+  .opcoes-rapidas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .opcoes-rapidas button { border: 1px solid var(--linha); background: #fff; border-radius: 99px; padding: 5px 11px; font-size: 12.5px; cursor: pointer; }
+  .opcoes-rapidas button:hover { border-color: #B79BF5; color: var(--marca); }
+  .resumo-ref { background: var(--superficie-2); border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--tinta-2); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; }
+  .escolhas { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .progresso { display: grid; justify-items: center; gap: 14px; padding: 30px 10px 14px; text-align: center; }
+  .girando { width: 46px; height: 46px; border-radius: 50%; border: 4px solid #EDE6FB; border-top-color: var(--marca); animation: gira 0.9s linear infinite; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  .visualizador { position: fixed; inset: 0; background: rgba(12,10,18,.92); z-index: 60; display: grid; grid-template-columns: 70px 1fr 70px; align-items: center; justify-items: center; }
+  .visualizador img { max-height: 88vh; max-width: 100%; border-radius: 14px; box-shadow: var(--sombra-forte); }
+  .visualizador button { border: 0; background: rgba(255,255,255,.1); color: #fff; width: 48px; height: 48px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+  .visualizador button:hover { background: rgba(255,255,255,.2); }
+  .visualizador .fechar-v { position: absolute; top: 18px; right: 18px; }
+  .visualizador .contagem { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; color: #CFCCE0; font-size: 13px; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); background: var(--tinta); color: #fff; padding: 11px 18px; border-radius: 12px; font-size: 13.5px; z-index: 70; opacity: 0; transition: .2s; pointer-events: none; box-shadow: var(--sombra-forte); display: flex; gap: 8px; align-items: center; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
 </style>
 </head>
 <body>
-<header>
-  <div class="linha" style="gap:10px">
-    <a class="marca" href="#/">Carrossel Studio</a>
-    <span class="trilha" id="trilha"></span>
-  </div>
-  <div class="selos" id="selos"></div>
-</header>
-<main id="app"></main>
+<div class="app">
+  <aside class="lateral">
+    <a class="logo" href="#/">
+      <span class="logo-marca"><svg viewBox="0 0 24 24"><path d="M6 6l6 13 6-13"/></svg></span>
+      <span><b>Viraliza Studio</b><small>CONTEÚDO QUE ENGAJA</small></span>
+    </a>
+    <nav class="menu">
+      <a href="#/" id="menuInicio">${ICONES.grade} Todos os clientes</a>
+    </nav>
+    <div class="bloco-clientes">
+      <div class="menu-titulo">Clientes</div>
+      <nav class="menu" id="menuClientes"></nav>
+    </div>
+    <div class="conexoes" id="conexoes"></div>
+  </aside>
+  <main class="principal" id="app"></main>
+</div>
+<div id="camadaModal"></div>
 <div class="toast" id="toast"></div>
 
 <script>
+// ============ utilidades ============
+const I = (d) => `<svg class="i" viewBox="0 0 24 24">${d}</svg>`;
+const ICONES = {
+  grade: I('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'),
+  mais: I('<path d="M12 5v14M5 12h14"/>'),
+  faisca: I('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z"/>'),
+  camadas: I('<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>'),
+  alvo: I('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'),
+  voz: I('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+  modelo: I('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/>'),
+  paleta: I('<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20c1 0 1.6-.8 1.6-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.6 1.7-1.6H16a6 6 0 0 0 6-6C22 6 17.5 2 12 2z"/>'),
+  instagram: I('<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/>'),
+  youtube: I('<path d="M22 8.5s-.2-1.6-.9-2.3c-.8-.9-1.8-.9-2.2-1C15.9 5 12 5 12 5s-3.9 0-6.9.2c-.4.1-1.4.1-2.2 1C2.2 6.9 2 8.5 2 8.5S2 10.3 2 12v1.5c0 1.8.2 3.5.2 3.5s.2 1.6.9 2.3c.8.9 1.9.9 2.4 1 1.7.2 6.5.2 6.5.2s3.9 0 6.9-.2c.4-.1 1.4-.1 2.2-1 .7-.7.9-2.3.9-2.3s.2-1.8.2-3.5V12c0-1.7-.2-3.5-.2-3.5z"/><path d="M10 15l5-3-5-3z" fill="currentColor"/>'),
+  coracao: I('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>'),
+  balao: I('<path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.5 8.5 0 1 1 21 11.5z"/>'),
+  olho: I('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>'),
+  atualizar: I('<path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/>'),
+  enviar: I('<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>'),
+  editar: I('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'),
+  baixar: I('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/>'),
+  estrela: I('<path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>'),
+  lixo: I('<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>'),
+  desfazer: I('<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/>'),
+  externo: I('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14L21 3"/>'),
+  ok: I('<path d="M20 6L9 17l-5-5"/>'),
+  x: I('<path d="M18 6L6 18M6 6l12 12"/>'),
+  esq: I('<path d="M15 18l-6-6 6-6"/>'),
+  dir: I('<path d="M9 18l6-6-6-6"/>'),
+  copiar: I('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
+  alerta: I('<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'),
+  vazio: I('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>'),
+};
+
 const $ = (id) => document.getElementById(id);
-const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const num = (n) => Intl.NumberFormat("pt-BR", { notation: "compact" }).format(n || 0);
+const dataCurta = (d) => new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+const dataHora = (d) => new Date(d).toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+const iniciais = (nome) => String(nome || "?").split(/\s+/).map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+const swatches = (p) => [p.escura, p.clara, p.destaque, p.destaque2];
+const gradienteCliente = (p) => `linear-gradient(135deg, ${p.destaque}, ${p.destaque2 || p.escura})`;
+const lerArquivo = (f) => new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(f); });
 const app = $("app");
-let status = { fontes: [] };
+let status = { fontes: [], estilos: [] };
 let cliente = null;
+let gerados = [];
+
+document.querySelector("#menuInicio").innerHTML = `${ICONES.grade} Todos os clientes`;
 
 async function api(caminho, opcoes = {}) {
-  if (opcoes.corpo !== undefined) {
-    opcoes = { ...opcoes, headers: { "Content-Type": "application/json" }, body: JSON.stringify(opcoes.corpo) };
-  }
+  if (opcoes.corpo !== undefined) opcoes = { ...opcoes, headers: { "Content-Type": "application/json" }, body: JSON.stringify(opcoes.corpo) };
   const r = await fetch(caminho, opcoes);
   const tipo = r.headers.get("Content-Type") || "";
   const d = tipo.includes("json") ? await r.json() : await r.text();
@@ -155,10 +317,10 @@ const post = (caminho, corpo = {}) => api(caminho, { method: "POST", corpo });
 
 let toastTimer;
 function toast(texto) {
-  $("toast").textContent = texto;
+  $("toast").innerHTML = `${ICONES.ok}<span>${esc(texto)}</span>`;
   $("toast").classList.add("on");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => $("toast").classList.remove("on"), 2600);
+  toastTimer = setTimeout(() => $("toast").classList.remove("on"), 2800);
 }
 
 // Executa uma ação com o botão travado e mensagem de status ao lado.
@@ -176,67 +338,143 @@ async function acao(botao, msgEl, fn, { ok = "Salvo." } = {}) {
   }
 }
 
-const swatches = (p) => [p.escura, p.clara, p.destaque, p.destaque2];
-const lerArquivo = (f) => new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(f); });
-let gerados = [];
+// ---------- modal ----------
+function abrirModal({ titulo, subtitulo = "", corpo, largo = false }) {
+  $("camadaModal").innerHTML = `
+    <div class="fundo-modal" data-fechar-modal>
+      <div class="modal ${largo ? "largo" : ""}" role="dialog" aria-modal="true">
+        <div class="topo-modal"><div><h2>${titulo}</h2>${subtitulo ? `<p class="sub">${subtitulo}</p>` : ""}</div>
+          <button class="fechar" data-fechar-modal title="Fechar">${ICONES.x}</button></div>
+        <div class="corpo-modal">${corpo}</div>
+      </div>
+    </div>`;
+  return $("camadaModal").querySelector(".modal");
+}
+const fecharModal = () => { $("camadaModal").innerHTML = ""; };
+$("camadaModal").addEventListener("click", (e) => {
+  if (e.target.closest("[data-fechar-modal]") && (e.target.matches("[data-fechar-modal]") || e.target.closest(".fechar"))) fecharModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { fecharModal(); fecharVisualizador(); }
+  if (visualizador && e.key === "ArrowRight") moverVisualizador(1);
+  if (visualizador && e.key === "ArrowLeft") moverVisualizador(-1);
+});
+
+// ---------- visualizador de slides ----------
+let visualizador = null;
+function abrirVisualizador(imagens, indice) {
+  visualizador = { imagens, indice };
+  const el = document.createElement("div");
+  el.className = "visualizador";
+  el.id = "visualizador";
+  document.body.appendChild(el);
+  desenharVisualizador();
+}
+function desenharVisualizador() {
+  const { imagens, indice } = visualizador;
+  $("visualizador").innerHTML = `
+    <button data-mover="-1" title="Anterior">${ICONES.esq}</button>
+    <img src="${imagens[indice]}" alt="">
+    <button data-mover="1" title="Próximo">${ICONES.dir}</button>
+    <button class="fechar-v" data-fechar-v title="Fechar">${ICONES.x}</button>
+    <div class="contagem">${indice + 1} de ${imagens.length}</div>`;
+}
+function moverVisualizador(passo) {
+  visualizador.indice = (visualizador.indice + passo + visualizador.imagens.length) % visualizador.imagens.length;
+  desenharVisualizador();
+}
+function fecharVisualizador() { $("visualizador")?.remove(); visualizador = null; }
+document.addEventListener("click", (e) => {
+  if (!visualizador) return;
+  const m = e.target.closest("[data-mover]");
+  if (m) return moverVisualizador(Number(m.dataset.mover));
+  if (e.target.closest("[data-fechar-v]") || e.target.id === "visualizador") fecharVisualizador();
+});
+
+// ============ menu lateral ============
+async function atualizarMenu(ativo) {
+  const clientes = await api("/api/clientes");
+  $("menuClientes").innerHTML = clientes.map((c) => `
+    <a href="#/c/${c.id}" class="${c.id === ativo ? "ativo" : ""}">
+      <span class="bola" style="background:${gradienteCliente(c.paleta)}"></span><span class="nome">${esc(c.nome)}</span>
+    </a>`).join("") + `<button class="novo" data-novo-cliente>${ICONES.mais} Novo cliente</button>`;
+  $("menuInicio").classList.toggle("ativo", !ativo);
+  return clientes;
+}
 
 // ============ roteamento ============
 async function rotear() {
   const partes = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+  fecharModal();
   try {
-    if (partes[0] === "c" && partes[1]) await telaCliente(partes[1], partes[2] || "conteudo");
+    if (partes[0] === "c" && partes[1]) await telaCliente(partes[1], partes[2] || "criar", partes[3]);
     else await telaInicio();
   } catch (e) {
-    app.innerHTML = `<div class="aviso">${esc(e.message)}</div><a href="#/">Voltar para clientes</a>`;
+    app.innerHTML = `<div class="aviso">${ICONES.alerta}<span>${esc(e.message)}</span></div><a class="btn" href="#/">Voltar para clientes</a>`;
   }
+  window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", rotear);
 
-// ============ início: lista e cadastro de clientes ============
+// ============ início ============
 async function telaInicio() {
   cliente = null;
-  $("trilha").innerHTML = "";
-  const clientes = await api("/api/clientes");
+  const clientes = await atualizarMenu(null);
+  const total = clientes.reduce((t, c) => ({ r: t.r + c.contagem.rascunho, p: t.p + c.contagem.postado }), { r: 0, p: 0 });
   app.innerHTML = `
-    <h1>Clientes</h1>
-    <p class="sub">Cada cliente tem o próprio painel com referências, tom de voz, modelos e identidade visual.</p>
+    <div class="topo-pagina">
+      <div><h1>Seus clientes</h1><p class="sub">Escolha um cliente para criar, revisar e publicar carrosséis.</p></div>
+      <div class="indicadores">
+        <div class="indicador"><b>${clientes.length}</b><span>clientes</span></div>
+        <div class="indicador"><b>${total.r}</b><span>rascunhos</span></div>
+        <div class="indicador"><b>${total.p}</b><span>postados</span></div>
+      </div>
+    </div>
     <div class="grade">
       ${clientes.map((c) => `
         <a class="cartao card-cliente" href="#/c/${c.id}">
           <div class="faixa">${swatches(c.paleta).map((cor) => `<i style="background:${cor}"></i>`).join("")}</div>
           <div class="corpo">
             <h3>${esc(c.nome)}</h3>
-            <div class="descricao">${esc(c.instagram || "sem Instagram")}${c.descricao ? " · " + esc(c.descricao) : ""}</div>
-            <div class="nums">${c.referencias} referências · ${c.carrosseis} carrosséis</div>
+            <div class="descricao">${esc(c.instagram || "Instagram não cadastrado")}${c.descricao ? " · " + esc(c.descricao) : ""}</div>
+            <div class="numeros">
+              <span class="etiqueta">${c.referencias} referências</span>
+              <span class="etiqueta marca">${c.contagem.rascunho} rascunhos</span>
+              <span class="etiqueta ok">${c.contagem.postado} postados</span>
+            </div>
           </div>
         </a>`).join("")}
-      <button class="cartao card-novo" id="abrirNovo">+ Cadastrar cliente</button>
-    </div>
-    <div class="cartao" id="formNovo" hidden style="margin-top:20px;max-width:640px">
-      <h2>Novo cliente</h2>
-      <label for="nNome">Nome *</label><input id="nNome" class="campo" placeholder="Ex.: Maria Silva">
-      <label for="nInsta">Instagram do cliente</label><input id="nInsta" class="campo" placeholder="@perfil ou link">
-      <label for="nDesc">Profissão, nicho e método</label><input id="nDesc" class="campo" placeholder="Ex.: Nutricionista comportamental, foco em mulheres 30+">
-      <label for="nModelo">Modelo de carrossel padrão</label><select id="nModelo" class="campo"></select>
-      <label>Cores principais (dá para ajustar depois)</label>
-      <div class="cores-rapidas">
-        <div><div class="ajuda">Fundo escuro</div><input type="color" id="nEscura" value="#1A1A1A"></div>
-        <div><div class="ajuda">Fundo claro</div><input type="color" id="nClara" value="#F5F1EA"></div>
-        <div><div class="ajuda">Destaque</div><input type="color" id="nDestaque" value="#E07A5F"></div>
-      </div>
-      <div class="acoes"><button id="criar">Criar cliente</button><button class="sec" id="cancelarNovo">Cancelar</button><span class="msg" id="msgNovo"></span></div>
+      <button class="card-novo" data-novo-cliente><span>${ICONES.mais}Cadastrar cliente</span></button>
     </div>`;
+}
 
+async function modalNovoCliente() {
   const modelos = await api("/api/modelos");
-  $("nModelo").innerHTML = modelos.map((m) => `<option value="${m.id}">${esc(m.nome)}</option>`).join("");
-  $("abrirNovo").onclick = () => { $("formNovo").hidden = false; $("nNome").focus(); };
-  $("cancelarNovo").onclick = () => { $("formNovo").hidden = true; };
-  $("criar").onclick = (e) => acao(e.target, $("msgNovo"), async () => {
+  const m = abrirModal({
+    titulo: "Novo cliente",
+    subtitulo: "O resto (referências, voz e visual) você completa no painel do cliente.",
+    corpo: `
+      <label class="rotulo" for="nNome">Nome</label><input id="nNome" class="campo" placeholder="Ex.: Maria Silva">
+      <label class="rotulo" for="nInsta">Instagram do cliente</label><input id="nInsta" class="campo" placeholder="@perfil ou link">
+      <label class="rotulo" for="nDesc">Profissão, nicho e método</label><input id="nDesc" class="campo" placeholder="Ex.: Nutricionista comportamental, mulheres 30+">
+      <label class="rotulo" for="nModelo">Modelo de carrossel padrão</label>
+      <select id="nModelo" class="campo">${modelos.map((x) => `<option value="${x.id}">${esc(x.nome)}</option>`).join("")}</select>
+      <label class="rotulo">Cores principais</label>
+      <div class="cores-rapidas">
+        <label class="cor-rapida"><input type="color" id="nEscura" value="#1A1A1A">Fundo escuro</label>
+        <label class="cor-rapida"><input type="color" id="nClara" value="#F5F1EA">Fundo claro</label>
+        <label class="cor-rapida"><input type="color" id="nDestaque" value="#E07A5F">Destaque</label>
+      </div>
+      <div class="acoes"><button class="btn primario" id="criar">${ICONES.mais} Criar cliente</button><span class="msg" id="msgNovo"></span></div>`,
+  });
+  m.querySelector("#nNome").focus();
+  m.querySelector("#criar").onclick = (e) => acao(e.currentTarget, $("msgNovo"), async () => {
     const escura = $("nEscura").value, clara = $("nClara").value, destaque = $("nDestaque").value;
     const { id } = await post("/api/clientes", {
       nome: $("nNome").value, instagram: $("nInsta").value, descricao: $("nDesc").value, modelo: $("nModelo").value,
       paleta: { escura, clara, destaque, destaque2: escurecer(destaque), texto_claro: "#FFFFFF", texto_escuro: escura },
     });
+    fecharModal();
     location.hash = `#/c/${id}/perfil`;
     toast("Cliente criado. Agora cadastre as referências.");
   });
@@ -244,91 +482,331 @@ async function telaInicio() {
 
 function escurecer(hex, f = 0.72) {
   const n = parseInt(hex.slice(1), 16);
-  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * f).toString(16).padStart(2, "0"));
-  return "#" + c.join("");
+  return "#" + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * f).toString(16).padStart(2, "0")).join("");
 }
 
-// ============ painel do cliente ============
+// ============ cliente ============
 const ABAS = [
-  ["conteudo", "Conteúdo"],
-  ["perfil", "Perfil e referências"],
-  ["voz", "Voz e direcionamento"],
-  ["modelos", "Modelos de carrossel"],
-  ["visual", "Identidade visual"],
+  ["criar", "Criar", ICONES.faisca],
+  ["carrosseis", "Carrosséis", ICONES.camadas],
+  ["perfil", "Perfil e referências", ICONES.alvo],
+  ["voz", "Voz e direcionamento", ICONES.voz],
+  ["modelos", "Modelos", ICONES.modelo],
+  ["visual", "Identidade visual", ICONES.paleta],
 ];
 
-async function telaCliente(id, aba) {
+async function telaCliente(id, aba, subaba) {
   cliente = await api(`/api/clientes/${id}`);
-  $("trilha").innerHTML = `/ <b>${esc(cliente.nome)}</b>`;
+  await atualizarMenu(id);
+  const c = cliente;
   app.innerHTML = `
-    <div class="topo-cliente">
-      <div class="bolinhas">${swatches(cliente.paleta).map((c) => `<i style="background:${c}"></i>`).join("")}</div>
-      <div><h1>${esc(cliente.nome)}</h1><div class="descricao">${esc(cliente.instagram || "Instagram não cadastrado")}</div></div>
+    <div class="cabecalho-cliente">
+      <div class="avatar" style="background:${gradienteCliente(c.paleta)}">${esc(iniciais(c.nome))}</div>
+      <div class="titulo">
+        <h1>${esc(c.nome)}</h1>
+        <div class="arroba">${ICONES.instagram}${esc(c.instagram || "Instagram não cadastrado")}${c.publicacao.conectado ? ' <span class="etiqueta ok">conectado</span>' : ""}</div>
+      </div>
+      <div class="indicadores">
+        <div class="indicador"><b>${c.contagem.rascunho}</b><span>rascunhos</span></div>
+        <div class="indicador"><b>${c.contagem.postado}</b><span>postados</span></div>
+        <div class="indicador"><b>${c.exemplos}</b><span>aprovados</span></div>
+      </div>
     </div>
-    <nav class="abas">${ABAS.map(([k, n]) => `<a href="#/c/${id}/${k}" class="${k === aba ? "ativa" : ""}">${n}</a>`).join("")}</nav>
+    <nav class="abas">${ABAS.map(([k, n, ic]) => `<a href="#/c/${id}/${k}" class="${k === aba ? "ativa" : ""}">${ic}${n}${k === "carrosseis" ? `<span class="contador">${c.contagem.rascunho}</span>` : ""}</a>`).join("")}</nav>
     <div id="aba"></div>`;
-  const telas = { conteudo: abaConteudo, perfil: abaPerfil, voz: abaVoz, modelos: abaModelos, visual: abaVisual };
-  await (telas[aba] || abaConteudo)();
+  const telas = { criar: abaCriar, carrosseis: abaCarrosseis, perfil: abaPerfil, voz: abaVoz, modelos: abaModelos, visual: abaVisual };
+  await (telas[aba] || abaCriar)(subaba);
 }
 
-// ---------- aba conteúdo ----------
-async function abaConteudo(recoletar = false) {
-  const c = cliente;
-  $("aba").innerHTML = `
-    <div class="duas">
-      <section>
-        <h2 class="linha" style="justify-content:space-between">Referências que mais engajaram <button class="sec" id="recoletar">Coletar de novo</button></h2>
-        ${c.referencias.instagram.length + c.referencias.youtube.length ? "" : `<div class="aviso">Nenhuma referência cadastrada. <a href="#/c/${c.id}/perfil">Cadastrar agora</a></div>`}
-        <div id="avisos"></div>
-        <div id="refs" class="vazio">Coletando e ranqueando...</div>
-      </section>
-      <section>
-        <h2>Carrosséis gerados</h2>
-        <div id="gerados" class="vazio">Carregando...</div>
-      </section>
-    </div>`;
-  $("recoletar").onclick = () => abaConteudo(true);
+// ---------- aba criar (ideias) ----------
+let ideias = [];
+let filtroPlataforma = "todas";
 
-  const [dados, gerados] = await Promise.all([
+async function abaCriar(_sub, recoletar = false) {
+  const c = cliente;
+  const semReferencias = !(c.referencias.instagram.length + c.referencias.youtube.length);
+  $("aba").innerHTML = `
+    <div class="barra">
+      <div><h2>Ideias que mais engajaram</h2><p class="sub">Posts das suas referências que performaram acima da média do próprio perfil.</p></div>
+      <div class="linha">
+        <div class="filtros" id="filtros">
+          <button data-filtro="todas">Todas</button>
+          <button data-filtro="instagram">${ICONES.instagram}Instagram</button>
+          <button data-filtro="youtube">${ICONES.youtube}YouTube</button>
+        </div>
+        <button class="btn" id="recoletar">${ICONES.atualizar} Coletar de novo</button>
+      </div>
+    </div>
+    ${semReferencias ? `<div class="aviso">${ICONES.alerta}<span>Nenhuma referência cadastrada para ${esc(c.nome)}. <a href="#/c/${c.id}/perfil">Cadastrar referências</a></span></div>` : ""}
+    <div id="avisos"></div>
+    <div id="ideias"><div class="progresso"><div class="girando"></div><span class="msg">Coletando e ranqueando as referências...</span></div></div>`;
+  $("recoletar").onclick = () => abaCriar(null, true);
+  $("filtros").onclick = (e) => {
+    const b = e.target.closest("[data-filtro]");
+    if (!b) return;
+    filtroPlataforma = b.dataset.filtro;
+    desenharIdeias();
+  };
+  const [dados, lista] = await Promise.all([
     api(`/api/clientes/${c.id}/referencias${recoletar ? "?recoletar=1" : ""}`),
     api(`/api/clientes/${c.id}/carrosseis`),
   ]);
-  $("avisos").innerHTML = (dados.avisos || []).map((a) => `<div class="aviso">${esc(a)}</div>`).join("");
-  const optModelos = c.modelos.map((m) => `<option value="${m.id}" ${m.id === c.conteudo.modelo_padrao ? "selected" : ""}>${esc(m.nome)}</option>`).join("");
-  const optEstilos = status.estilos.map((e) => `<option value="${e.id}" ${e.id === c.visual.template ? "selected" : ""}>Estilo: ${esc(e.nome)}</option>`).join("");
-  const optImagens = [["auto", "Imagens: automático"], ["nenhuma", "Sem imagens"], ["capa", "Imagem só na capa"], ["todas", "Imagens em todos"]]
-    .map(([k, n]) => `<option value="${k}" ${k === (c.visual.imagens?.modo || "auto") ? "selected" : ""}>${n}</option>`).join("");
-  const optAngulos = `<option value="">Tema: IA escolhe</option>` + c.conteudo.angulos.map((a) => `<option>${esc(a)}</option>`).join("");
-  $("refs").className = "";
-  $("refs").innerHTML = dados.posts.map((p, i) => `
-    <div class="ref">
-      <div class="topo"><span>#${i + 1} · ${esc(p.plataforma)} · ${esc(p.tipo)} · ${esc(p.perfil)}</span><span class="score">${p.ranking.outlier}x</span></div>
-      <p>${esc(p.texto)}</p>
-      <div class="topo" style="margin-bottom:10px"><span>${num(p.metricas.curtidas)} curtidas · ${num(p.metricas.comentarios)} comentários${p.metricas.visualizacoes ? " · " + num(p.metricas.visualizacoes) + " views" : ""}</span>${p.url ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">abrir</a>` : ""}</div>
-      <div class="escolhas"><select data-modelo>${optModelos}</select><select data-angulo>${optAngulos}</select><select data-estilo-sel>${optEstilos}</select><select data-imagens>${optImagens}</select></div>
-      <button data-gerar="${esc(p.id)}" data-i="${i}" style="width:100%">Gerar carrossel</button>
-    </div>`).join("") || '<span class="vazio">Nada coletado.</span>';
-  mostrarGerados(gerados);
+  gerados = lista;
+  $("avisos").innerHTML = (dados.avisos || []).filter((a) => !a.includes("não configurad")).map((a) => `<div class="aviso">${ICONES.alerta}<span>${esc(a)}</span></div>`).join("");
+  ideias = dados.posts;
+  desenharIdeias();
 }
 
-function mostrarGerados(lista) {
-  gerados = lista;
-  const el = $("gerados");
-  if (!el) return;
-  if (!lista.length) { el.innerHTML = '<span class="vazio">Nenhum carrossel ainda. Escolha uma referência e clique em Gerar carrossel.</span>'; return; }
-  el.className = "";
-  el.innerHTML = lista.map((g) => `
-    <div class="cartao gerado">
-      <h3>${esc(g.angulo)}${g.demo ? " <small style='color:var(--alerta)'>(demo)</small>" : ""}</h3>
-      <div class="meta">${[new Date(g.data).toLocaleString("pt-BR"), g.carrossel.modelo?.nome, status.estilos.find((e) => e.id === g.carrossel.estilo)?.nome, g.carrossel.referencia?.perfil && "referência " + g.carrossel.referencia.perfil].filter(Boolean).map(esc).join(" · ")}</div>
-      <div class="slides">${g.imagens.map((src) => `<a href="${src}" target="_blank" download><img src="${src}" loading="lazy" alt=""></a>`).join("")}</div>
-      <details><summary>Por que a referência funcionou</summary><pre>${esc(g.carrossel.por_que_a_referencia_funcionou)}</pre></details>
-      <details><summary>Legenda</summary><pre>${esc(g.carrossel.legenda)}</pre></details>
-      ${g.carrossel.direcao_de_arte ? `<details><summary>Direção de arte das imagens</summary><pre>${esc(g.carrossel.direcao_de_arte)}\n\n${g.carrossel.slides.map((s, i) => s.imagem_descricao ? `Slide ${i + 1}: ${s.imagem_descricao}` : "").filter(Boolean).map(esc).join("\n")}</pre></details>` : ""}
-      ${g.carrossel.pendencias?.length ? `<details open><summary>Pendências para preencher</summary><pre>${esc(g.carrossel.pendencias.join("\n"))}</pre></details>` : ""}
-      <div class="acoes"><button class="sec" data-editar="${esc(g.pasta)}">Editar</button><button class="sec" data-aprovar="${esc(g.pasta)}">Aprovar como exemplo</button><span class="msg"></span></div>
+function desenharIdeias() {
+  document.querySelectorAll("#filtros [data-filtro]").forEach((b) => b.classList.toggle("ativo", b.dataset.filtro === filtroPlataforma));
+  const usadas = new Set(gerados.map((g) => g.referencia));
+  const lista = ideias.filter((p) => filtroPlataforma === "todas" || p.plataforma === filtroPlataforma);
+  $("ideias").innerHTML = lista.length ? `<div class="grade">${lista.map((p) => `
+    <div class="cartao ideia">
+      <div class="topo">
+        <div class="autor"><span class="plataforma ${p.plataforma}">${ICONES[p.plataforma] || ""}</span><span>${esc(p.perfil)}</span></div>
+        <span class="score ${p.ranking.outlier < 1.5 ? "baixo" : ""}" title="Quanto performou acima da média do próprio perfil">${p.ranking.outlier}x</span>
+      </div>
+      <p>${esc(p.texto)}</p>
+      <div class="metricas">
+        <span>${ICONES.coracao}${num(p.metricas.curtidas)}</span>
+        <span>${ICONES.balao}${num(p.metricas.comentarios)}</span>
+        ${p.metricas.visualizacoes ? `<span>${ICONES.olho}${num(p.metricas.visualizacoes)}</span>` : ""}
+        <span>${esc(p.tipo)}</span>
+      </div>
+      <div class="rodape-ideia">
+        <button class="btn primario" data-criar="${esc(p.id)}">${ICONES.faisca} Criar carrossel</button>
+        ${usadas.has(p.id) ? '<span class="etiqueta ok" title="Já virou carrossel">usada</span>' : ""}
+        ${p.url ? `<a class="btn icone" href="${esc(p.url)}" target="_blank" rel="noopener" title="Abrir post original">${ICONES.externo}</a>` : ""}
+      </div>
+    </div>`).join("")}</div>`
+    : `<div class="cartao vazio">${ICONES.vazio}<div>Nenhuma ideia nessa plataforma.</div></div>`;
+}
+
+function modalCriar(refId) {
+  const c = cliente;
+  const p = ideias.find((x) => x.id === refId);
+  const i = ideias.indexOf(p);
+  const opt = (lista, atual) => lista.map(([v, n]) => `<option value="${esc(v)}" ${v === atual ? "selected" : ""}>${esc(n)}</option>`).join("");
+  const m = abrirModal({
+    titulo: "Criar carrossel",
+    subtitulo: `A partir de ${esc(p.perfil)} · ${p.ranking.outlier}x acima da média`,
+    corpo: `
+      <div class="resumo-ref">${esc(p.texto)}</div>
+      <div class="escolhas">
+        <div><label class="rotulo" for="gModelo">Modelo (estrutura)</label>
+          <select id="gModelo" class="campo">${opt(c.modelos.map((x) => [x.id, x.nome]), c.conteudo.modelo_padrao)}</select></div>
+        <div><label class="rotulo" for="gEstilo">Estilo visual</label>
+          <select id="gEstilo" class="campo">${opt(status.estilos.map((x) => [x.id, x.nome]), c.visual.template)}</select></div>
+        <div><label class="rotulo" for="gTema">Tema</label>
+          <select id="gTema" class="campo">${opt([["", "A IA escolhe"], ...c.conteudo.angulos.map((a) => [a, a])], "")}</select></div>
+        <div><label class="rotulo" for="gImagens">Imagens com IA</label>
+          <select id="gImagens" class="campo">${opt([["auto", "Automático (conforme o estilo)"], ["nenhuma", "Sem imagens"], ["capa", "Só na capa"], ["todas", "Em todos os slides"]], c.visual.imagens?.modo || "auto")}</select></div>
+      </div>
+      <div class="acoes"><button class="btn primario" id="gerar">${ICONES.faisca} Gerar carrossel</button><span class="msg" id="msgGerar"></span></div>`,
+  });
+  m.querySelector("#gerar").onclick = async () => {
+    const corpo = {
+      refId, indice: i, modelo: $("gModelo").value, estilo: $("gEstilo").value, angulo: $("gTema").value, imagens: $("gImagens").value,
+    };
+    m.querySelector(".corpo-modal").innerHTML = `<div class="progresso"><div class="girando"></div>
+      <h3>Criando seu carrossel</h3><span class="msg">${corpo.imagens === "nenhuma" ? "Escrevendo o texto na voz do cliente..." : "Escrevendo o texto e gerando as imagens. Pode levar de 1 a 3 minutos."}</span></div>`;
+    try {
+      await post(`/api/clientes/${c.id}/gerar`, corpo);
+      fecharModal();
+      toast("Carrossel criado. Ele está em Rascunhos.");
+      location.hash = `#/c/${c.id}/carrosseis/rascunho`;
+    } catch (erro) {
+      m.querySelector(".corpo-modal").innerHTML = `<div class="aviso">${ICONES.alerta}<span>${esc(erro.message)}</span></div><button class="btn" data-fechar-modal>Fechar</button>`;
+    }
+  };
+}
+
+// ---------- aba carrosséis ----------
+const ESTADOS = [["rascunho", "Rascunhos"], ["postado", "Postados"], ["descartado", "Descartados"]];
+let estadoAtual = "rascunho";
+const detalheAberto = {};
+
+async function abaCarrosseis(sub) {
+  estadoAtual = ESTADOS.some(([k]) => k === sub) ? sub : "rascunho";
+  gerados = await api(`/api/clientes/${cliente.id}/carrosseis`);
+  desenharCarrosseis();
+}
+
+function desenharCarrosseis() {
+  const c = cliente;
+  const cont = Object.fromEntries(ESTADOS.map(([k]) => [k, gerados.filter((g) => g.estado === k).length]));
+  const lista = gerados.filter((g) => g.estado === estadoAtual);
+  const vazio = {
+    rascunho: `Nenhum rascunho. <a href="#/c/${c.id}/criar">Crie um carrossel a partir das ideias</a>.`,
+    postado: "Nada publicado ainda. Os carrosséis postados aparecem aqui.",
+    descartado: "Nenhum descarte. Quando você descarta, o motivo ensina a IA.",
+  }[estadoAtual];
+  $("aba").innerHTML = `
+    <div class="barra">
+      <div class="filtros">${ESTADOS.map(([k, n]) => `<button class="${k === estadoAtual ? "ativo" : ""}" data-estado="${k}">${n} <span class="etiqueta">${cont[k]}</span></button>`).join("")}</div>
+      <a class="btn primario" href="#/c/${c.id}/criar">${ICONES.faisca} Criar novo</a>
+    </div>
+    ${lista.length ? lista.map(cartaoCarrossel).join("") : `<div class="cartao vazio">${ICONES.camadas}<div>${vazio}</div></div>`}`;
+}
+
+function cartaoCarrossel(g) {
+  const k = g.carrossel;
+  const estilo = status.estilos.find((e) => e.id === k.estilo)?.nome;
+  const aberto = detalheAberto[g.pasta];
+  const abas = [
+    ["legenda", "Legenda", k.legenda],
+    ["porque", "Por que funcionou", k.por_que_a_referencia_funcionou],
+    ["arte", "Direção de arte", k.direcao_de_arte ? `${k.direcao_de_arte}\n\n${k.slides.map((s, i) => s.imagem_descricao ? `Slide ${i + 1}: ${s.imagem_descricao}` : "").filter(Boolean).join("\n")}` : ""],
+    ["pendencias", `Pendências (${k.pendencias?.length || 0})`, (k.pendencias || []).join("\n")],
+  ].filter(([, , t]) => t);
+  const conteudoAberto = abas.find(([id]) => id === aberto);
+  let acoes;
+  if (g.estado === "rascunho") {
+    acoes = `
+      <button class="btn primario" data-publicar="${esc(g.pasta)}">${ICONES.enviar} Postar no Instagram</button>
+      <button class="btn" data-editar="${esc(g.pasta)}">${ICONES.editar} Editar</button>
+      <a class="btn" href="/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(g.pasta)}/zip">${ICONES.baixar} Baixar</a>
+      <button class="btn" data-aprovar="${esc(g.pasta)}" title="Ensina a IA com este carrossel">${ICONES.estrela} Aprovar como exemplo</button>
+      <span class="espaco"></span>
+      <button class="btn perigo" data-descartar="${esc(g.pasta)}">${ICONES.lixo} Descartar</button>`;
+  } else if (g.estado === "postado") {
+    acoes = `
+      <a class="btn" href="/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(g.pasta)}/zip">${ICONES.baixar} Baixar</a>
+      <button class="btn" data-aprovar="${esc(g.pasta)}">${ICONES.estrela} Aprovar como exemplo</button>`;
+  } else {
+    acoes = `<button class="btn" data-restaurar="${esc(g.pasta)}">${ICONES.desfazer} Restaurar para rascunhos</button>`;
+  }
+  return `
+    <div class="cartao carrossel" data-carrossel="${esc(g.pasta)}">
+      <div class="cabeca">
+        <div>
+          <h3>${esc(g.angulo)}</h3>
+          <div class="chips">
+            <span class="etiqueta">${esc(dataHora(g.data))}</span>
+            ${k.modelo?.nome ? `<span class="etiqueta">${esc(k.modelo.nome)}</span>` : ""}
+            ${estilo ? `<span class="etiqueta marca">${esc(estilo)}</span>` : ""}
+            ${k.referencia?.perfil ? `<span class="etiqueta">ref. ${esc(k.referencia.perfil)}</span>` : ""}
+            ${g.demo ? '<span class="etiqueta aviso-e">demonstração</span>' : ""}
+          </div>
+        </div>
+      </div>
+      ${g.estado === "postado" ? `<div class="postado-info">${ICONES.ok}<span>Postado em ${esc(dataHora(g.postado_em))}</span>${g.permalink ? `<a class="btn pequeno" href="${esc(g.permalink)}" target="_blank" rel="noopener">${ICONES.externo} Ver no Instagram</a>` : ""}</div>` : ""}
+      ${g.estado === "descartado" ? `<div class="motivo"><b>Motivo do descarte:</b> ${esc(g.motivo)}</div>` : ""}
+      <div class="trilho">${g.imagens.map((src, i) => `<button data-ver-slide="${esc(g.pasta)}" data-i="${i}"><img src="${src}" loading="lazy" alt="Slide ${i + 1}"></button>`).join("")}</div>
+      <div class="detalhes">${abas.map(([id, nome]) => `<button class="${aberto === id ? "ativo" : ""} ${id === "pendencias" ? "pendente" : ""}" data-detalhe="${esc(g.pasta)}" data-qual="${id}">${id === "pendencias" ? ICONES.alerta : ""}${nome}</button>`).join("")}</div>
+      ${conteudoAberto ? `<div class="painel-detalhe">${conteudoAberto[0] === "legenda" ? `<button class="btn pequeno copiar" data-copiar="${esc(g.pasta)}">${ICONES.copiar} Copiar</button>` : ""}${esc(conteudoAberto[2])}</div>` : ""}
+      <div class="barra-acoes">${acoes}<span class="msg"></span></div>
       <div class="editor" data-editor="${esc(g.pasta)}" hidden></div>
-    </div>`).join("");
+    </div>`;
+}
+
+const buscarGerado = (pasta) => gerados.find((g) => g.pasta === pasta);
+
+function modalDescartar(pasta) {
+  const g = buscarGerado(pasta);
+  const m = abrirModal({
+    titulo: "Descartar carrossel",
+    subtitulo: `"${esc(g.angulo)}". O motivo ensina a IA a não repetir o erro nos próximos.`,
+    corpo: `
+      <div class="opcoes-rapidas">${["Texto fraco ou genérico", "Fora do tom do cliente", "Imagem não combina com o texto", "Tema repetido", "Visual não ficou bom", "Informação errada"].map((o) => `<button data-motivo="${o}">${o}</button>`).join("")}</div>
+      <textarea id="motivo" class="campo" rows="4" placeholder="Conte o que não funcionou. Ex.: o gancho ficou agressivo demais para o público dela."></textarea>
+      <div class="acoes"><button class="btn escuro" id="confirmarDescarte">${ICONES.lixo} Descartar</button><span class="msg" id="msgDescarte"></span></div>`,
+  });
+  m.querySelector(".opcoes-rapidas").onclick = (e) => {
+    const b = e.target.closest("[data-motivo]");
+    if (!b) return;
+    const campo = $("motivo");
+    campo.value = campo.value.trim() ? `${campo.value.trim()}. ${b.dataset.motivo}` : b.dataset.motivo;
+    campo.focus();
+  };
+  m.querySelector("#confirmarDescarte").onclick = (e) => acao(e.currentTarget, $("msgDescarte"), async () => {
+    await post(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}/descartar`, { motivo: $("motivo").value });
+    fecharModal();
+    toast("Descartado. A IA vai levar esse motivo em conta.");
+    cliente = await api(`/api/clientes/${cliente.id}`);
+    await abaCarrosseis(estadoAtual);
+  });
+}
+
+function modalPublicar(pasta) {
+  const g = buscarGerado(pasta);
+  const k = g.carrossel;
+  const conectado = cliente.publicacao.conectado;
+  const marcadores = (k.legenda.match(/\[[^\]]+\]/g) || []);
+  const m = abrirModal({
+    titulo: "Postar no Instagram",
+    subtitulo: conectado ? `Vai publicar em ${esc(cliente.publicacao.conta || cliente.instagram || "conta conectada")} agora.` : "Este cliente ainda não tem o Instagram conectado.",
+    largo: true,
+    corpo: `
+      <div class="trilho" style="padding:0 0 12px">${g.imagens.map((src) => `<img src="${src}" style="height:150px" alt="">`).join("")}</div>
+      ${marcadores.length ? `<div class="aviso">${ICONES.alerta}<span>A legenda ainda tem marcadores para preencher: <b>${esc(marcadores.join(", "))}</b></span></div>` : ""}
+      ${k.pendencias?.length ? `<div class="aviso">${ICONES.alerta}<span>Pendências: ${esc(k.pendencias.join(" · "))}</span></div>` : ""}
+      <label class="rotulo" for="legendaPost">Legenda</label>
+      <textarea id="legendaPost" class="campo" rows="7">${esc(k.legenda)}</textarea>
+      ${conectado ? "" : `<div class="aviso" style="margin-top:14px">${ICONES.alerta}<span>Para postar direto, conecte o Instagram em <a href="#/c/${cliente.id}/perfil">Perfil e referências</a>. Enquanto isso, baixe os slides, poste pelo celular e marque como postado.</span></div>`}
+      <div class="acoes">
+        ${conectado ? `<button class="btn primario" id="publicarAgora">${ICONES.enviar} Publicar agora</button>` : ""}
+        <a class="btn" href="/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}/zip">${ICONES.baixar} Baixar slides</a>
+        <button class="btn" id="marcarPostado">${ICONES.ok} Já postei, marcar como postado</button>
+        <span class="msg" id="msgPublicar"></span>
+      </div>`,
+  });
+  const concluir = async (texto) => {
+    fecharModal();
+    toast(texto);
+    cliente = await api(`/api/clientes/${cliente.id}`);
+    location.hash = `#/c/${cliente.id}/carrosseis/postado`;
+  };
+  const botaoPublicar = m.querySelector("#publicarAgora");
+  if (botaoPublicar) botaoPublicar.onclick = (e) => acao(e.currentTarget, $("msgPublicar"), async () => {
+    if (marcadores.length && !confirm("A legenda ainda tem marcadores [entre colchetes]. Publicar mesmo assim?")) throw new Error("Publicação cancelada.");
+    $("msgPublicar").textContent = "Publicando... isso leva uns 30 segundos.";
+    await post(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}/publicar`, { legenda: $("legendaPost").value });
+    await concluir("Publicado no Instagram!");
+  });
+  m.querySelector("#marcarPostado").onclick = (e) => acao(e.currentTarget, $("msgPublicar"), async () => {
+    await post(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}/marcar-postado`, {});
+    await concluir("Marcado como postado.");
+  });
+}
+
+function abrirEditor(pasta) {
+  const g = buscarGerado(pasta);
+  const el = document.querySelector(`[data-editor="${CSS.escape(pasta)}"]`);
+  el.hidden = !el.hidden;
+  if (el.hidden) return;
+  el.innerHTML = `<div class="ajuda" style="margin:0">Use *asteriscos* para destacar palavras e uma linha em branco para separar parágrafos. Dá para trocar a imagem de qualquer slide (ex.: subir um print real).</div>` +
+    g.carrossel.slides.map((s, i) => `
+    <div class="slide-ed" data-i="${i}">
+      <img src="${g.imagens[i]}" alt="">
+      <div>
+        <textarea rows="2" class="campo" data-campo="titulo">${esc(s.titulo)}</textarea>
+        <textarea rows="3" class="campo" data-campo="subtitulo" style="margin-top:6px">${esc(s.subtitulo)}</textarea>
+        <div class="miudo"><span>Imagem do slide:</span><input type="file" accept="image/*" data-campo="imagem">
+          ${s.imagem ? `<label><input type="checkbox" data-campo="remover"> remover imagem</label>` : ""}</div>
+      </div>
+    </div>`).join("") + `
+    <div class="acoes" style="margin-top:0"><button class="btn primario" data-salvar-edicao="${esc(pasta)}">${ICONES.ok} Salvar e renderizar</button><button class="btn" data-editar="${esc(pasta)}">Cancelar</button><span class="msg"></span></div>`;
+}
+
+async function salvarEdicao(botao, pasta) {
+  const el = document.querySelector(`[data-editor="${CSS.escape(pasta)}"]`);
+  await acao(botao, botao.parentElement.querySelector(".msg"), async () => {
+    const slides = [];
+    const imagens = {};
+    for (const bloco of el.querySelectorAll(".slide-ed")) {
+      const i = Number(bloco.dataset.i);
+      slides[i] = { titulo: bloco.querySelector('[data-campo="titulo"]').value, subtitulo: bloco.querySelector('[data-campo="subtitulo"]').value };
+      const arquivo = bloco.querySelector('[data-campo="imagem"]').files[0];
+      if (arquivo) imagens[i] = await lerArquivo(arquivo);
+      else if (bloco.querySelector('[data-campo="remover"]')?.checked) imagens[i] = null;
+    }
+    await put(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}`, { slides, imagens });
+    gerados = await api(`/api/clientes/${cliente.id}/carrosseis`);
+    desenharCarrosseis();
+    toast("Carrossel atualizado.");
+  });
 }
 
 // ---------- aba perfil e referências ----------
@@ -337,62 +815,91 @@ function abaPerfil() {
   const edicao = { ig: [...c.referencias.instagram], yt: [...c.referencias.youtube] };
   $("aba").innerHTML = `
     <div class="metade">
-      <div class="cartao">
-        <h2>Dados do cliente</h2>
-        <label for="pNome">Nome</label><input id="pNome" class="campo" value="${esc(c.nome)}">
-        <label for="pInsta">Instagram do cliente</label><input id="pInsta" class="campo" value="${esc(c.instagram)}" placeholder="@perfil_do_cliente">
-        <div class="ajuda">Usado para coletar o tom de voz automaticamente.</div>
-        <label for="pDesc">Profissão, nicho e método</label><input id="pDesc" class="campo" value="${esc(c.descricao)}">
-        <div class="acoes"><button id="salvarPerfil">Salvar dados</button><span class="msg" id="msgPerfil"></span></div>
+      <div>
+        <div class="cartao">
+          <h2>Dados do cliente</h2>
+          <label class="rotulo" for="pNome">Nome</label><input id="pNome" class="campo" value="${esc(c.nome)}">
+          <label class="rotulo" for="pInsta">Instagram do cliente</label><input id="pInsta" class="campo" value="${esc(c.instagram)}" placeholder="@perfil_do_cliente">
+          <div class="ajuda">Usado para coletar o tom de voz automaticamente.</div>
+          <label class="rotulo" for="pDesc">Profissão, nicho e método</label><input id="pDesc" class="campo" value="${esc(c.descricao)}">
+          <div class="acoes"><button class="btn escuro" id="salvarPerfil">Salvar dados</button><span class="msg" id="msgPerfil"></span></div>
+        </div>
+        <div class="cartao">
+          <div class="cabecalho-cartao"><div><h2>Postar direto no Instagram</h2><p class="sub">Conta Profissional (Business ou Criador) deste cliente.</p></div>
+            ${c.publicacao.conectado ? `<span class="etiqueta ok">${ICONES.ok} ${esc(c.publicacao.conta || "conectado")}</span>` : '<span class="etiqueta">não conectado</span>'}</div>
+          <label class="rotulo" for="igId">ID da conta do Instagram</label>
+          <input id="igId" class="campo" value="${esc(c.publicacao.ig_user_id)}" placeholder="Ex.: 17841400000000000">
+          <label class="rotulo" for="igToken">Token de acesso</label>
+          <input id="igToken" class="campo" type="password" placeholder="${c.publicacao.conectado ? "Salvo. Cole um novo só para trocar." : "Cole o token gerado no painel da Meta"}">
+          <details style="margin-top:12px"><summary>Como conseguir o ID e o token</summary>
+            <ol class="passos">
+              <li>O Instagram do cliente precisa ser conta <b>Profissional</b>.</li>
+              <li>Em <b>developers.facebook.com</b>, crie um app do tipo "Empresa" e adicione o produto <b>Instagram</b>.</li>
+              <li>Em "Configuração da API com login do Instagram", adicione a conta do cliente e gere o <b>token</b>, com a permissão de publicar conteúdo.</li>
+              <li>O <b>ID da conta</b> aparece na mesma tela, ao lado do @.</li>
+              <li>No arquivo <b>.env</b>, preencha também <b>IMGBB_API_KEY</b> (grátis em api.imgbb.com), usada para enviar as imagens ao Instagram.</li>
+            </ol>
+          </details>
+          ${status.hospedagem ? "" : `<div class="aviso" style="margin-top:12px">${ICONES.alerta}<span>Falta a IMGBB_API_KEY no .env para enviar as imagens.</span></div>`}
+          <div class="acoes"><button class="btn escuro" id="salvarIg">Salvar e testar conexão</button><span class="msg" id="msgIg"></span></div>
+        </div>
       </div>
       <div class="cartao">
         <h2>Referências deste cliente</h2>
-        <div class="ajuda">Perfis e canais de onde o sistema vai tirar as ideias que mais engajaram. Pode colar o @ ou o link, vários de uma vez.</div>
-        <label for="novoIg">Instagram</label>
-        <div class="chips" id="chipsIg"></div>
-        <div class="linha"><input id="novoIg" placeholder="@perfil ou link do perfil"><button class="sec" data-add="ig">Adicionar</button></div>
-        <label for="novoYt">YouTube</label>
-        <div class="chips" id="chipsYt"></div>
-        <div class="linha"><input id="novoYt" placeholder="@canal ou link do canal"><button class="sec" data-add="yt">Adicionar</button></div>
-        <label for="periodo">Analisar posts dos últimos</label>
-        <select id="periodo">${[30, 60, 90, 180, 365].map((d) => `<option value="${d}" ${d === (c.referencias.periodo_dias || 90) ? "selected" : ""}>${d} dias</option>`).join("")}</select>
-        <div class="acoes"><button id="salvarRefs">Salvar e coletar</button><span class="msg" id="msgRefs"></span></div>
+        <p class="sub">Perfis e canais de onde saem as ideias. Pode colar o @ ou o link, vários de uma vez.</p>
+        <label class="rotulo" for="novoIg">Instagram</label>
+        <div class="chips-ref" id="chipsIg"></div>
+        <div class="linha"><input id="novoIg" class="campo" placeholder="@perfil ou link do perfil" autocomplete="off"><button class="btn" data-add="ig">${ICONES.mais} Adicionar</button></div>
+        <label class="rotulo" for="novoYt">YouTube</label>
+        <div class="chips-ref" id="chipsYt"></div>
+        <div class="linha"><input id="novoYt" class="campo" placeholder="@canal ou link do canal" autocomplete="off"><button class="btn" data-add="yt">${ICONES.mais} Adicionar</button></div>
+        <label class="rotulo" for="periodo">Analisar posts dos últimos</label>
+        <select id="periodo" class="campo">${[30, 60, 90, 180, 365].map((d) => `<option value="${d}" ${d === (c.referencias.periodo_dias || 90) ? "selected" : ""}>${d} dias</option>`).join("")}</select>
+        <div class="acoes"><button class="btn primario" id="salvarRefs">${ICONES.atualizar} Salvar e coletar</button><span class="msg" id="msgRefs"></span></div>
       </div>
     </div>`;
 
   const chips = () => {
     for (const t of ["ig", "yt"]) {
       $(t === "ig" ? "chipsIg" : "chipsYt").innerHTML = edicao[t].length
-        ? edicao[t].map((r, i) => `<span class="chip">${esc(r)}<button title="Remover" data-remover="${t}" data-i="${i}">×</button></span>`).join("")
-        : '<span class="vazio">Nenhum cadastrado.</span>';
+        ? edicao[t].map((r, i) => `<span class="chip">${esc(r)}<button title="Remover" data-remover="${t}" data-i="${i}">${ICONES.x}</button></span>`).join("")
+        : '<span class="ajuda" style="margin:0">Nenhum cadastrado.</span>';
     }
   };
   const adicionar = (t) => {
     const campo = $(t === "ig" ? "novoIg" : "novoYt");
     for (const n of campo.value.split(/[\s,;]+/).filter(Boolean)) if (!edicao[t].includes(n)) edicao[t].push(n);
     campo.value = "";
+    campo.focus();
     chips();
   };
   chips();
   $("aba").onclick = (e) => {
-    const d = e.target.dataset;
-    if (d.add) adicionar(d.add);
-    if (d.remover) { edicao[d.remover].splice(Number(d.i), 1); chips(); }
+    const add = e.target.closest("[data-add]");
+    if (add) adicionar(add.dataset.add);
+    const rem = e.target.closest("[data-remover]");
+    if (rem) { edicao[rem.dataset.remover].splice(Number(rem.dataset.i), 1); chips(); }
   };
-  $("novoIg").onkeydown = (e) => e.key === "Enter" && adicionar("ig");
-  $("novoYt").onkeydown = (e) => e.key === "Enter" && adicionar("yt");
+  // Só o Enter adiciona; as outras teclas digitam normalmente.
+  $("novoIg").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); adicionar("ig"); } });
+  $("novoYt").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); adicionar("yt"); } });
 
-  $("salvarPerfil").onclick = (e) => acao(e.target, $("msgPerfil"), async () => {
+  $("salvarPerfil").onclick = (e) => acao(e.currentTarget, $("msgPerfil"), async () => {
     cliente = await put(`/api/clientes/${c.id}/perfil`, { nome: $("pNome").value, instagram: $("pInsta").value, descricao: $("pDesc").value });
-    $("trilha").innerHTML = `/ <b>${esc(cliente.nome)}</b>`;
+    atualizarMenu(c.id);
   });
-  $("salvarRefs").onclick = (e) => acao(e.target, $("msgRefs"), async () => {
+  $("salvarIg").onclick = (e) => acao(e.currentTarget, $("msgIg"), async () => {
+    cliente = await put(`/api/clientes/${c.id}/publicacao`, { ig_user_id: $("igId").value, token: $("igToken").value });
+    abaPerfil();
+    toast(cliente.publicacao.conta ? `Conectado a ${cliente.publicacao.conta}.` : "Dados salvos.");
+  });
+  $("salvarRefs").onclick = (e) => acao(e.currentTarget, $("msgRefs"), async () => {
     for (const t of ["ig", "yt"]) if ($(t === "ig" ? "novoIg" : "novoYt").value.trim()) adicionar(t);
     await put(`/api/clientes/${c.id}/referencias`, { instagram: edicao.ig, youtube: edicao.yt, periodo_dias: $("periodo").value });
     $("msgRefs").textContent = "Salvo. Coletando posts, pode levar alguns minutos...";
     await api(`/api/clientes/${c.id}/referencias?recoletar=1`);
     cliente = await api(`/api/clientes/${c.id}`);
-  }, { ok: "Salvo e coletado. Veja o ranking na aba Conteúdo." });
+  }, { ok: "Salvo e coletado. Veja as ideias na aba Criar." });
 }
 
 // ---------- aba voz e direcionamento ----------
@@ -418,53 +925,53 @@ function abaVoz() {
     <div class="metade">
       <div class="cartao">
         <h2>1. Tom de voz coletado pelo sistema</h2>
-        <div class="ajuda">O sistema lê as legendas do Instagram ${c.instagram ? `<b>${esc(c.instagram)}</b>` : "do cliente"} e descreve o jeito de escrever: vocabulário, ritmo, expressões e CTAs. Você pode ajustar o texto depois.</div>
-        ${podeColetar ? "" : `<div class="aviso">${!c.instagram ? `Cadastre o Instagram do cliente na aba <a href="#/c/${c.id}/perfil">Perfil e referências</a>.` : "Precisa das chaves do Apify e da IA no arquivo .env."}</div>`}
-        <div class="acoes" style="margin:0 0 12px"><button id="coletarVoz" ${podeColetar ? "" : "disabled"}>Coletar tom de voz do Instagram</button><span class="msg" id="msgColeta"></span></div>
-        <textarea id="voz" rows="18" placeholder="O tom de voz aparece aqui depois da coleta. Você também pode escrever à mão.">${esc(c.voz)}</textarea>
-        <div class="acoes"><button class="sec" id="salvarVoz">Salvar ajustes</button><span class="msg" id="msgVoz"></span></div>
+        <p class="sub">Lê as legendas do Instagram ${c.instagram ? `<b>${esc(c.instagram)}</b>` : "do cliente"} e descreve o jeito de escrever. Você pode ajustar depois.</p>
+        ${podeColetar ? "" : `<div class="aviso" style="margin-top:12px">${ICONES.alerta}<span>${!c.instagram ? `Cadastre o Instagram do cliente em <a href="#/c/${c.id}/perfil">Perfil e referências</a>.` : "Precisa das chaves do Apify e da IA no arquivo .env."}</span></div>`}
+        <div class="acoes" style="margin:14px 0"><button class="btn primario" id="coletarVoz" ${podeColetar ? "" : "disabled"}>${ICONES.voz} Coletar tom de voz do Instagram</button><span class="msg" id="msgColeta"></span></div>
+        <textarea id="voz" class="campo" rows="18" placeholder="O tom de voz aparece aqui depois da coleta. Você também pode escrever à mão.">${esc(c.voz)}</textarea>
+        <div class="acoes"><button class="btn escuro" id="salvarVoz">Salvar ajustes</button><span class="msg" id="msgVoz"></span></div>
       </div>
       <div class="cartao">
         <h2>2. Informações e direcionamento</h2>
-        <div class="ajuda">Tudo que você coletou sobre o cliente: método, público, produtos, regras. A IA segue isso com prioridade ao escrever.</div>
-        <textarea id="direcionamento" rows="18" placeholder="${esc(MODELO_DIRECIONAMENTO)}">${esc(c.direcionamento)}</textarea>
-        <div class="acoes"><button id="salvarDir">Salvar direcionamento</button><span class="msg" id="msgDir"></span></div>
+        <p class="sub">Tudo que você levantou sobre o cliente. A IA segue isso com prioridade.</p>
+        <textarea id="direcionamento" class="campo" rows="21" style="margin-top:14px" placeholder="${esc(MODELO_DIRECIONAMENTO)}">${esc(c.direcionamento)}</textarea>
+        <div class="acoes"><button class="btn escuro" id="salvarDir">Salvar direcionamento</button><span class="msg" id="msgDir"></span></div>
       </div>
     </div>
     <div class="cartao" style="margin-top:20px">
       <h2>3. Temas e regras de conteúdo</h2>
-      <div class="metade">
+      <div class="metade" style="margin-top:12px">
         <div>
-          <label for="angulos">Temas ou ângulos (um por linha)</label>
-          <textarea id="angulos" rows="8" placeholder="Opcional. Ex.:&#10;Ansiedade no trabalho&#10;Culpa depois de comer">${esc(c.conteudo.angulos.join("\n"))}</textarea>
-          <div class="ajuda">A IA escolhe um tema por carrossel. Aparecem também na hora de gerar.</div>
+          <label class="rotulo" for="angulos">Temas ou ângulos (um por linha)</label>
+          <textarea id="angulos" class="campo" rows="8" placeholder="Opcional. Ex.:&#10;Ansiedade no trabalho&#10;Culpa depois de comer">${esc(c.conteudo.angulos.join("\n"))}</textarea>
+          <div class="ajuda">A IA escolhe um tema por carrossel. Eles também aparecem na hora de criar.</div>
         </div>
         <div>
-          <label for="cta">Objetivo e CTA da legenda</label>
-          <textarea id="cta" rows="4">${esc(c.conteudo.cta_legenda)}</textarea>
-          <label><input type="checkbox" id="travessao" ${c.conteudo.proibir_travessao ? "checked" : ""}> Nunca usar travessão</label>
-          <div class="ajuda">${c.exemplos} carrossel(is) aprovado(s) como exemplo de tom. Aprove mais na aba Conteúdo.</div>
+          <label class="rotulo" for="cta">Objetivo e CTA da legenda</label>
+          <textarea id="cta" class="campo" rows="4">${esc(c.conteudo.cta_legenda)}</textarea>
+          <label class="linha" style="margin-top:14px;font-weight:500"><input type="checkbox" id="travessao" ${c.conteudo.proibir_travessao ? "checked" : ""}> Nunca usar travessão</label>
+          <div class="ajuda">${c.exemplos} carrossel(is) aprovado(s) como exemplo de tom. Os descartados também ensinam a IA pelo motivo.</div>
         </div>
       </div>
-      <div class="acoes"><button id="salvarRegras">Salvar temas e regras</button><span class="msg" id="msgRegras"></span></div>
+      <div class="acoes"><button class="btn escuro" id="salvarRegras">Salvar temas e regras</button><span class="msg" id="msgRegras"></span></div>
     </div>`;
 
-  $("coletarVoz").onclick = (e) => acao(e.target, $("msgColeta"), async () => {
+  $("coletarVoz").onclick = (e) => acao(e.currentTarget, $("msgColeta"), async () => {
     $("msgColeta").textContent = "Coletando legendas e analisando, pode levar alguns minutos...";
     const r = await post(`/api/clientes/${c.id}/voz/gerar`);
     $("voz").value = r.texto;
     cliente.voz = r.texto;
     return r;
   }, { ok: (r) => `Pronto. Tom de voz gerado a partir de ${r.legendas} legendas e salvo.` });
-  $("salvarVoz").onclick = (e) => acao(e.target, $("msgVoz"), async () => {
+  $("salvarVoz").onclick = (e) => acao(e.currentTarget, $("msgVoz"), async () => {
     await put(`/api/clientes/${c.id}/voz`, { texto: $("voz").value });
     cliente.voz = $("voz").value;
   });
-  $("salvarDir").onclick = (e) => acao(e.target, $("msgDir"), async () => {
+  $("salvarDir").onclick = (e) => acao(e.currentTarget, $("msgDir"), async () => {
     await put(`/api/clientes/${c.id}/direcionamento`, { texto: $("direcionamento").value });
     cliente.direcionamento = $("direcionamento").value;
   });
-  $("salvarRegras").onclick = (e) => acao(e.target, $("msgRegras"), async () => {
+  $("salvarRegras").onclick = (e) => acao(e.currentTarget, $("msgRegras"), async () => {
     cliente = await put(`/api/clientes/${c.id}/conteudo`, {
       angulos: $("angulos").value.split("\n"), cta_legenda: $("cta").value, proibir_travessao: $("travessao").checked,
     });
@@ -481,36 +988,37 @@ function corDoFundo(fundo, p) {
 function abaModelos() {
   const c = cliente;
   $("aba").innerHTML = `
-    <p class="sub">Escolha o modelo padrão deste cliente. Na hora de gerar, dá para trocar o modelo em cada carrossel.</p>
+    <div class="barra"><div><h2>Modelos de carrossel</h2><p class="sub">A estrutura do texto, slide a slide. Escolha o padrão deste cliente; dá para trocar em cada carrossel.</p></div></div>
     <div class="grade" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">
       ${c.modelos.map((m) => `
         <div class="cartao modelo ${m.id === c.conteudo.modelo_padrao ? "padrao" : ""}">
-          <div class="linha" style="justify-content:space-between"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta">Padrão</span>' : ""}</div>
-          <div class="descricao" style="-webkit-line-clamp:3">${esc(m.descricao)}</div>
+          <div class="cabecalho-cartao" style="margin:0"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta marca">Padrão</span>' : ""}</div>
+          <div class="sub" style="margin:0;font-size:13px">${esc(m.descricao)}</div>
           <div class="tira">${m.estrutura.map((s) => { const k = corDoFundo(s.fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
           <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>
           <div class="acoes" style="margin-top:auto">
-            ${m.id === c.conteudo.modelo_padrao ? "" : `<button data-padrao="${m.id}">Usar como padrão</button>`}
-            <button class="sec" data-ver="${m.id}">Ver prévia</button>
+            ${m.id === c.conteudo.modelo_padrao ? "" : `<button class="btn escuro pequeno" data-padrao="${m.id}">Usar como padrão</button>`}
+            <button class="btn pequeno" data-ver="${m.id}">${ICONES.olho} Ver prévia</button>
           </div>
         </div>`).join("")}
     </div>
-    <div id="areaPrevia" style="margin-top:20px" hidden>
-      <h2 id="tituloPrevia"></h2>
+    <div id="areaPrevia" style="margin-top:22px" hidden>
+      <h2 id="tituloPrevia" style="margin-bottom:10px"></h2>
       <iframe class="previa" id="previaModelo" title="Prévia do modelo"></iframe>
     </div>`;
 
   $("aba").onclick = async (e) => {
-    const d = e.target.dataset;
-    if (d.padrao) {
-      await acao(e.target, null, async () => {
-        cliente = await put(`/api/clientes/${c.id}/conteudo`, { modelo_padrao: d.padrao });
+    const alvo = e.target.closest("[data-padrao],[data-ver]");
+    if (!alvo) return;
+    if (alvo.dataset.padrao) {
+      await acao(alvo, null, async () => {
+        cliente = await put(`/api/clientes/${c.id}/conteudo`, { modelo_padrao: alvo.dataset.padrao });
         abaModelos();
         toast("Modelo padrão atualizado.");
       });
     }
-    if (d.ver) {
-      const m = c.modelos.find((x) => x.id === d.ver);
+    if (alvo.dataset.ver) {
+      const m = c.modelos.find((x) => x.id === alvo.dataset.ver);
       $("areaPrevia").hidden = false;
       $("tituloPrevia").textContent = `Prévia: ${m.nome}`;
       $("previaModelo").srcdoc = await post(`/api/clientes/${c.id}/previa`, { modelo: m.id });
@@ -526,15 +1034,12 @@ const PRESETS = [
   ["Verde", { escura: "#14231C", clara: "#F1F5EE", destaque: "#4F9D69", destaque2: "#2F6B45", texto_claro: "#FFFFFF", texto_escuro: "#14231C" }],
   ["Rosa", { escura: "#2A1620", clara: "#FBF1F4", destaque: "#E26D9A", destaque2: "#B3446F", texto_claro: "#FFFFFF", texto_escuro: "#2A1620" }],
   ["Roxo", { escura: "#1B1530", clara: "#F4F1FB", destaque: "#8B5CF6", destaque2: "#5B34C9", texto_claro: "#FFFFFF", texto_escuro: "#1B1530" }],
+  ["Vinho", { escura: "#2B0A12", clara: "#F7F0EC", destaque: "#9E1B32", destaque2: "#6B0F1F", texto_claro: "#FFFFFF", texto_escuro: "#2B0A12" }],
   ["Preto e dourado", { escura: "#0E0E0E", clara: "#F6F1E7", destaque: "#C9A24B", destaque2: "#8C6B22", texto_claro: "#FFFFFF", texto_escuro: "#0E0E0E" }],
 ];
 const CAMPOS_COR = [
-  ["escura", "Fundo escuro"],
-  ["clara", "Fundo claro"],
-  ["destaque", "Cor de destaque"],
-  ["destaque2", "Segunda cor do gradiente"],
-  ["texto_claro", "Texto sobre fundo escuro"],
-  ["texto_escuro", "Texto sobre fundo claro"],
+  ["escura", "Fundo escuro"], ["clara", "Fundo claro"], ["destaque", "Cor de destaque"],
+  ["destaque2", "Segunda cor do gradiente"], ["texto_claro", "Texto sobre fundo escuro"], ["texto_escuro", "Texto sobre fundo claro"],
 ];
 
 function abaVisual() {
@@ -542,50 +1047,52 @@ function abaVisual() {
   const v = { ...c.visual, paleta: { ...c.visual.paleta } };
   $("aba").innerHTML = `
     <div class="duas">
-      <div class="cartao">
-        <h2>Estilo do carrossel</h2>
-        <div class="estilos">${status.estilos.map((e) => `<button class="estilo" data-estilo="${e.id}"><b>${esc(e.nome)}</b><span>${esc(e.descricao)}</span></button>`).join("")}</div>
-
-        <h2 style="margin-top:24px">Imagens com IA (gpt-image-2)</h2>
-        <div class="ajuda">As imagens são criadas sozinhas a partir do conteúdo: a IA define uma direção de arte para o carrossel (mesma personagem, ambiente e luz) e cada imagem mostra exatamente a cena que o texto do slide descreve.</div>
-        <label for="modoImagens">Quando gerar</label>
-        <select id="modoImagens" class="campo">
-          <option value="auto">Automático, conforme o estilo</option>
-          <option value="nenhuma">Nunca (só texto)</option>
-          <option value="capa">Só na capa</option>
-          <option value="todas">Todos os slides</option>
-        </select>
-        <label for="estiloImagens">Preferência visual (opcional)</label>
-        <textarea id="estiloImagens" rows="2" placeholder="Não precisa preencher. Use só se quiser orientar, ex.: luz natural, tons terrosos"></textarea>
-        <div class="ajuda">No automático: Clássico, Editorial e Tweet ganham imagem na capa; Cinematográfico e Dividido, em todos os slides. Cada imagem tem custo na OpenAI. ${status.imagens ? "" : "<b>Preencha OPENAI_API_KEY no .env para gerar imagens.</b>"}</div>
-
-        <h2 style="margin-top:24px">Cores</h2>
-        <label>Paletas prontas</label>
-        <div class="presets">${PRESETS.map(([n, p], i) => `<button class="preset" title="${n}" data-preset="${i}">${swatches({ ...p }).map((cor) => `<i style="background:${cor}" data-preset="${i}"></i>`).join("")}</button>`).join("")}</div>
-        <label>Paleta do cliente</label>
-        ${CAMPOS_COR.map(([k, n]) => `<div class="cor"><span>${n}</span><input type="color" data-cor="${k}"><input data-hex="${k}" maxlength="7"></div>`).join("")}
-        <label><input type="checkbox" id="gradiente"> Slides de destaque com gradiente</label>
-
-        <h2 style="margin-top:24px">Texto e marca</h2>
-        <label for="fonte">Fonte</label>
-        <select id="fonte" class="campo">${status.fontes.map((f) => `<option>${f}</option>`).join("")}</select>
-        <label for="assinatura">Assinatura no topo dos slides</label>
-        <input id="assinatura" class="campo" placeholder="@perfil (deixe vazio para não mostrar)">
-        <label for="ctaFinal">Botão do último slide</label>
-        <input id="ctaFinal" class="campo" placeholder="SALVAR ESTE POST">
-        <label for="arraste">Texto de "arraste"</label>
-        <input id="arraste" class="campo" placeholder="ARRASTE →">
-        <label>Foto do cliente (PNG sem fundo)</label>
-        <div class="ajuda">Usada na capa do estilo Papelaria editorial, com a pessoa recortada abaixo do título.</div>
-        <div class="linha"><input type="file" id="fotoPessoa" accept="image/png,image/webp">${c.visual.tem_foto_pessoa ? '<button class="sec" id="removerFoto">Remover foto</button>' : ""}</div>
-        <label>Logo (aparece no topo, no lugar da assinatura)</label>
-        <div class="linha"><input type="file" id="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">${c.visual.tem_logo ? '<button class="sec" id="removerLogo">Remover logo</button>' : ""}</div>
-
-        <div class="acoes"><button id="salvarVisual">Salvar identidade visual</button><span class="msg" id="msgVisual"></span></div>
-      </div>
       <div>
-        <h2>Prévia ao vivo</h2>
-        <div class="ajuda">Mostra o modelo padrão com o estilo e as cores escolhidos. As imagens aparecem como marcação. Só vale para os próximos carrosséis depois de salvar.</div>
+        <div class="cartao">
+          <h2>Estilo do carrossel</h2>
+          <p class="sub">O layout dos slides. Dá para trocar em cada carrossel também.</p>
+          <div class="estilos" style="margin-top:14px">${status.estilos.map((e) => `<button class="estilo" data-estilo="${e.id}"><b>${esc(e.nome)}</b><span>${esc(e.descricao)}</span></button>`).join("")}</div>
+        </div>
+        <div class="cartao">
+          <h2>Imagens com IA</h2>
+          <p class="sub">Criadas sozinhas a partir do conteúdo: uma direção de arte para o carrossel e, em cada slide, a cena que o texto descreve.</p>
+          <label class="rotulo" for="modoImagens">Quando gerar</label>
+          <select id="modoImagens" class="campo">
+            <option value="auto">Automático (conforme o estilo)</option><option value="nenhuma">Nunca (só texto)</option>
+            <option value="capa">Só na capa</option><option value="todas">Em todos os slides</option>
+          </select>
+          <label class="rotulo" for="estiloImagens">Preferência visual (opcional)</label>
+          <textarea id="estiloImagens" class="campo" rows="2" placeholder="Não precisa preencher. Ex.: luz natural, tons terrosos"></textarea>
+          <div class="ajuda">Cada imagem tem custo na OpenAI. ${status.imagens ? "" : "<b>Preencha OPENAI_API_KEY no .env para gerar imagens.</b>"}</div>
+        </div>
+        <div class="cartao">
+          <h2>Cores</h2>
+          <label class="rotulo">Paletas prontas</label>
+          <div class="presets">${PRESETS.map(([n, p], i) => `<button class="preset" title="${n}" data-preset="${i}">${swatches(p).map((cor) => `<i style="background:${cor}" data-preset="${i}"></i>`).join("")}</button>`).join("")}</div>
+          <label class="rotulo">Paleta do cliente</label>
+          ${CAMPOS_COR.map(([k, n]) => `<div class="cor"><span>${n}</span><input type="color" data-cor="${k}"><input class="campo" data-hex="${k}" maxlength="7"></div>`).join("")}
+          <label class="linha" style="margin-top:10px;font-weight:500"><input type="checkbox" id="gradiente"> Slides de destaque com gradiente</label>
+        </div>
+        <div class="cartao">
+          <h2>Texto e marca</h2>
+          <label class="rotulo" for="fonte">Fonte</label>
+          <select id="fonte" class="campo">${status.fontes.map((f) => `<option>${f}</option>`).join("")}</select>
+          <label class="rotulo" for="assinatura">Assinatura no topo dos slides</label>
+          <input id="assinatura" class="campo" placeholder="@perfil (vazio para não mostrar)">
+          <label class="rotulo" for="ctaFinal">Botão do último slide</label>
+          <input id="ctaFinal" class="campo" placeholder="SALVAR ESTE POST">
+          <label class="rotulo" for="arraste">Texto de "arraste"</label>
+          <input id="arraste" class="campo" placeholder="ARRASTE →">
+          <label class="rotulo">Foto do cliente (PNG sem fundo)</label>
+          <div class="linha"><input type="file" id="fotoPessoa" accept="image/png,image/webp">${c.visual.tem_foto_pessoa ? `<button class="btn pequeno perigo" id="removerFoto">${ICONES.lixo} Remover</button>` : ""}</div>
+          <div class="ajuda">Usada na capa do estilo Papelaria editorial.</div>
+          <label class="rotulo">Logo</label>
+          <div class="linha"><input type="file" id="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">${c.visual.tem_logo ? `<button class="btn pequeno perigo" id="removerLogo">${ICONES.lixo} Remover</button>` : ""}</div>
+          <div class="acoes"><button class="btn primario" id="salvarVisual">${ICONES.ok} Salvar identidade visual</button><span class="msg" id="msgVisual"></span></div>
+        </div>
+      </div>
+      <div class="coluna-fixa">
+        <div class="barra" style="margin-bottom:10px"><div><h2>Prévia ao vivo</h2><p class="sub">As imagens aparecem como marcação. Vale depois de salvar.</p></div></div>
         <iframe class="previa" id="previa" title="Prévia"></iframe>
       </div>
     </div>`;
@@ -626,126 +1133,75 @@ function abaVisual() {
       document.querySelector(`[data-cor="${d.hex}"]`).value = e.target.value;
     }
     if (e.target.id === "gradiente") v.paleta.gradiente = e.target.checked;
+    if (e.target.type === "file") return;
     atualizarPrevia();
   };
   $("aba").onchange = $("aba").oninput;
   $("aba").onclick = (e) => {
-    if (e.target.dataset.estilo) {
-      v.template = e.target.dataset.estilo;
-      preencher();
-      atualizarPrevia();
-      return;
-    }
-    const i = e.target.dataset.preset;
-    if (i === undefined) return;
-    Object.assign(v.paleta, PRESETS[i][1]);
+    const estilo = e.target.closest("[data-estilo]");
+    if (estilo) { v.template = estilo.dataset.estilo; preencher(); atualizarPrevia(); return; }
+    const preset = e.target.closest("[data-preset]");
+    if (!preset) return;
+    Object.assign(v.paleta, PRESETS[preset.dataset.preset][1]);
     preencher();
     atualizarPrevia();
   };
-  $("logo").onchange = async (e) => {
+  const enviarImagem = (campo, rota, limite) => async (e) => {
     const f = e.target.files[0];
     if (!f) return;
-    if (f.size > 2_000_000) return alert("Use uma imagem de até 2 MB.");
-    cliente = await put(`/api/clientes/${c.id}/logo`, { dataUrl: await lerArquivo(f) });
-    toast("Logo enviado.");
+    if (f.size > limite) return alert(`Use uma imagem de até ${limite / 1_000_000} MB.`);
+    cliente = await put(`/api/clientes/${c.id}/${rota}`, { dataUrl: await lerArquivo(f) });
+    toast("Imagem enviada.");
     abaVisual();
   };
-  $("fotoPessoa").onchange = async (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    if (f.size > 5_000_000) return alert("Use uma imagem de até 5 MB.");
-    cliente = await put(`/api/clientes/${c.id}/foto-pessoa`, { dataUrl: await lerArquivo(f) });
-    toast("Foto enviada.");
-    abaVisual();
-  };
-  if ($("removerFoto")) $("removerFoto").onclick = async () => {
-    cliente = await put(`/api/clientes/${c.id}/foto-pessoa`, { dataUrl: null });
-    toast("Foto removida.");
-    abaVisual();
-  };
-  if ($("removerLogo")) $("removerLogo").onclick = async () => {
-    cliente = await put(`/api/clientes/${c.id}/logo`, { dataUrl: null });
-    toast("Logo removido.");
-    abaVisual();
-  };
-  $("salvarVisual").onclick = (e) => acao(e.target, $("msgVisual"), async () => {
+  $("logo").onchange = enviarImagem("logo", "logo", 2_000_000);
+  $("fotoPessoa").onchange = enviarImagem("foto", "foto-pessoa", 5_000_000);
+  const remover = (rota) => async () => { cliente = await put(`/api/clientes/${c.id}/${rota}`, { dataUrl: null }); toast("Imagem removida."); abaVisual(); };
+  if ($("removerFoto")) $("removerFoto").onclick = remover("foto-pessoa");
+  if ($("removerLogo")) $("removerLogo").onclick = remover("logo");
+  $("salvarVisual").onclick = (e) => acao(e.currentTarget, $("msgVisual"), async () => {
     cliente = await put(`/api/clientes/${c.id}/visual`, dadosVisual());
-    document.querySelector(".bolinhas").innerHTML = swatches(cliente.paleta).map((cor) => `<i style="background:${cor}"></i>`).join("");
+    document.querySelector(".avatar").style.background = gradienteCliente(cliente.paleta);
+    atualizarMenu(c.id);
   }, { ok: "Salvo. Os próximos carrosséis já saem com essa identidade." });
 }
 
-// ============ ações globais (aba conteúdo) ============
+// ============ cliques globais ============
 document.addEventListener("click", async (e) => {
-  const d = e.target.dataset || {};
-  if (d.gerar) {
-    const card = e.target.closest(".ref");
-    const botao = e.target;
-    botao.disabled = true;
-    botao.textContent = card.querySelector("[data-imagens]").value === "nenhuma" ? "Gerando..." : "Gerando texto e imagens (1 a 3 min)...";
-    try {
-      await post(`/api/clientes/${cliente.id}/gerar`, {
-        refId: d.gerar, indice: Number(d.i),
-        modelo: card.querySelector("[data-modelo]").value, angulo: card.querySelector("[data-angulo]").value,
-        estilo: card.querySelector("[data-estilo-sel]").value, imagens: card.querySelector("[data-imagens]").value,
-      });
-      mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
-      toast("Carrossel gerado.");
-    } catch (erro) { alert(erro.message); }
-    botao.disabled = false; botao.textContent = "Gerar carrossel";
+  const alvo = e.target.closest("[data-novo-cliente],[data-criar],[data-estado],[data-ver-slide],[data-detalhe],[data-copiar],[data-publicar],[data-editar],[data-salvar-edicao],[data-aprovar],[data-descartar],[data-restaurar]");
+  if (!alvo) return;
+  const d = alvo.dataset;
+  if (d.novoCliente !== undefined) return modalNovoCliente();
+  if (d.criar) return modalCriar(d.criar);
+  if (d.estado) { history.replaceState(null, "", `#/c/${cliente.id}/carrosseis/${d.estado}`); estadoAtual = d.estado; return desenharCarrosseis(); }
+  if (d.verSlide) return abrirVisualizador(buscarGerado(d.verSlide).imagens, Number(d.i));
+  if (d.detalhe) { detalheAberto[d.detalhe] = detalheAberto[d.detalhe] === d.qual ? null : d.qual; return desenharCarrosseis(); }
+  if (d.copiar) { await navigator.clipboard.writeText(buscarGerado(d.copiar).carrossel.legenda); return toast("Legenda copiada."); }
+  if (d.publicar) return modalPublicar(d.publicar);
+  if (d.editar) return abrirEditor(d.editar);
+  if (d.salvarEdicao) return salvarEdicao(alvo, d.salvarEdicao);
+  if (d.descartar) return modalDescartar(d.descartar);
+  if (d.restaurar) {
+    await acao(alvo, null, () => post(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(d.restaurar)}/restaurar`));
+    toast("Voltou para os rascunhos.");
+    cliente = await api(`/api/clientes/${cliente.id}`);
+    return abaCarrosseis("descartado");
   }
-  if (d.editar) abrirEditor(d.editar);
-  if (d.salvarEdicao) salvarEdicao(e.target, d.salvarEdicao);
-  if (d.cancelarEdicao) document.querySelector(`[data-editor="${CSS.escape(d.cancelarEdicao)}"]`).hidden = true;
   if (d.aprovar) {
-    const msg = e.target.nextElementSibling;
-    acao(e.target, msg, () => post(`/api/clientes/${cliente.id}/aprovar`, { pasta: d.aprovar }),
-      { ok: (r) => `Aprovado. ${r.exemplos} exemplo(s) de tom salvos.` });
+    const r = await acao(alvo, null, () => post(`/api/clientes/${cliente.id}/aprovar`, { pasta: d.aprovar }));
+    if (r) toast(`Aprovado. ${r.exemplos} exemplo(s) ensinando o tom à IA.`);
   }
 });
 
-// ---------- edição de um carrossel gerado ----------
-function abrirEditor(pasta) {
-  const g = gerados.find((x) => x.pasta === pasta);
-  const el = document.querySelector(`[data-editor="${CSS.escape(pasta)}"]`);
-  el.hidden = false;
-  el.innerHTML = g.carrossel.slides.map((s, i) => `
-    <div class="slide-ed" data-i="${i}">
-      <img src="${g.imagens[i]}" alt="">
-      <div>
-        <textarea rows="2" data-campo="titulo">${esc(s.titulo)}</textarea>
-        <textarea rows="3" data-campo="subtitulo" style="margin-top:6px">${esc(s.subtitulo)}</textarea>
-        <div class="miudo">
-          <span>Imagem do slide (ex.: print real):</span><input type="file" accept="image/*" data-campo="imagem">
-          ${s.imagem ? `<label style="margin:0;text-transform:none;letter-spacing:0;font-weight:400"><input type="checkbox" data-campo="remover"> remover imagem</label>` : ""}
-        </div>
-      </div>
-    </div>`).join("") + `
-    <div class="ajuda">Use *asteriscos* para destacar palavras e uma linha em branco para separar parágrafos.</div>
-    <div class="acoes"><button data-salvar-edicao="${esc(pasta)}">Salvar e renderizar</button><button class="sec" data-cancelar-edicao="${esc(pasta)}">Cancelar</button><span class="msg"></span></div>`;
-}
-
-async function salvarEdicao(botao, pasta) {
-  const el = document.querySelector(`[data-editor="${CSS.escape(pasta)}"]`);
-  await acao(botao, botao.parentElement.querySelector(".msg"), async () => {
-    const slides = [];
-    const imagens = {};
-    for (const bloco of el.querySelectorAll(".slide-ed")) {
-      const i = Number(bloco.dataset.i);
-      slides[i] = { titulo: bloco.querySelector('[data-campo="titulo"]').value, subtitulo: bloco.querySelector('[data-campo="subtitulo"]').value };
-      const arquivo = bloco.querySelector('[data-campo="imagem"]').files[0];
-      if (arquivo) imagens[i] = await lerArquivo(arquivo);
-      else if (bloco.querySelector('[data-campo="remover"]')?.checked) imagens[i] = null;
-    }
-    await put(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}`, { slides, imagens });
-    mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
-    toast("Carrossel atualizado.");
-  });
-}
-
 (async () => {
   status = await api("/api/status");
-  $("selos").innerHTML = [[status.ia ? `IA: ${status.ia}` : "IA (copy)", status.ia], ["Apify (Instagram)", status.apify], ["YouTube API", status.youtube]]
-    .map(([n, ok]) => `<span class="selo ${ok ? "on" : "off"}">${n}: ${ok ? "ativo" : "demo"}</span>`).join("");
+  $("conexoes").innerHTML = [
+    [status.ia ? `IA de texto: ${status.ia}` : "IA de texto", status.ia],
+    ["Imagens (gpt-image-2)", status.imagens],
+    ["Coleta do Instagram", status.apify],
+    ["Coleta do YouTube", status.youtube],
+    ["Envio ao Instagram", status.hospedagem],
+  ].map(([n, ok]) => `<div class="conexao ${ok ? "on" : ""}"><i></i>${n}${ok ? "" : " · demo"}</div>`).join("");
   rotear();
 })();
 </script>

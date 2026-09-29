@@ -61,7 +61,12 @@ Modelo: ${modelo.nome}
 ${estrutura}
 </estrutura_do_carrossel>
 
-${exemplos ? `<carrosseis_aprovados>
+${opcoes.rejeitados?.length ? `<carrosseis_descartados>
+Carrosséis que o cliente DESCARTOU e o motivo. Aprenda com isso e não repita os mesmos erros:
+${opcoes.rejeitados.map((r) => `- ${r.angulo}${r.estilo ? ` (estilo ${r.estilo})` : ""}: ${r.motivo}`).join("\n")}
+</carrosseis_descartados>
+
+` : ""}${exemplos ? `<carrosseis_aprovados>
 Estes carrosséis já foram publicados e aprovados. Use-os como padrão de tom, ritmo e tamanho de texto. A ordem dos slides segue sempre a <estrutura_do_carrossel> acima, mesmo que os exemplos tenham outra estrutura.
 
 ${exemplos}

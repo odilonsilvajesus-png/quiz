@@ -7,20 +7,14 @@ import { ranquear } from "./ranking.js";
 import { escreverCarrossel } from "./copy.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
+import { historico, salvarHistorico, aprendizados } from "./carrosseis.js";
+
+export { historico };
 import { temGeradorImagem, slidesComImagem, gerarImagem, emParalelo, resolverModo } from "./imagens.js";
 import { listarEstilos } from "./render.js";
 
 const slug = (t) =>
   t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
-
-function arquivoHistorico(clienteId) {
-  return path.join(pastaSaida(clienteId), "historico.json");
-}
-
-export function historico(clienteId) {
-  const arq = arquivoHistorico(clienteId);
-  return fs.existsSync(arq) ? JSON.parse(fs.readFileSync(arq, "utf8")) : [];
-}
 
 export async function referenciasRanqueadas(cliente, { recoletar = false, limite = 20, log } = {}) {
   const coleta = (!recoletar && ultimaColeta(cliente.id)) || (await coletar(cliente, { log }));
@@ -37,7 +31,7 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
   const estiloImagem = cliente.visual.imagens?.estilo || "";
   log(`Escrevendo carrossel (${modelo.nome}) a partir de ${referencia.perfil} (${referencia.ranking?.outlier ?? "-"}x)...`);
   const copy = await escreverCarrossel(cliente, referencia, {
-    angulo, indice, modelo, angulosRecentes: recentes, comImagem: modoImagens !== "nenhuma", estiloImagem, estilo: infoEstilo,
+    angulo, indice, modelo, angulosRecentes: recentes, rejeitados: aprendizados(cliente.id), comImagem: modoImagens !== "nenhuma", estiloImagem, estilo: infoEstilo,
   });
   // Cada slide guarda o próprio fundo, para re-renderizar igual mesmo se o modelo mudar depois.
   copy.slides = copy.slides.map((s, i) => ({ ...s, fundo: modelo.estrutura[i]?.fundo || "escuro" }));
@@ -64,8 +58,11 @@ export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
   const render = await renderizar(cliente, carrossel, pasta);
 
   const hist = historico(cliente.id);
-  hist.push({ data: carrossel.criado_em, angulo: copy.angulo, referencia: referencia.id, pasta: path.basename(pasta), demo: !!copy.demo });
-  fs.writeFileSync(arquivoHistorico(cliente.id), JSON.stringify(hist, null, 2));
+  hist.push({
+    data: carrossel.criado_em, angulo: copy.angulo, referencia: referencia.id, pasta: path.basename(pasta),
+    demo: !!copy.demo, estado: "rascunho", modelo: modelo.nome, estilo: carrossel.estilo,
+  });
+  salvarHistorico(cliente.id, hist);
 
   return { carrossel, ...render };
 }
