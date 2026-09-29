@@ -4,8 +4,11 @@ import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
 
 export const temIA = () => Boolean(provedor());
 
-function esquema(qtdSlides, comImagem) {
+function esquema(qtdSlides, comImagem, comDiagrama) {
   const slide = { titulo: z.string(), subtitulo: z.string() };
+  if (comDiagrama) {
+    slide.etapas = z.array(z.string()).describe("3 a 5 rótulos curtos de uma sequência, só nos slides que ensinam etapas. Vazio nos outros.");
+  }
   if (comImagem) {
     slide.imagem = z.string().describe("A cena exata que este slide descreve, mostrada como fotografia: quem, fazendo o quê, onde, com qual expressão. Sem texto na imagem.");
   }
@@ -26,8 +29,8 @@ function esquema(qtdSlides, comImagem) {
 
 // As imagens nascem do texto: uma direção de arte para o carrossel inteiro e, em cada slide,
 // a cena que aquele texto descreve. Nada genérico ou de banco de imagens.
-function regrasImagem(cliente, preferencia) {
-  return `Imagens (serão geradas por IA a partir do que você escrever):
+function regrasImagem(cliente, preferencia, direcaoEstilo) {
+  return `Imagens (serão geradas por IA a partir do que você escrever):${direcaoEstilo ? `\n- Tipo de imagem que este estilo visual pede: ${direcaoEstilo}` : ""}
 - Preencha "direcao_de_arte" com UM conceito visual para o carrossel inteiro, tirado do tema e do público de ${cliente.nome}: a mesma personagem principal em todos os slides (idade, aparência, roupa), o mesmo ambiente, a mesma luz e o mesmo clima emocional.${preferencia ? ` Preferência visual do cliente: ${preferencia}.` : ""}
 - Em cada slide, preencha "imagem" com a cena que ILUSTRA LITERALMENTE aquele texto: se o slide fala de comer escondida à noite, mostre a personagem comendo escondida à noite. A imagem precisa fazer sentido mesmo para quem ler só aquele slide.
 - Mostre ação, gesto e expressão concretos. Nada de imagem genérica, simbólica demais, de banco de imagens ou sem relação com a frase.
@@ -71,7 +74,7 @@ Regras de formato:
 ${c.angulos?.length ? `- Escolha o ângulo mais adequado desta lista: ${c.angulos.join("; ")}.` : ""}
 ${c.proibir_travessao ? "- Nunca use travessão (— ou –). Use vírgula, ponto, dois pontos ou hífen simples." : ""}
 - Legenda: ${c.cta_legenda || "termine com um CTA claro."}
-${opcoes.comImagem ? `${regrasImagem(cliente, opcoes.estiloImagem)}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
+${opcoes.estilo?.formato_texto ? `- Formato do texto para o estilo visual "${opcoes.estilo.nome}": ${opcoes.estilo.formato_texto}\n` : ""}${opcoes.comImagem ? `${regrasImagem(cliente, opcoes.estiloImagem, opcoes.estilo?.direcao_imagem)}\n` : ""}- Nunca invente números, depoimentos, preços ou resultados. Quando precisar de um dado que não existe na base, use um marcador entre colchetes e liste em "pendencias".`;
 }
 
 function promptUsuario(referencia, { angulo, angulosRecentes = [] }) {
@@ -125,7 +128,7 @@ export async function escreverCarrossel(cliente, referencia, opcoes = {}) {
   const resultado = await gerarEstruturado({
     sistema: promptSistema(cliente, modelo, opcoes),
     usuario: promptUsuario(referencia, opcoes),
-    schema: esquema(qtd, opcoes.comImagem),
+    schema: esquema(qtd, opcoes.comImagem, opcoes.estilo?.diagrama),
     nome: "carrossel",
   });
   if (resultado.slides.length !== qtd) {

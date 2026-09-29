@@ -52,7 +52,7 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 | **Perfil e referências** | Nome, Instagram e nicho do cliente. Perfis do Instagram e canais do YouTube de referência (cole o @ ou o link). **Salvar e coletar** já busca os posts. |
 | **Voz e direcionamento** | **1. Tom de voz coletado pelo sistema** a partir das legendas do Instagram do cliente (editável). **2. Informações e direcionamento**: o que você levantou sobre o cliente; a IA segue com prioridade. **3. Temas e regras**: temas, CTA da legenda, proibir travessão. |
 | **Modelos de carrossel** | Biblioteca de estruturas (Quebra de crença, Lista de dicas, Mito x Verdade, Storytelling, Passo a passo, Erros comuns, e o modelo próprio do cliente quando existe). Escolha o padrão e veja a prévia. |
-| **Identidade visual** | **Estilo do carrossel** (Clássico, Editorial, Tweet, Cinematográfico, Dividido), **imagens com IA** (nenhuma, só capa ou todos os slides, com estilo das imagens), paleta de 6 cores (com paletas prontas), fonte, assinatura, logo e textos. Prévia ao vivo antes de salvar. |
+| **Identidade visual** | **Estilo do carrossel** (Clássico, Editorial, Tweet, Cinematográfico, Dividido, Papelaria editorial, Minimalista de texto, Parábola ilustrada, Ensaio quadriculado), **foto do cliente** (PNG sem fundo, usada na capa da Papelaria), **imagens com IA** (nenhuma, só capa ou todos os slides, com estilo das imagens), paleta de 6 cores (com paletas prontas), fonte, assinatura, logo e textos. Prévia ao vivo antes de salvar. |
 
 Os arquivos saem em `saida/<cliente>/carrosseis/<data>-<tema>/`: `slide-01.png` …, `legenda.txt`, `carrossel.json` (editável) e `carrossel.html`.
 
@@ -71,6 +71,17 @@ As imagens são geradas sozinhas, a partir do conteúdo, sem ninguém escrever p
 
 No modo **automático** (padrão), Clássico, Editorial e Tweet ganham imagem na capa, e Cinematográfico e Dividido, em todos os slides. A direção de arte e a cena de cada imagem aparecem em cada carrossel gerado.
 Precisa de `OPENAI_API_KEY`. Cada imagem tem custo; qualidade e modelo mudam no `.env` (`IMAGEM_QUALIDADE`, `IMAGEM_MODELO`).
+
+### Editar um carrossel gerado
+Em cada carrossel da aba **Conteúdo**, o botão **Editar** abre os textos de cada slide e permite trocar ou remover a imagem de um slide (por exemplo, subir um print real de comentário ou resultado). **Salvar e renderizar** gera os PNGs de novo.
+Prints de prova social devem ser sempre reais: a IA nunca inventa depoimentos ou resultados.
+
+### Estilos com formato próprio
+Alguns estilos pedem um jeito de escrever diferente, e a IA recebe essas regras automaticamente:
+- **Minimalista de texto:** destaque em negrito (não em cor), capa em caixa alta, sem imagens.
+- **Parábola ilustrada:** história frase a frase, falas entre aspas em faixa de papel, frase de virada em faixa escura. As imagens mantêm a mesma personagem: a primeira é gerada e serve de referência para as outras.
+- **Ensaio quadriculado:** títulos "Passo 1:" viram rótulo manuscrito e, quando o slide ensina uma sequência, o sistema desenha um diagrama de etapas a partir do texto.
+- **Papelaria editorial:** o fundo de cada slide é uma mesa com objetos ligados ao tema daquele slide.
 
 ### Criar um estilo visual novo
 Copie um arquivo de `templates/` (ex.: `editorial.js`), mude `info` (nome e descrição), o CSS e o HTML do slide.

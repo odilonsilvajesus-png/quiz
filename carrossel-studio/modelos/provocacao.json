@@ -1,0 +1,38 @@
+{
+  "id": "provocacao",
+  "nome": "Provocação",
+  "descricao": "Frases de impacto que cutucam o público, uma por slide. Combina com o estilo Papelaria editorial.",
+  "ordem": 13,
+  "estrutura": [
+    {
+      "papel": "Capa provocativa",
+      "fundo": "claro",
+      "instrucao": "Frase que cutuca uma desculpa comum do público."
+    },
+    {
+      "papel": "Espelho",
+      "fundo": "claro",
+      "instrucao": "Mostra a consequência de continuar igual."
+    },
+    {
+      "papel": "A desculpa",
+      "fundo": "claro",
+      "instrucao": "Nomeia a desculpa mais usada e desmonta."
+    },
+    {
+      "papel": "O custo",
+      "fundo": "claro",
+      "instrucao": "O que se perde adiando."
+    },
+    {
+      "papel": "Virada",
+      "fundo": "claro",
+      "instrucao": "O pequeno passo possível hoje."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "claro",
+      "instrucao": "Convite direto para agir. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

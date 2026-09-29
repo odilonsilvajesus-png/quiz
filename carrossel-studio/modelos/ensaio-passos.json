@@ -1,0 +1,63 @@
+{
+  "id": "ensaio-passos",
+  "nome": "Ensaio em passos",
+  "descricao": "Texto de autoridade: provoca, diagnostica o problema e ensina um passo a passo. Combina com o estilo Ensaio quadriculado.",
+  "ordem": 11,
+  "estrutura": [
+    {
+      "papel": "Capa provocativa",
+      "fundo": "claro",
+      "instrucao": "Afirmação ousada sobre algo que quase ninguém faz ou fala."
+    },
+    {
+      "papel": "Convite",
+      "fundo": "escuro",
+      "instrucao": "Pede para a leitora fazer um teste rápido ou olhar para a própria realidade."
+    },
+    {
+      "papel": "O problema",
+      "fundo": "claro",
+      "instrucao": "Nomeia o problema que o teste revela."
+    },
+    {
+      "papel": "Por que acontece",
+      "fundo": "escuro",
+      "instrucao": "Explica a causa real do problema."
+    },
+    {
+      "papel": "Consequência",
+      "fundo": "claro",
+      "instrucao": "O que esse problema está custando."
+    },
+    {
+      "papel": "A virada",
+      "fundo": "escuro",
+      "instrucao": "A nova forma de pensar que resolve."
+    },
+    {
+      "papel": "Passo 1",
+      "fundo": "claro",
+      "instrucao": "Título começando com \"Passo 1:\". Primeira ação prática."
+    },
+    {
+      "papel": "Passo 2",
+      "fundo": "escuro",
+      "instrucao": "Título começando com \"Passo 2:\". Segunda ação prática."
+    },
+    {
+      "papel": "Passo 3",
+      "fundo": "claro",
+      "instrucao": "Título começando com \"Passo 3:\". Terceira ação, com a sequência completa em etapas."
+    },
+    {
+      "papel": "Prova ou bastidor",
+      "fundo": "escuro",
+      "instrucao": "Por que isso funciona. Sem inventar números ou depoimentos."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "claro",
+      "instrucao": "Resumo e convite. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

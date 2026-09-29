@@ -3,8 +3,33 @@
 export const escapar = (t) =>
   String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-// *palavra* vira destaque na cor do fundo atual.
-export const comDestaque = (t) => escapar(t).replace(/\*([^*]+)\*/g, '<span class="destaque">$1</span>');
+// *palavra* vira destaque (cada estilo decide a aparência: cor, negrito, caixa...). \n vira quebra de linha.
+export const comDestaque = (t) =>
+  escapar(t).replace(/\*([^*]+)\*/g, '<span class="destaque">$1</span>').replace(/\n/g, "<br>");
+
+export const semMarcacao = (t) => String(t ?? "").replace(/\*/g, "");
+
+// Linha em branco separa parágrafos. Cada parágrafo recebe classes conforme o formato:
+// fala entre aspas -> "fala"; parágrafo inteiro entre asteriscos -> "virada".
+export function paragrafos(t) {
+  return String(t ?? "")
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => {
+      const fala = /^["“”']/.test(p);
+      const virada = /^\*[^*]+\*[.!?…]*$/.test(p);
+      const texto = virada ? p.replace(/^\*|\*(?=[.!?…]*$)/g, "") : p;
+      return `<p class="${fala ? "fala" : virada ? "virada" : ""}">${comDestaque(texto)}</p>`;
+    })
+    .join("");
+}
+
+// Cor em hex + transparência.
+export function rgba(hex, alfa) {
+  const n = parseInt(String(hex).replace("#", "").slice(0, 6), 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alfa})`;
+}
 
 // Escolhe o tamanho da fonte pelo tamanho do texto: [[até N caracteres, px], ...], mínimo.
 export function tamanho(texto, faixas, minimo) {

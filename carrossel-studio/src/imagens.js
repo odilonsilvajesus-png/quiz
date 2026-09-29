@@ -1,6 +1,6 @@
 // Gera as imagens dos slides com o gpt-image-2 da OpenAI.
 import fs from "node:fs";
-import OpenAI from "openai";
+import OpenAI, { toFile } from "openai";
 
 const MODELO = () => process.env.IMAGEM_MODELO || "gpt-image-2";
 const QUALIDADE = () => process.env.IMAGEM_QUALIDADE || "medium";
@@ -20,9 +20,13 @@ export function slidesComImagem(modo, total) {
   return [];
 }
 
-function montarPrompt({ descricao, direcao, estilo, paleta }) {
+function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia }) {
   return [
+    comReferencia
+      ? "Use a imagem de referência só para manter a mesma personagem, o mesmo cenário, a mesma luz e o mesmo estilo. Crie uma cena NOVA:"
+      : "",
     `Cena: ${descricao}`,
+    direcaoEstilo ? `Composição exigida pelo layout: ${direcaoEstilo}` : "",
     direcao ? `Direção de arte do carrossel (mantenha a mesma personagem, ambiente e luz): ${direcao}` : "",
     estilo ? `Preferência visual: ${estilo}.` : "",
     "Fotografia realista e natural, com emoção verdadeira, sem aparência de banco de imagens.",
@@ -33,16 +37,25 @@ function montarPrompt({ descricao, direcao, estilo, paleta }) {
   ].filter(Boolean).join(" ");
 }
 
-export async function gerarImagem({ descricao, direcao, estilo, paleta, destino }) {
+// Com `referencia` (caminho de uma imagem já gerada), usa a edição de imagem para manter a continuidade.
+// Se a edição falhar, gera do zero.
+export async function gerarImagem({ descricao, direcao, direcaoEstilo, estilo, paleta, referencia, destino }) {
   const client = new OpenAI();
-  const resposta = await client.images.generate({
-    model: MODELO(),
-    prompt: montarPrompt({ descricao, direcao, estilo, paleta }),
-    size: TAMANHO,
-    quality: QUALIDADE(),
-    output_format: "jpeg",
-    n: 1,
-  });
+  const base = { model: MODELO(), size: TAMANHO, quality: QUALIDADE(), output_format: "jpeg", n: 1 };
+  let resposta;
+  if (referencia) {
+    try {
+      resposta = await client.images.edit({
+        ...base,
+        image: await toFile(fs.createReadStream(referencia), "referencia.jpg", { type: "image/jpeg" }),
+        input_fidelity: "high",
+        prompt: montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia: true }),
+      });
+    } catch (erro) {
+      console.warn(`Aviso: edição com referência falhou (${erro.message}). Gerando sem referência.`);
+    }
+  }
+  resposta ??= await client.images.generate({ ...base, prompt: montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta }) });
   const b64 = resposta.data?.[0]?.b64_json;
   if (!b64) throw new Error("A OpenAI não devolveu a imagem.");
   fs.writeFileSync(destino, Buffer.from(b64, "base64"));

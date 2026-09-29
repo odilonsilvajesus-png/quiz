@@ -1,0 +1,38 @@
+{
+  "id": "reflexao",
+  "nome": "Reflexão",
+  "descricao": "Mensagem de reflexão em frases curtas, uma ideia por slide. Combina com o estilo Minimalista de texto.",
+  "ordem": 12,
+  "estrutura": [
+    {
+      "papel": "Capa",
+      "fundo": "claro",
+      "instrucao": "Uma frase curta e forte que resume a mensagem."
+    },
+    {
+      "papel": "Reflexão 1",
+      "fundo": "claro",
+      "instrucao": "Uma frase em negrito e uma explicação de 1 a 2 frases."
+    },
+    {
+      "papel": "Reflexão 2",
+      "fundo": "claro",
+      "instrucao": "Outra frase em negrito e sua explicação."
+    },
+    {
+      "papel": "Contraste",
+      "fundo": "claro",
+      "instrucao": "O que é fácil fazer x o que é difícil e necessário, com negrito nos trechos fortes."
+    },
+    {
+      "papel": "Reflexão final",
+      "fundo": "claro",
+      "instrucao": "A frase mais profunda da sequência."
+    },
+    {
+      "papel": "Fechamento + CTA",
+      "fundo": "claro",
+      "instrucao": "Convite para salvar, enviar para alguém ou comentar."
+    }
+  ]
+}

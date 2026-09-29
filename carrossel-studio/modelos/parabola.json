@@ -1,0 +1,43 @@
+{
+  "id": "parabola",
+  "nome": "Parábola",
+  "descricao": "História com personagem, conflito e virada que termina numa lição. Combina com o estilo Parábola ilustrada.",
+  "ordem": 10,
+  "estrutura": [
+    {
+      "papel": "Capa intrigante",
+      "fundo": "destaque",
+      "instrucao": "Promessa curta e misteriosa de que a história vai mudar a forma de ver algo."
+    },
+    {
+      "papel": "Cenário e personagem",
+      "fundo": "claro",
+      "instrucao": "Apresenta a personagem e a situação difícil em que ela vive."
+    },
+    {
+      "papel": "A dor",
+      "fundo": "claro",
+      "instrucao": "Mostra a pergunta ou o sofrimento da personagem, com uma fala dela entre aspas."
+    },
+    {
+      "papel": "O encontro",
+      "fundo": "claro",
+      "instrucao": "Alguém ou algo aparece e traz uma chance ou um conselho, com uma fala entre aspas."
+    },
+    {
+      "papel": "A dúvida",
+      "fundo": "escuro",
+      "instrucao": "A personagem não entende ou resiste ao conselho."
+    },
+    {
+      "papel": "A decisão",
+      "fundo": "claro",
+      "instrucao": "Mesmo assim, ela decide tentar. Termine com a frase de virada."
+    },
+    {
+      "papel": "A lição + CTA",
+      "fundo": "destaque",
+      "instrucao": "O que aconteceu e a lição para a vida da leitora. O botão de CTA é adicionado pelo template."
+    }
+  ]
+}

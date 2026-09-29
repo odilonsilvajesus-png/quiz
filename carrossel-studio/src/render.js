@@ -8,7 +8,7 @@ import { RAIZ } from "./cliente.js";
 const require = createRequire(import.meta.url);
 
 // Fontes ficam embutidas no HTML para o render funcionar offline e o preview abrir em qualquer lugar.
-function fontesCss(fonte, pesos = [400, 500, 600, 700, 800]) {
+function fontesCss(fonte, pesos = [400, 500, 600, 700, 800, 900]) {
   const slug = fonte.toLowerCase().replace(/\s+/g, "-");
   let pasta;
   try {
@@ -48,7 +48,7 @@ export async function listarEstilos() {
       return { id: path.basename(f, ".js"), ...t.info };
     }),
   );
-  const ordem = ["classico", "editorial", "tweet", "cinematografico", "dividido"];
+  const ordem = ["classico", "editorial", "tweet", "cinematografico", "dividido", "papelaria", "minimalista", "parabola", "ensaio"];
   return estilos.sort((a, b) => (ordem.indexOf(a.id) + 1 || 99) - (ordem.indexOf(b.id) + 1 || 99));
 }
 
@@ -61,6 +61,8 @@ export async function montarHtml(cliente, carrossel, { cssExtra = "", pastaImage
   const visual = {
     ...cliente.visual,
     logo: comoDataUri(cliente.visual.logo, cliente.pasta),
+    foto_pessoa: comoDataUri(cliente.visual.foto_pessoa, cliente.pasta),
+    data: new Date(carrossel.criado_em || Date.now()).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }),
     nome_exibicao: cliente.nome,
     arroba: cliente.instagram || cliente.visual.assinatura,
   };
@@ -81,7 +83,7 @@ export async function montarHtml(cliente, carrossel, { cssExtra = "", pastaImage
 
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
 <title>${cliente.nome} · ${carrossel.angulo}</title>
-<style>${template.css(visual, fontesCss(visual.fonte || "Poppins"))}${cssExtra}</style>
+<style>${template.css(visual, [visual.fonte || "Poppins", ...(template.info?.fontes || [])].filter((f, k, l) => l.indexOf(f) === k).map((f) => fontesCss(f)).join("\n"))}${cssExtra}</style>
 </head><body>${slides}</body></html>`;
 }
 

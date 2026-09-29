@@ -4,12 +4,12 @@ import http from "node:http";
 import path from "node:path";
 import {
   RAIZ, PASTA_SAIDA, FONTES, carregarCliente, listarClientes, criarCliente, fundosDaPaleta,
-  salvarReferencias, salvarPerfil, salvarVisual, salvarLogo, salvarConteudo, salvarVoz,
+  salvarReferencias, salvarPerfil, salvarVisual, salvarImagemCliente, salvarConteudo, salvarVoz, gravarDataUrl,
   salvarDirecionamento, adicionarExemplo,
 } from "./cliente.js";
 import { referenciasRanqueadas, gerarCarrossel, historico } from "./pipeline.js";
 import { listarModelos, modelosDoCliente, resolverModelo } from "./modelos.js";
-import { montarHtml, listarEstilos } from "./render.js";
+import { montarHtml, listarEstilos, renderizar } from "./render.js";
 import { imagemExemplo, slidesComImagem, temGeradorImagem, resolverModo } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
 import { descreverVoz } from "./copy.js";
@@ -62,7 +62,9 @@ function listarGerados(clienteId) {
       if (!fs.existsSync(path.join(pasta, "carrossel.json"))) return null;
       const carrossel = JSON.parse(fs.readFileSync(path.join(pasta, "carrossel.json"), "utf8"));
       const imagens = fs.readdirSync(pasta).filter((f) => f.endsWith(".png")).sort();
-      return { ...h, carrossel, imagens: imagens.map((f) => `/saida/${clienteId}/carrosseis/${h.pasta}/${f}`) };
+      // ?v= muda quando o slide é renderizado de novo, para o navegador não mostrar a versão antiga.
+      const versao = (f) => Math.round(fs.statSync(path.join(pasta, f)).mtimeMs);
+      return { ...h, carrossel, imagens: imagens.map((f) => `/saida/${clienteId}/carrosseis/${h.pasta}/${f}?v=${versao(f)}`) };
     })
     .filter(Boolean);
 }
@@ -98,6 +100,7 @@ function detalheCliente(id) {
       cta_final: c.visual.cta_final || "",
       texto_arraste: c.visual.rodape?.texto_arraste || "",
       tem_logo: Boolean(c.visual.logo),
+      tem_foto_pessoa: Boolean(c.visual.foto_pessoa),
       template: c.visual.template,
       imagens: c.visual.imagens,
     },
@@ -142,6 +145,27 @@ async function previa(id, dados) {
   return new Resposta("text/html; charset=utf-8", html);
 }
 
+// Ajuste manual de um carrossel já gerado: textos e troca/remoção da imagem de cada slide
+// (ex.: subir um print real). Depois renderiza de novo.
+async function editarCarrossel(id, nomePasta, { slides = [], imagens = {} }) {
+  const cliente = carregarCliente(id);
+  const pasta = pastaCarrossel(id, nomePasta);
+  const arquivo = path.join(pasta, "carrossel.json");
+  const carrossel = JSON.parse(fs.readFileSync(arquivo, "utf8"));
+  slides.forEach((s, i) => {
+    if (!carrossel.slides[i]) return;
+    if (typeof s.titulo === "string") carrossel.slides[i].titulo = s.titulo;
+    if (typeof s.subtitulo === "string") carrossel.slides[i].subtitulo = s.subtitulo;
+  });
+  for (const [i, dataUrl] of Object.entries(imagens)) {
+    const s = carrossel.slides[Number(i)];
+    if (!s) continue;
+    s.imagem = dataUrl ? gravarDataUrl(dataUrl, pasta, `enviada-${String(Number(i) + 1).padStart(2, "0")}-${Date.now()}`) : undefined;
+  }
+  await renderizar(cliente, carrossel, pasta);
+  return listarGerados(id).find((g) => g.pasta === nomePasta);
+}
+
 async function gerarVoz(id) {
   const cliente = carregarCliente(id);
   if (!cliente.instagram) throw new Error("Preencha o Instagram do cliente na aba Referências primeiro.");
@@ -171,7 +195,9 @@ const rotas = [
   rota("GET", "/api/clientes/:id", (m) => detalheCliente(m[1])),
   rota("PUT", "/api/clientes/:id/perfil", async (m, _u, req) => (salvarPerfil(m[1], await corpo(req)), detalheCliente(m[1]))),
   rota("PUT", "/api/clientes/:id/visual", async (m, _u, req) => (salvarVisual(m[1], await corpo(req)), detalheCliente(m[1]))),
-  rota("PUT", "/api/clientes/:id/logo", async (m, _u, req) => (salvarLogo(m[1], (await corpo(req)).dataUrl), detalheCliente(m[1]))),
+  rota("PUT", "/api/clientes/:id/logo", async (m, _u, req) => (salvarImagemCliente(m[1], "logo", (await corpo(req)).dataUrl), detalheCliente(m[1]))),
+  rota("PUT", "/api/clientes/:id/foto-pessoa", async (m, _u, req) => (salvarImagemCliente(m[1], "foto_pessoa", (await corpo(req)).dataUrl), detalheCliente(m[1]))),
+  rota("PUT", "/api/clientes/:id/carrosseis/([\\w.-]+)", async (m, _u, req) => editarCarrossel(m[1], m[2], await corpo(req))),
   rota("PUT", "/api/clientes/:id/conteudo", async (m, _u, req) => (salvarConteudo(m[1], await corpo(req)), detalheCliente(m[1]))),
   rota("PUT", "/api/clientes/:id/voz", async (m, _u, req) => (salvarVoz(m[1], (await corpo(req)).texto), { ok: true })),
   rota("POST", "/api/clientes/:id/voz/gerar", (m) => gerarVoz(m[1])),

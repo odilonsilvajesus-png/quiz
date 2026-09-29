@@ -111,6 +111,11 @@
   .estilo span { font-size:12px; color:var(--suave); line-height:1.35; display:block; pointer-events:none; }
   .estilo.ativo { border-color:var(--acento); box-shadow:0 0 0 1px var(--acento); }
   @media (max-width: 500px) { .estilos { grid-template-columns:1fr; } }
+  .editor { margin-top:14px; border-top:1px solid var(--borda); padding-top:14px; display:grid; gap:14px; }
+  .editor .slide-ed { display:grid; grid-template-columns: 110px 1fr; gap:12px; align-items:start; }
+  .editor .slide-ed img { width:110px; aspect-ratio:1080/1350; border-radius:6px; border:1px solid var(--borda); }
+  .editor textarea { font-size:13px; }
+  .editor .miudo { font-size:12px; color:var(--suave); display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:6px; }
   iframe.previa { width:100%; height:640px; border:1px solid var(--borda); border-radius:12px; background:repeating-conic-gradient(#eee 0% 25%, #fafafa 0% 50%) 50% / 20px 20px; }
   .toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--texto); color:#fff; padding:10px 16px; border-radius:8px; font-size:13px; z-index:10; opacity:0; transition:opacity .2s; pointer-events:none; }
   .toast.on { opacity:1; }
@@ -172,6 +177,8 @@ async function acao(botao, msgEl, fn, { ok = "Salvo." } = {}) {
 }
 
 const swatches = (p) => [p.escura, p.clara, p.destaque, p.destaque2];
+const lerArquivo = (f) => new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(f); });
+let gerados = [];
 
 // ============ roteamento ============
 async function rotear() {
@@ -305,6 +312,7 @@ async function abaConteudo(recoletar = false) {
 }
 
 function mostrarGerados(lista) {
+  gerados = lista;
   const el = $("gerados");
   if (!el) return;
   if (!lista.length) { el.innerHTML = '<span class="vazio">Nenhum carrossel ainda. Escolha uma referência e clique em Gerar carrossel.</span>'; return; }
@@ -318,7 +326,8 @@ function mostrarGerados(lista) {
       <details><summary>Legenda</summary><pre>${esc(g.carrossel.legenda)}</pre></details>
       ${g.carrossel.direcao_de_arte ? `<details><summary>Direção de arte das imagens</summary><pre>${esc(g.carrossel.direcao_de_arte)}\n\n${g.carrossel.slides.map((s, i) => s.imagem_descricao ? `Slide ${i + 1}: ${s.imagem_descricao}` : "").filter(Boolean).map(esc).join("\n")}</pre></details>` : ""}
       ${g.carrossel.pendencias?.length ? `<details open><summary>Pendências para preencher</summary><pre>${esc(g.carrossel.pendencias.join("\n"))}</pre></details>` : ""}
-      <div class="acoes"><button class="sec" data-aprovar="${esc(g.pasta)}">Aprovar como exemplo</button><span class="msg"></span></div>
+      <div class="acoes"><button class="sec" data-editar="${esc(g.pasta)}">Editar</button><button class="sec" data-aprovar="${esc(g.pasta)}">Aprovar como exemplo</button><span class="msg"></span></div>
+      <div class="editor" data-editor="${esc(g.pasta)}" hidden></div>
     </div>`).join("");
 }
 
@@ -566,6 +575,9 @@ function abaVisual() {
         <input id="ctaFinal" class="campo" placeholder="SALVAR ESTE POST">
         <label for="arraste">Texto de "arraste"</label>
         <input id="arraste" class="campo" placeholder="ARRASTE →">
+        <label>Foto do cliente (PNG sem fundo)</label>
+        <div class="ajuda">Usada na capa do estilo Papelaria editorial, com a pessoa recortada abaixo do título.</div>
+        <div class="linha"><input type="file" id="fotoPessoa" accept="image/png,image/webp">${c.visual.tem_foto_pessoa ? '<button class="sec" id="removerFoto">Remover foto</button>' : ""}</div>
         <label>Logo (aparece no topo, no lugar da assinatura)</label>
         <div class="linha"><input type="file" id="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml">${c.visual.tem_logo ? '<button class="sec" id="removerLogo">Remover logo</button>' : ""}</div>
 
@@ -634,9 +646,21 @@ function abaVisual() {
     const f = e.target.files[0];
     if (!f) return;
     if (f.size > 2_000_000) return alert("Use uma imagem de até 2 MB.");
-    const dataUrl = await new Promise((ok) => { const r = new FileReader(); r.onload = () => ok(r.result); r.readAsDataURL(f); });
-    cliente = await put(`/api/clientes/${c.id}/logo`, { dataUrl });
+    cliente = await put(`/api/clientes/${c.id}/logo`, { dataUrl: await lerArquivo(f) });
     toast("Logo enviado.");
+    abaVisual();
+  };
+  $("fotoPessoa").onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 5_000_000) return alert("Use uma imagem de até 5 MB.");
+    cliente = await put(`/api/clientes/${c.id}/foto-pessoa`, { dataUrl: await lerArquivo(f) });
+    toast("Foto enviada.");
+    abaVisual();
+  };
+  if ($("removerFoto")) $("removerFoto").onclick = async () => {
+    cliente = await put(`/api/clientes/${c.id}/foto-pessoa`, { dataUrl: null });
+    toast("Foto removida.");
     abaVisual();
   };
   if ($("removerLogo")) $("removerLogo").onclick = async () => {
@@ -669,12 +693,54 @@ document.addEventListener("click", async (e) => {
     } catch (erro) { alert(erro.message); }
     botao.disabled = false; botao.textContent = "Gerar carrossel";
   }
+  if (d.editar) abrirEditor(d.editar);
+  if (d.salvarEdicao) salvarEdicao(e.target, d.salvarEdicao);
+  if (d.cancelarEdicao) document.querySelector(`[data-editor="${CSS.escape(d.cancelarEdicao)}"]`).hidden = true;
   if (d.aprovar) {
     const msg = e.target.nextElementSibling;
     acao(e.target, msg, () => post(`/api/clientes/${cliente.id}/aprovar`, { pasta: d.aprovar }),
       { ok: (r) => `Aprovado. ${r.exemplos} exemplo(s) de tom salvos.` });
   }
 });
+
+// ---------- edição de um carrossel gerado ----------
+function abrirEditor(pasta) {
+  const g = gerados.find((x) => x.pasta === pasta);
+  const el = document.querySelector(`[data-editor="${CSS.escape(pasta)}"]`);
+  el.hidden = false;
+  el.innerHTML = g.carrossel.slides.map((s, i) => `
+    <div class="slide-ed" data-i="${i}">
+      <img src="${g.imagens[i]}" alt="">
+      <div>
+        <textarea rows="2" data-campo="titulo">${esc(s.titulo)}</textarea>
+        <textarea rows="3" data-campo="subtitulo" style="margin-top:6px">${esc(s.subtitulo)}</textarea>
+        <div class="miudo">
+          <span>Imagem do slide (ex.: print real):</span><input type="file" accept="image/*" data-campo="imagem">
+          ${s.imagem ? `<label style="margin:0;text-transform:none;letter-spacing:0;font-weight:400"><input type="checkbox" data-campo="remover"> remover imagem</label>` : ""}
+        </div>
+      </div>
+    </div>`).join("") + `
+    <div class="ajuda">Use *asteriscos* para destacar palavras e uma linha em branco para separar parágrafos.</div>
+    <div class="acoes"><button data-salvar-edicao="${esc(pasta)}">Salvar e renderizar</button><button class="sec" data-cancelar-edicao="${esc(pasta)}">Cancelar</button><span class="msg"></span></div>`;
+}
+
+async function salvarEdicao(botao, pasta) {
+  const el = document.querySelector(`[data-editor="${CSS.escape(pasta)}"]`);
+  await acao(botao, botao.parentElement.querySelector(".msg"), async () => {
+    const slides = [];
+    const imagens = {};
+    for (const bloco of el.querySelectorAll(".slide-ed")) {
+      const i = Number(bloco.dataset.i);
+      slides[i] = { titulo: bloco.querySelector('[data-campo="titulo"]').value, subtitulo: bloco.querySelector('[data-campo="subtitulo"]').value };
+      const arquivo = bloco.querySelector('[data-campo="imagem"]').files[0];
+      if (arquivo) imagens[i] = await lerArquivo(arquivo);
+      else if (bloco.querySelector('[data-campo="remover"]')?.checked) imagens[i] = null;
+    }
+    await put(`/api/clientes/${cliente.id}/carrosseis/${encodeURIComponent(pasta)}`, { slides, imagens });
+    mostrarGerados(await api(`/api/clientes/${cliente.id}/carrosseis`));
+    toast("Carrossel atualizado.");
+  });
+}
 
 (async () => {
   status = await api("/api/status");

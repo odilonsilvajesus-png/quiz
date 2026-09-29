@@ -222,20 +222,22 @@ export function salvarVisual(id, v) {
   });
 }
 
-// Recebe a imagem como data URL (vinda do navegador) e grava em assets/.
-export function salvarLogo(id, dataUrl) {
+// Converte a imagem enviada pelo navegador (data URL) e grava em `pasta` com o nome dado.
+export function gravarDataUrl(dataUrl, pasta, nome) {
+  const m = String(dataUrl).match(/^data:image\/(png|jpeg|jpg|webp|svg\+xml);base64,(.+)$/);
+  if (!m) throw new Error("Envie uma imagem PNG, JPG, WEBP ou SVG.");
+  const ext = { jpeg: "jpg", "svg+xml": "svg" }[m[1]] || m[1];
+  fs.mkdirSync(pasta, { recursive: true });
+  const arquivo = `${nome}.${ext}`;
+  fs.writeFileSync(path.join(pasta, arquivo), Buffer.from(m[2], "base64"));
+  return arquivo;
+}
+
+// Logo ou foto do cliente (PNG sem fundo), guardados em assets/.
+export function salvarImagemCliente(id, campo, dataUrl) {
+  if (!["logo", "foto_pessoa"].includes(campo)) throw new Error("Campo de imagem inválido.");
   alterarConfig(id, (c) => {
-    if (!dataUrl) {
-      c.visual.logo = null;
-      return;
-    }
-    const m = dataUrl.match(/^data:image\/(png|jpeg|jpg|webp|svg\+xml);base64,(.+)$/);
-    if (!m) throw new Error("Envie uma imagem PNG, JPG, WEBP ou SVG.");
-    const ext = { jpeg: "jpg", "svg+xml": "svg" }[m[1]] || m[1];
-    const pastaAssets = path.join(PASTA_CLIENTES, id, "assets");
-    fs.mkdirSync(pastaAssets, { recursive: true });
-    fs.writeFileSync(path.join(pastaAssets, `logo.${ext}`), Buffer.from(m[2], "base64"));
-    c.visual.logo = `assets/logo.${ext}`;
+    c.visual[campo] = dataUrl ? `assets/${gravarDataUrl(dataUrl, path.join(PASTA_CLIENTES, id, "assets"), campo)}` : null;
   });
 }
 
