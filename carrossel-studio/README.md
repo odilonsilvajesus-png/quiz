@@ -84,6 +84,10 @@ Na janela **Postar no Instagram**, escolha data e hora e clique em **Agendar pub
 Depois disso, **Postar no Instagram** publica o carrossel com a legenda (editável na hora) e ele vai para **Postados**, com o link do post.
 Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já postei, marcar como postado**.
 
+### Dashboard e foto do perfil
+- **Dashboard** (menu lateral): carrosséis criados, postados, agendados e rascunhos do mês, nota média do revisor, gasto com IA e custo médio por carrossel; gráficos por dia dos últimos 30 dias; tabela por cliente; estruturas mais usadas; próximos agendamentos e descartes recentes.
+- **Foto do perfil:** o painel puxa sozinho a foto do Instagram de cada cliente (pela conexão do Instagram, grátis, ou pelo Apify) e mostra no menu, nos cartões e no topo do cliente, com o número de seguidores. Em **Perfil e referências** há o botão **Atualizar foto**.
+
 ### Escrita viral e revisor
 - **Estruturas:** Ensino, Narrativa, Sequência, Contraponto e Identificação. No modelo **Automático**, a IA escolhe a estrutura pelo tipo do conteúdo (com o modelo barato do `LEITURA_MODELO`).
 - **Capa só com a headline** (4 a 12 palavras) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.

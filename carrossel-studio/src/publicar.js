@@ -78,6 +78,12 @@ export async function publicarCarrossel({ igUserId, token, arquivos, legenda, lo
   return { id, permalink: permalink || "" };
 }
 
+// Foto e seguidores da conta conectada (grátis, pela API oficial).
+export async function dadosDoPerfil({ igUserId, token }) {
+  const d = await graph(token, "GET", igUserId, { fields: "username,profile_picture_url,followers_count" });
+  return { foto: d.profile_picture_url || null, seguidores: d.followers_count ?? null };
+}
+
 // Confere se a conexão funciona e devolve o @ da conta.
 export async function testarConexao({ igUserId, token }) {
   const dados = await graph(token, "GET", igUserId, { fields: "username" });

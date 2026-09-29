@@ -45,7 +45,43 @@
   .menu a, .menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border-radius: 10px; text-decoration: none; color: var(--tinta-2); background: none; border: 0; cursor: pointer; text-align: left; font-weight: 500; }
   .menu a:hover, .menu button:hover { background: var(--destaque-sup); color: #fff; }
   .menu a.ativo { background: var(--destaque-sup); color: #fff; box-shadow: inset 3px 0 0 var(--marca-2); }
-  .menu .bola { width: 22px; height: 22px; border-radius: 7px; flex: none; }
+  .menu .bola { width: 24px; height: 24px; border-radius: 50%; flex: none; overflow: hidden; display: block; }
+  .avatar img, .bola img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .avatar.pequeno { width: 40px; height: 40px; font-size: 14px; border-radius: 50%; box-shadow: none; }
+  .card-cliente .identidade { display: flex; align-items: center; gap: 10px; }
+  .foto-perfil-linha { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--linha); }
+  .foto-perfil-linha > div { flex: 1; min-width: 0; }
+
+  /* ---------- dashboard ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .kpi { background: var(--superficie); border: 1px solid var(--linha); border-radius: var(--raio); padding: 14px 16px; }
+  .kpi span { display: block; font-size: 12.5px; color: var(--tinta-2); }
+  .kpi b { display: block; font-size: 26px; letter-spacing: -.02em; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi small { display: block; color: var(--tinta-3); font-size: 12px; margin-top: 2px; }
+  .graficos { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 16px; }
+  .graficos > .cartao + .cartao { margin-top: 0; }
+  .grafico svg { width: 100%; height: auto; display: block; margin-top: 12px; }
+  .grafico .eixo { fill: var(--tinta-3); font-size: 11px; font-family: inherit; }
+  .grafico .linha-grade { stroke: var(--linha); stroke-width: 1; }
+  .grafico .base { stroke: #57466E; stroke-width: 1; }
+  .grafico .barra { fill: var(--marca-2); }
+  .grafico .coluna:hover .barra { fill: var(--lavanda); }
+  .grafico .coluna rect { fill: transparent; }
+  .barras-h { display: grid; gap: 10px; margin-top: 14px; }
+  .barras-h .item { display: grid; grid-template-columns: 120px 1fr 32px; gap: 10px; align-items: center; font-size: 13px; }
+  .barras-h .trilha { height: 12px; }
+  .barras-h .trilha i { display: block; height: 100%; background: var(--marca-2); border-radius: 0 4px 4px 0; min-width: 4px; }
+  .barras-h .item b { text-align: right; font-variant-numeric: tabular-nums; }
+  .dica { position: fixed; pointer-events: none; background: var(--destaque-sup); border: 1px solid #4A3A63; border-radius: 8px; padding: 6px 10px; font-size: 12.5px; z-index: 80; box-shadow: var(--sombra-forte); white-space: nowrap; }
+  .tabela-custos tr[data-ir] { cursor: pointer; }
+  .tabela-custos tr[data-ir]:hover td { background: var(--superficie-2); }
+  .cliente-celula { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .cliente-celula .bola { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; flex: none; display: block; }
+  .rolagem { overflow-x: auto; }
+  .lista-dash { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+  .lista-dash li { display: flex; gap: 12px; align-items: baseline; font-size: 13px; padding: 8px 0; border-bottom: 1px solid var(--linha); }
+  .lista-dash li:last-child { border-bottom: 0; }
+  .lista-dash .quando { color: var(--tinta-3); white-space: nowrap; font-variant-numeric: tabular-nums; min-width: 92px; }
   .menu .nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .menu .novo { color: var(--lavanda); }
   .conexoes { margin-top: auto; display: grid; gap: 6px; padding: 12px; background: var(--bg); border: 1px solid var(--linha); border-radius: 12px; }
@@ -127,7 +163,7 @@
 
   /* ---------- cliente ---------- */
   .cabecalho-cliente { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; }
-  .avatar { width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 22px; flex: none; overflow: hidden; }
+  .avatar { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 22px; flex: none; overflow: hidden; }
   .avatar img { width: 100%; height: 100%; object-fit: cover; }
   .cabecalho-cliente .titulo { flex: 1; min-width: 220px; }
   .cabecalho-cliente .arroba { color: var(--tinta-2); display: flex; align-items: center; gap: 6px; margin-top: 3px; }
@@ -298,6 +334,7 @@
       <img class="logo-simbolo" src="/marca/viraliza-simbolo.png" alt="Viraliza Studio" width="36" height="36">
     </a>
     <nav class="menu">
+      <a href="#/dashboard" id="menuDashboard"></a>
       <a href="#/" id="menuInicio">${ICONES.grade} Todos os clientes</a>
     </nav>
     <div class="bloco-clientes">
@@ -317,6 +354,7 @@ const I = (d) => `<svg class="i" viewBox="0 0 24 24">${d}</svg>`;
 const ICONES = {
   grade: I('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'),
   mais: I('<path d="M12 5v14M5 12h14"/>'),
+  grafico: I('<path d="M3 3v18h18"/><path d="M8 16v-4M13 16V8M18 16v-7"/>'),
   faisca: I('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 17l.8 2.2L22 20l-2.2.8L19 23l-.8-2.2L16 20l2.2-.8z"/>'),
   camadas: I('<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>'),
   alvo: I('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'),
@@ -368,6 +406,15 @@ let cliente = null;
 let gerados = [];
 
 document.querySelector("#menuInicio").innerHTML = `${ICONES.grade} Todos os clientes`;
+document.querySelector("#menuDashboard").innerHTML = `${ICONES.grafico} Dashboard`;
+
+// Avatar do cliente: a foto do perfil do Instagram quando existe; senão, as iniciais nas cores da marca.
+function avatarCliente(c, classe = "avatar") {
+  const fundo = `background:${gradienteCliente(c.paleta)}`;
+  return c.foto_perfil
+    ? `<span class="${classe}" style="${fundo}"><img src="${c.foto_perfil}" alt="" loading="lazy" onerror="this.remove()"></span>`
+    : `<span class="${classe}" style="${fundo}">${classe === "bola" ? "" : esc(iniciais(c.nome))}</span>`;
+}
 
 async function api(caminho, opcoes = {}) {
   if (opcoes.corpo !== undefined) opcoes = { ...opcoes, headers: { "Content-Type": "application/json" }, body: JSON.stringify(opcoes.corpo) };
@@ -499,9 +546,11 @@ async function atualizarMenu(ativo) {
   const clientes = await api("/api/clientes");
   $("menuClientes").innerHTML = clientes.map((c) => `
     <a href="#/c/${c.id}" class="${c.id === ativo ? "ativo" : ""}">
-      <span class="bola" style="background:${gradienteCliente(c.paleta)}"></span><span class="nome">${esc(c.nome)}</span>
+      ${avatarCliente(c, "bola")}<span class="nome">${esc(c.nome)}</span>
     </a>`).join("") + `<button class="novo" data-novo-cliente>${ICONES.mais} Novo cliente</button>`;
   $("menuInicio").classList.toggle("ativo", !ativo);
+  $("menuDashboard").classList.toggle("ativo", ativo === "dashboard");
+  if (ativo === "dashboard") $("menuInicio").classList.remove("ativo");
   return clientes;
 }
 
@@ -509,8 +558,10 @@ async function atualizarMenu(ativo) {
 async function rotear() {
   const partes = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
   fecharModal();
+  document.querySelector(".dica")?.setAttribute("hidden", "");
   try {
     if (partes[0] === "c" && partes[1]) await telaCliente(partes[1], partes[2] || "criar", partes[3]);
+    else if (partes[0] === "dashboard") await telaDashboard();
     else await telaInicio();
   } catch (e) {
     app.innerHTML = `<div class="aviso">${ICONES.alerta}<span>${esc(e.message)}</span></div><a class="btn" href="#/">Voltar para clientes</a>`;
@@ -518,6 +569,114 @@ async function rotear() {
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", rotear);
+
+// ============ dashboard ============
+// Passo "redondo" do eixo: 1, 2 ou 5 × 10^n acima do maior valor.
+function topoDoEixo(max) {
+  if (!max) return 1;
+  const base = 10 ** Math.floor(Math.log10(max));
+  return [1, 2, 5, 10].map((m) => m * base).find((v) => v >= max);
+}
+
+// Colunas verticais (uma série): barras finas com ponta arredondada, grade discreta e dica ao passar o mouse.
+function graficoColunas(dados, { valor, dica, formatarEixo = (v) => v }) {
+  const L = 640, A = 190, esq = 44, base = A - 22, topoY = 10;
+  const topo = topoDoEixo(Math.max(...dados.map(valor), 0));
+  const passo = (L - esq) / dados.length;
+  const largura = Math.max(3, Math.min(passo - 2, 18));
+  const y = (v) => base - (v / topo) * (base - topoY);
+  const grade = [0, topo / 2, topo].map((v) => `
+    <line class="${v ? "linha-grade" : "base"}" x1="${esq}" x2="${L}" y1="${y(v)}" y2="${y(v)}"></line>
+    <text class="eixo" x="${esq - 8}" y="${y(v) + 4}" text-anchor="end">${esc(formatarEixo(v))}</text>`).join("");
+  const colunas = dados.map((d, i) => {
+    const v = valor(d);
+    const x = esq + i * passo + (passo - largura) / 2;
+    const h = base - y(v);
+    const r = Math.min(4, h, largura / 2);
+    const forma = v > 0
+      ? `<path class="barra" d="M${x},${base} V${base - h + r} Q${x},${base - h} ${x + r},${base - h} H${x + largura - r} Q${x + largura},${base - h} ${x + largura},${base - h + r} V${base} Z"></path>`
+      : "";
+    const rotulo = i % 5 === 0 || i === dados.length - 1
+      ? `<text class="eixo" x="${i === dados.length - 1 ? x + largura : x + largura / 2}" y="${A - 4}" text-anchor="${i === dados.length - 1 ? "end" : "middle"}">${d.dia.slice(8, 10)}/${d.dia.slice(5, 7)}</text>` : "";
+    return `<g class="coluna" data-dica="${esc(dica(d))}"><rect x="${esq + i * passo}" y="${topoY}" width="${passo}" height="${base - topoY}"></rect>${forma}${rotulo}</g>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${L} ${A}" role="img">${grade}${colunas}</svg>`;
+}
+
+const dataDia = (d) => new Date(`${d}T12:00`).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+
+async function telaDashboard() {
+  cliente = null;
+  const [lista, d] = await Promise.all([atualizarMenu("dashboard"), api("/api/dashboard")]);
+  const porId = Object.fromEntries(lista.map((c) => [c.id, c]));
+  const t = d.totais;
+  const vazio30 = (campo) => !d.dias.some((x) => x[campo] > 0);
+  const maxEstrutura = Math.max(...d.estruturas.map((e) => e.qtd), 1);
+  app.innerHTML = `
+    <div class="topo-pagina">
+      <div><h1>Dashboard</h1><p class="sub">Resumo de ${nomeMes()} de todos os clientes. Os gráficos mostram os últimos 30 dias.</p></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span>Carrosséis criados</span><b>${t.criados_mes}</b><small>em ${nomeMes()}</small></div>
+      <div class="kpi"><span>Postados</span><b>${t.postados_mes}</b><small>em ${nomeMes()}</small></div>
+      <div class="kpi"><span>Agendados</span><b>${t.agendados}</b><small>para publicar</small></div>
+      <div class="kpi"><span>Rascunhos</span><b>${t.rascunhos}</b><small>esperando revisão</small></div>
+      <div class="kpi"><span>Nota média do revisor</span><b>${t.nota_media != null ? nota(t.nota_media) : "–"}</b><small>de 0 a 10</small></div>
+      <div class="kpi"><span>Gasto com IA</span><b>${reais(t.gasto_mes)}</b><small>em ${nomeMes()}</small></div>
+      <div class="kpi"><span>Custo médio</span><b>${t.custo_medio_carrossel != null ? reais(t.custo_medio_carrossel) : "–"}</b><small>por carrossel</small></div>
+    </div>
+    <div class="graficos">
+      <div class="cartao grafico"><h2>Carrosséis criados por dia</h2>
+        ${vazio30("criados") ? `<div class="vazio">Nenhum carrossel criado nos últimos 30 dias.</div>` : graficoColunas(d.dias, {
+          valor: (x) => x.criados, dica: (x) => `${dataDia(x.dia)}: ${x.criados} criado(s), ${x.postados} postado(s)`,
+        })}</div>
+      <div class="cartao grafico"><h2>Gasto com IA por dia</h2>
+        ${vazio30("gasto") ? `<div class="vazio">Nenhum gasto registrado nos últimos 30 dias.</div>` : graficoColunas(d.dias, {
+          valor: (x) => x.gasto, dica: (x) => `${dataDia(x.dia)}: ${reais(x.gasto)}`, formatarEixo: (v) => (v ? `R$ ${v.toLocaleString("pt-BR")}` : "0"),
+        })}</div>
+    </div>
+    <div class="cartao">
+      <h2>Por cliente em ${nomeMes()}</h2>
+      <div class="rolagem"><table class="tabela-custos" style="margin-top:10px">
+        <thead><tr><th>Cliente</th><th class="valor">Criados</th><th class="valor">Postados</th><th class="valor">Rascunhos</th><th class="valor">Agendados</th><th class="valor">Nota média</th><th class="valor">Gasto</th><th class="valor">Custo médio</th><th>Último post</th></tr></thead>
+        <tbody>${d.clientes.map((c) => `<tr data-ir="#/c/${esc(c.id)}">
+          <td><div class="cliente-celula">${porId[c.id] ? avatarCliente(porId[c.id], "bola") : ""}${esc(c.nome)}</div></td>
+          <td class="valor">${c.criados_mes}</td><td class="valor">${c.postados_mes}</td><td class="valor">${c.rascunhos}</td><td class="valor">${c.agendados}</td>
+          <td class="valor">${c.nota_media != null ? nota(c.nota_media) : "–"}</td>
+          <td class="valor">${reais(c.gasto_mes)}</td><td class="valor">${c.custo_medio_carrossel != null ? reais(c.custo_medio_carrossel) : "–"}</td>
+          <td>${c.ultimo_post ? esc(dataCurta(c.ultimo_post)) : "–"}</td></tr>`).join("")}</tbody>
+      </table></div>
+    </div>
+    <div class="graficos" style="margin-top:16px">
+      <div class="cartao"><h2>Estruturas usadas em ${nomeMes()}</h2>
+        ${d.estruturas.length ? `<div class="barras-h">${d.estruturas.map((e) => `
+          <div class="item" data-dica="${esc(e.nome)}: ${e.qtd} carrossel(is)"><span>${esc(e.nome)}</span><div class="trilha"><i style="width:${(e.qtd / maxEstrutura) * 100}%"></i></div><b>${e.qtd}</b></div>`).join("")}</div>`
+          : `<div class="vazio">Nenhum carrossel neste mês.</div>`}</div>
+      <div class="cartao"><h2>Próximos agendamentos</h2>
+        ${d.agendados.length ? `<ul class="lista-dash">${d.agendados.map((a) => `
+          <li><span class="quando">${esc(dataHora(a.quando))}</span><span><b>${esc(a.cliente)}</b> · ${esc(a.angulo)}${a.falhou ? ' <span class="etiqueta perigo">falhou</span>' : ""}</span></li>`).join("")}</ul>`
+          : `<div class="vazio">Nada agendado.</div>`}</div>
+      <div class="cartao"><h2>Descartes recentes</h2><p class="sub">O que a IA está aprendendo a evitar.</p>
+        ${d.descartes.length ? `<ul class="lista-dash">${d.descartes.map((x) => `
+          <li><span class="quando">${esc(dataCurta(x.quando))}</span><span><b>${esc(x.cliente)}</b> · ${esc(x.motivo)}</span></li>`).join("")}</ul>`
+          : `<div class="vazio">Nenhum descarte.</div>`}</div>
+    </div>`;
+}
+
+// Dica flutuante dos gráficos (e de qualquer elemento com data-dica).
+const dica = document.createElement("div");
+dica.className = "dica";
+dica.hidden = true;
+document.body.appendChild(dica);
+document.addEventListener("mousemove", (e) => {
+  const alvo = e.target.closest?.("[data-dica]");
+  if (!alvo) { dica.hidden = true; return; }
+  dica.textContent = alvo.dataset.dica;
+  dica.hidden = false;
+  const x = Math.min(e.clientX + 14, window.innerWidth - dica.offsetWidth - 8);
+  dica.style.left = `${x}px`;
+  dica.style.top = `${e.clientY - dica.offsetHeight - 12}px`;
+});
 
 // ============ início ============
 async function telaInicio() {
@@ -539,7 +698,7 @@ async function telaInicio() {
         <a class="cartao card-cliente" href="#/c/${c.id}">
           <div class="faixa">${swatches(c.paleta).map((cor) => `<i style="background:${cor}"></i>`).join("")}</div>
           <div class="corpo">
-            <h3>${esc(c.nome)}</h3>
+            <div class="identidade">${avatarCliente(c, "avatar pequeno")}<h3>${esc(c.nome)}</h3></div>
             <div class="descricao">${esc(c.instagram || "Instagram não cadastrado")}${c.descricao ? " · " + esc(c.descricao) : ""}</div>
             <div class="numeros">
               <span class="etiqueta">${c.referencias} referências</span>
@@ -600,16 +759,30 @@ const ABAS = [
   ["visual", "Identidade visual", ICONES.paleta],
 ];
 
+// A foto do perfil é buscada em segundo plano no servidor; quando chega, aparece sem recarregar a página.
+function esperarFoto(c, tentativas = 4) {
+  if (c.foto_perfil || !c.instagram || !tentativas || !(status.apify || c.publicacao?.conectado)) return;
+  setTimeout(async () => {
+    if (cliente?.id !== c.id) return;
+    const novo = await api(`/api/clientes/${c.id}`).catch(() => null);
+    if (!novo || cliente?.id !== c.id) return;
+    if (!novo.foto_perfil) return esperarFoto(c, tentativas - 1);
+    Object.assign(cliente, { foto_perfil: novo.foto_perfil, seguidores: novo.seguidores });
+    $("avatarCliente").innerHTML = avatarCliente(novo);
+    atualizarMenu(c.id);
+  }, 20_000);
+}
+
 async function telaCliente(id, aba, subaba) {
   cliente = await api(`/api/clientes/${id}`);
   await atualizarMenu(id);
   const c = cliente;
   app.innerHTML = `
     <div class="cabecalho-cliente">
-      <div class="avatar" style="background:${gradienteCliente(c.paleta)}">${esc(iniciais(c.nome))}</div>
+      <span id="avatarCliente">${avatarCliente(c)}</span>
       <div class="titulo">
         <h1>${esc(c.nome)}</h1>
-        <div class="arroba">${ICONES.instagram}${esc(c.instagram || "Instagram não cadastrado")}${c.publicacao.conectado ? ' <span class="etiqueta ok">conectado</span>' : ""}</div>
+        <div class="arroba">${ICONES.instagram}${esc(c.instagram || "Instagram não cadastrado")}${c.seguidores ? ` · ${num(c.seguidores)} seguidores` : ""}${c.publicacao.conectado ? ' <span class="etiqueta ok">conectado</span>' : ""}</div>
       </div>
       <div class="indicadores">
         <div class="indicador"><b>${c.contagem.rascunho}</b><span>rascunhos</span></div>
@@ -620,6 +793,7 @@ async function telaCliente(id, aba, subaba) {
     </div>
     <nav class="abas">${ABAS.map(([k, n, ic]) => `<a href="#/c/${id}/${k}" class="${k === aba ? "ativa" : ""}">${ic}${n}${k === "carrosseis" ? `<span class="contador">${c.contagem.rascunho}</span>` : ""}</a>`).join("")}</nav>
     <div id="aba"></div>`;
+  esperarFoto(c);
   const telas = { criar: abaCriar, carrosseis: abaCarrosseis, perfil: abaPerfil, voz: abaVoz, modelos: abaModelos, visual: abaVisual };
   await (telas[aba] || abaCriar)(subaba);
 }
@@ -1184,6 +1358,12 @@ function abaPerfil() {
           <div class="ajuda">Usado para coletar o tom de voz automaticamente.</div>
           <label class="rotulo" for="pDesc">Profissão, nicho e método</label><input id="pDesc" class="campo" value="${esc(c.descricao)}">
           <div class="acoes"><button class="btn escuro" id="salvarPerfil">Salvar dados</button><span class="msg" id="msgPerfil"></span></div>
+          <div class="foto-perfil-linha">
+            ${avatarCliente(c, "avatar pequeno")}
+            <div><b>Foto do perfil</b><div class="ajuda" style="margin:2px 0 0">${c.foto_perfil ? "Puxada do Instagram do cliente." : c.foto_erro ? esc(c.foto_erro) : "Puxada sozinha do Instagram quando o @ está cadastrado."}</div></div>
+            <button class="btn pequeno" id="atualizarFoto">${ICONES.atualizar} ${c.foto_perfil ? "Atualizar foto" : "Buscar foto"}</button>
+          </div>
+          <span class="msg" id="msgFoto"></span>
         </div>
         <div class="cartao">
           <div class="cabecalho-cartao"><div><h2>Postar direto no Instagram</h2><p class="sub">Conta Profissional (Business ou Criador) deste cliente.</p></div>
@@ -1252,6 +1432,13 @@ function abaPerfil() {
     cliente = await put(`/api/clientes/${c.id}/perfil`, { nome: $("pNome").value, instagram: $("pInsta").value, descricao: $("pDesc").value });
     atualizarMenu(c.id);
   });
+  $("atualizarFoto").onclick = (e) => acao(e.currentTarget, $("msgFoto"), async () => {
+    $("msgFoto").textContent = "Buscando a foto no Instagram...";
+    cliente = await post(`/api/clientes/${c.id}/foto-perfil`);
+    $("avatarCliente").innerHTML = avatarCliente(cliente);
+    atualizarMenu(c.id);
+    abaPerfil();
+  }, { ok: "" });
   $("salvarIg").onclick = (e) => acao(e.currentTarget, $("msgIg"), async () => {
     cliente = await put(`/api/clientes/${c.id}/publicacao`, { ig_user_id: $("igId").value, token: $("igToken").value });
     abaPerfil();
@@ -1694,11 +1881,12 @@ document.addEventListener("click", async (e) => {
     "[data-novo-cliente]", "[data-criar]", "[data-estado]", "[data-ver-slide]", "[data-detalhe]", "[data-copiar]", "[data-publicar]",
     "[data-editar]", "[data-salvar-edicao]", "[data-aprovar]", "[data-descartar]", "[data-restaurar]", "[data-cancelar-agendamento]",
     "[data-fonte]", "[data-recoletar]", "[data-limpar-criar]", "[data-plataforma]", "[data-perfil]", "[data-selecionar]",
-    "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]", "[data-custos]", "[data-usar-gancho]",
+    "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]", "[data-custos]", "[data-usar-gancho]", "[data-ir]",
   ].join(","));
   if (!alvo) return;
   const d = alvo.dataset;
   if (d.novoCliente !== undefined) return modalNovoCliente();
+  if (d.ir) { location.hash = d.ir; return; }
   if (d.custos !== undefined) return d.custos ? modalCustosCliente(d.custos) : modalCustosGeral();
   if (d.criar) return modalCriar([d.criar]);
   // Tela Criar: filtros, seleção e sugestões.

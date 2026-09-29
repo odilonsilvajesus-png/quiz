@@ -97,6 +97,13 @@ export async function coletarPerfis(refs, { limite = 30, periodoDias = 90, log =
     }));
 }
 
+// Foto e seguidores de um perfil público (usado para o avatar do cliente no painel).
+export async function detalhesDoPerfil(ref, log = () => {}) {
+  const handle = normalizarHandle(ref);
+  const [p] = await rodarAtor({ directUrls: [`https://www.instagram.com/${handle}/`], resultsType: "details", resultsLimit: 1 }, log);
+  return { foto: p?.profilePicUrlHD || p?.profilePicUrl || null, seguidores: p?.followersCount ?? null };
+}
+
 // Posts do próprio cliente, usados para entender o tom de voz (fala, slides e legendas).
 export async function coletarPostsDoCliente(handle, limite = 30, log = () => {}) {
   return coletarPerfis([handle], { limite, periodoDias: 365, log });

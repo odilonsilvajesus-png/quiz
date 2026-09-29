@@ -6,6 +6,7 @@ import {
   RAIZ, PASTA_SAIDA, FONTES, carregarCliente, listarClientes, criarCliente, fundosDaPaleta,
   salvarReferencias, salvarPerfil, salvarVisual, salvarImagemCliente, salvarConteudo, salvarVoz, gravarDataUrl,
   salvarDirecionamento, adicionarExemplo, salvarPublicacao, listarFotos, caminhoFoto, adicionarFoto, removerFoto,
+  caminhoFotoPerfil, marcarTentativaFoto,
 } from "./cliente.js";
 import { listarSugestoes, gerarSugestoes, limparSugestoes, sugestaoComoReferencia } from "./sugestoes.js";
 import { aprofundar, podeAnalisar } from "./analise.js";
@@ -15,6 +16,8 @@ import { gerarCarrossel, atualizarColeta } from "./pipeline.js";
 import { ultimaColeta } from "./coleta/index.js";
 import { ranquear } from "./ranking.js";
 import { iniciarTarefa, estadoTarefa } from "./tarefas.js";
+import { atualizarFotoPerfil, buscarFotoSeFaltar, temFotoPerfil } from "./perfil.js";
+import { painelGeral } from "./dashboard.js";
 import { comMedicao, resumoDoMes, custoPorPasta, cotacao } from "./custos.js";
 import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
@@ -83,6 +86,10 @@ function resumoCliente(c) {
     referencias: (c.referencias.instagram?.length || 0) + (c.referencias.youtube?.length || 0),
     contagem: carrosseis.contagem(c.id),
     gasto_mes: resumoDoMes(c.id).brl,
+    // ?v= muda quando a foto é atualizada, para o navegador não mostrar a antiga.
+    foto_perfil: temFotoPerfil(c.id) ? `/api/clientes/${c.id}/foto-perfil?v=${Math.round(fs.statSync(caminhoFotoPerfil(c.id)).mtimeMs)}` : null,
+    seguidores: c.perfil_instagram?.seguidores ?? null,
+    foto_erro: c.perfil_instagram?.erro || null,
   };
 }
 
@@ -290,10 +297,31 @@ const rotas = [
     fontes: FONTES,
   })),
   rota("GET", "/api/modelos", () => listarModelos()),
-  rota("GET", "/api/clientes", () => listarClientes().map(resumoCliente)),
-  rota("POST", "/api/clientes", async (_m, _u, req) => ({ id: criarCliente(await corpo(req)) })),
-  rota("GET", "/api/clientes/:id", (m) => detalheCliente(m[1])),
-  rota("PUT", "/api/clientes/:id/perfil", async (m, _u, req) => (salvarPerfil(m[1], await corpo(req)), detalheCliente(m[1]))),
+  rota("GET", "/api/dashboard", () => painelGeral()),
+  // Ao listar ou abrir um cliente sem foto, a foto do Instagram é buscada em segundo plano.
+  rota("GET", "/api/clientes", () => listarClientes().map((c) => (buscarFotoSeFaltar(c), resumoCliente(c)))),
+  rota("POST", "/api/clientes", async (_m, _u, req) => {
+    const id = criarCliente(await corpo(req));
+    buscarFotoSeFaltar(carregarCliente(id));
+    return { id };
+  }),
+  rota("GET", "/api/clientes/:id", (m) => (buscarFotoSeFaltar(carregarCliente(m[1])), detalheCliente(m[1]))),
+  rota("PUT", "/api/clientes/:id/perfil", async (m, _u, req) => {
+    const antes = carregarCliente(m[1]).instagram;
+    salvarPerfil(m[1], await corpo(req));
+    const depois = carregarCliente(m[1]);
+    if (depois.instagram !== antes) {
+      // Trocou o @: a foto antiga não vale mais.
+      fs.rmSync(caminhoFotoPerfil(m[1]), { force: true });
+      atualizarFotoPerfil(m[1]).catch((erro) => marcarTentativaFoto(m[1], erro.message));
+    }
+    return detalheCliente(m[1]);
+  }),
+  rota("POST", "/api/clientes/:id/foto-perfil", async (m) => (await atualizarFotoPerfil(m[1]), detalheCliente(m[1]))),
+  rota("GET", "/api/clientes/:id/foto-perfil", (m) => {
+    if (!temFotoPerfil(m[1])) throw new Error("Este cliente ainda não tem foto do perfil.");
+    return new Resposta("image/jpeg", fs.readFileSync(caminhoFotoPerfil(m[1])));
+  }),
   rota("PUT", "/api/clientes/:id/visual", async (m, _u, req) => (salvarVisual(m[1], await corpo(req)), detalheCliente(m[1]))),
   rota("PUT", "/api/clientes/:id/logo", async (m, _u, req) => (salvarImagemCliente(m[1], "logo", (await corpo(req)).dataUrl), detalheCliente(m[1]))),
   rota("PUT", "/api/clientes/:id/foto-pessoa", async (m, _u, req) => (salvarImagemCliente(m[1], "foto_pessoa", (await corpo(req)).dataUrl), detalheCliente(m[1]))),

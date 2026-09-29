@@ -234,6 +234,23 @@ export function salvarPerfil(id, { nome, descricao, instagram }) {
   });
 }
 
+// Foto do perfil do Instagram do cliente (avatar no painel). Fica em assets/perfil.jpg.
+export const caminhoFotoPerfil = (id) => path.join(PASTA_CLIENTES, id, "assets", "perfil.jpg");
+
+export function salvarFotoPerfil(id, buffer, { seguidores } = {}) {
+  fs.mkdirSync(path.dirname(caminhoFotoPerfil(id)), { recursive: true });
+  fs.writeFileSync(caminhoFotoPerfil(id), buffer);
+  alterarConfig(id, (c) => {
+    c.perfil_instagram = { ...c.perfil_instagram, seguidores: seguidores ?? c.perfil_instagram?.seguidores ?? null, atualizado_em: new Date().toISOString() };
+  });
+}
+
+export function marcarTentativaFoto(id, erro) {
+  alterarConfig(id, (c) => {
+    c.perfil_instagram = { ...c.perfil_instagram, tentativa_em: new Date().toISOString(), erro: erro || null };
+  });
+}
+
 export function salvarVisual(id, v) {
   alterarConfig(id, (c) => {
     if (v.paleta) c.visual.paleta = { ...c.visual.paleta, ...v.paleta };
