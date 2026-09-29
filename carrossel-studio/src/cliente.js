@@ -27,9 +27,35 @@ function hexParaRgba(hex, alfa) {
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alfa})`;
 }
 
-// A paleta (6 cores) gera os 3 tipos de fundo usados nos slides.
+// Mistura duas cores hex (peso = quanto de `b`).
+export function misturar(a, b, peso) {
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [x, y] = [rgb(a), rgb(b)];
+  return "#" + x.map((v, i) => Math.round(v + (y[i] - v) * peso).toString(16).padStart(2, "0")).join("").toUpperCase();
+}
+
+const luminancia = (hex) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  return 0.299 * r + 0.587 * g + 0.114 * b;
+};
+
+// Cor do último slide: se o cliente não escolheu, um tom profundo da cor de destaque (diferente dos outros fundos).
+export const corDeFechamento = (p) => (/^#[0-9a-f]{6}$/i.test(p.fechamento || "") ? p.fechamento : misturar(p.escura, p.destaque, 0.45));
+
+// A paleta gera os 4 tipos de fundo usados nos slides: escuro, claro, destaque e fechamento (último slide).
 export function fundosDaPaleta(p) {
+  const fechamento = corDeFechamento(p);
+  const fechamentoEscuro = luminancia(fechamento) < 0.55;
   return {
+    fechamento: {
+      fundo: fechamentoEscuro
+        ? `radial-gradient(120% 80% at 50% 105%, ${hexParaRgba(p.destaque, 0.45)} 0%, transparent 60%), ${fechamento}`
+        : fechamento,
+      texto: fechamentoEscuro ? p.texto_claro : p.texto_escuro,
+      subtexto: hexParaRgba(fechamentoEscuro ? p.texto_claro : p.texto_escuro, 0.78),
+      destaque: fechamentoEscuro ? p.destaque : p.escura,
+      pill_texto: p.texto_claro,
+    },
     escuro: { fundo: p.escura, texto: p.texto_claro, subtexto: hexParaRgba(p.texto_claro, 0.72), destaque: p.destaque },
     claro: { fundo: p.clara, texto: p.texto_escuro, subtexto: hexParaRgba(p.texto_escuro, 0.68), destaque: p.destaque },
     destaque: {
@@ -66,7 +92,10 @@ function normalizar(config) {
       texto_escuro: f.claro?.texto || PALETA_PADRAO.texto_escuro,
     };
   }
+  c.visual.paleta.fechamento = corDeFechamento(c.visual.paleta);
   c.visual.fundos = { ...f, ...fundosDaPaleta(c.visual.paleta) };
+  c.visual.alternar_fundos ??= true;
+  c.visual.usar_fechamento ??= true;
   c.visual.largura ??= 1080;
   c.visual.altura ??= 1350;
   c.visual.template ??= "classico";
@@ -219,6 +248,8 @@ export function salvarVisual(id, v) {
       };
     }
     if (v.assinatura !== undefined) c.visual.assinatura = v.assinatura;
+    if (v.alternar_fundos !== undefined) c.visual.alternar_fundos = Boolean(v.alternar_fundos);
+    if (v.usar_fechamento !== undefined) c.visual.usar_fechamento = Boolean(v.usar_fechamento);
     if (v.cta_final !== undefined) c.visual.cta_final = v.cta_final;
     if (v.texto_arraste !== undefined) c.visual.rodape = { ...c.visual.rodape, texto_arraste: v.texto_arraste };
   });

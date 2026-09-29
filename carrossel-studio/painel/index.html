@@ -1339,7 +1339,32 @@ function abaVoz() {
 }
 
 // ---------- aba modelos ----------
+// Mesmas regras do src/render.js: sem cor repetida em slides seguidos e cor própria no último.
+function sequenciaDeFundos(nomes, { alternar = true, fechamento = true } = {}) {
+  const lista = nomes.map((n) => (n === "gradiente" ? "destaque" : n || "escuro"));
+  if (lista.every((n) => n === lista[0])) return lista;
+  const n = lista.length;
+  if (alternar) {
+    for (let i = 1; i < n; i++) {
+      if (lista[i] !== lista[i - 1]) continue;
+      const proximo = i + 1 === n - 1 && fechamento ? "fechamento" : lista[i + 1];
+      const opcoes = ["claro", "escuro", "destaque"].filter((c) => c !== lista[i - 1] && c !== proximo);
+      const par = { claro: "escuro", escuro: "claro", destaque: "escuro" }[lista[i - 1]];
+      lista[i] = opcoes.includes(par) ? par : opcoes[0] || par;
+    }
+  }
+  if (fechamento && n > 2) lista[n - 1] = "fechamento";
+  return lista;
+}
+const misturar = (a, b, peso) => {
+  const rgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+  const [x, y] = [rgb(a), rgb(b)];
+  return "#" + x.map((v, i) => Math.round(v + (y[i] - v) * peso).toString(16).padStart(2, "0")).join("").toUpperCase();
+};
+const fechamentoPadrao = (p) => misturar(p.escura, p.destaque, 0.45);
+
 function corDoFundo(fundo, p) {
+  if (fundo === "fechamento") return { bg: p.fechamento || fechamentoPadrao(p), fg: p.texto_claro };
   if (fundo === "claro") return { bg: p.clara, fg: p.texto_escuro };
   if (fundo === "destaque") return { bg: p.gradiente ? `linear-gradient(160deg, ${p.destaque}, ${p.destaque2})` : p.destaque, fg: p.texto_claro };
   return { bg: p.escura, fg: p.texto_claro };
@@ -1354,7 +1379,7 @@ function abaModelos() {
         <div class="cartao modelo ${m.id === c.conteudo.modelo_padrao ? "padrao" : ""}">
           <div class="cabecalho-cartao" style="margin:0"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta marca">Padrão</span>' : ""}</div>
           <div class="sub" style="margin:0;font-size:13px">${esc(m.descricao)}</div>
-          <div class="tira">${m.estrutura.map((s) => { const k = corDoFundo(s.fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
+          <div class="tira">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
           <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>
           <div class="acoes" style="margin-top:auto">
             ${m.id === c.conteudo.modelo_padrao ? "" : `<button class="btn escuro pequeno" data-padrao="${m.id}">Usar como padrão</button>`}
@@ -1399,7 +1424,8 @@ const PRESETS = [
 ];
 const CAMPOS_COR = [
   ["escura", "Fundo escuro"], ["clara", "Fundo claro"], ["destaque", "Cor de destaque"],
-  ["destaque2", "Segunda cor do gradiente"], ["texto_claro", "Texto sobre fundo escuro"], ["texto_escuro", "Texto sobre fundo claro"],
+  ["destaque2", "Segunda cor do gradiente"], ["fechamento", "Fundo do último slide"],
+  ["texto_claro", "Texto sobre fundo escuro"], ["texto_escuro", "Texto sobre fundo claro"],
 ];
 
 function abaVisual() {
@@ -1451,6 +1477,9 @@ function abaVisual() {
           <label class="rotulo">Paleta do cliente</label>
           ${CAMPOS_COR.map(([k, n]) => `<div class="cor"><span>${n}</span><input type="color" data-cor="${k}"><input class="campo" data-hex="${k}" maxlength="7"></div>`).join("")}
           <label class="linha" style="margin-top:10px;font-weight:500"><input type="checkbox" id="gradiente"> Slides de destaque com gradiente</label>
+          <label class="linha" style="margin-top:8px;font-weight:500"><input type="checkbox" id="alternarFundos"> Não repetir a mesma cor em dois slides seguidos</label>
+          <label class="linha" style="margin-top:8px;font-weight:500"><input type="checkbox" id="usarFechamento"> Último slide com a cor de fechamento</label>
+          <p class="ajuda">Modelos feitos todos na mesma cor (como Reflexão e Provocação) ficam como estão.</p>
         </div>
         <div class="cartao">
           <h2>Texto e marca</h2>
@@ -1482,6 +1511,8 @@ function abaVisual() {
       document.querySelector(`[data-hex="${k}"]`).value = v.paleta[k].toUpperCase();
     }
     $("gradiente").checked = v.paleta.gradiente !== false;
+    $("alternarFundos").checked = v.alternar_fundos !== false;
+    $("usarFechamento").checked = v.usar_fechamento !== false;
     document.querySelectorAll("[data-estilo]").forEach((b) => b.classList.toggle("ativo", b.dataset.estilo === v.template));
     $("modoImagens").value = v.imagens?.modo || "auto";
     $("estiloImagens").value = v.imagens?.estilo || "";
@@ -1494,6 +1525,7 @@ function abaVisual() {
   const dadosVisual = () => ({
     template: v.template, imagens: { modo: $("modoImagens").value, estilo: $("estiloImagens").value, regras: $("regrasImagens").value },
     paleta: v.paleta, fonte: $("fonte").value, assinatura: $("assinatura").value,
+    alternar_fundos: $("alternarFundos").checked, usar_fechamento: $("usarFechamento").checked,
     cta_final: $("ctaFinal").value, texto_arraste: $("arraste").value,
   });
   let timer;
@@ -1513,6 +1545,8 @@ function abaVisual() {
       document.querySelector(`[data-cor="${d.hex}"]`).value = e.target.value;
     }
     if (e.target.id === "gradiente") v.paleta.gradiente = e.target.checked;
+    if (e.target.id === "alternarFundos") v.alternar_fundos = e.target.checked;
+    if (e.target.id === "usarFechamento") v.usar_fechamento = e.target.checked;
     if (e.target.type === "file") return;
     atualizarPrevia();
   };
@@ -1540,6 +1574,7 @@ function abaVisual() {
         </div>`;
       $("aplicarMapa").onclick = () => {
         Object.assign(v.paleta, mp.paleta, { gradiente: mp.gradiente });
+        v.paleta.fechamento = fechamentoPadrao(v.paleta);
         v.fonte = mp.fonte;
         preencher();
         atualizarPrevia();
@@ -1571,6 +1606,7 @@ function abaVisual() {
     const preset = e.target.closest("[data-preset]");
     if (!preset) return;
     Object.assign(v.paleta, PRESETS[preset.dataset.preset][1]);
+    v.paleta.fechamento = fechamentoPadrao(v.paleta);
     preencher();
     atualizarPrevia();
   };

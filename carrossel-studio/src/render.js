@@ -54,6 +54,25 @@ export async function listarEstilos() {
 
 // opcoes.pastaImagens: pasta do carrossel, onde ficam as imagens geradas pela IA.
 // opcoes.imagemExemplo: usada na prévia no lugar das imagens que ainda não existem.
+// Ordem das cores dos slides: sem a mesma cor em dois slides seguidos e com uma cor própria no último.
+// Modelos todos na mesma cor (ex.: minimalistas) ficam como estão: é escolha de design.
+export function sequenciaDeFundos(nomes, { alternar = true, fechamento = true } = {}) {
+  const lista = nomes.map((n) => (n === "gradiente" ? "destaque" : n || "escuro"));
+  if (lista.every((n) => n === lista[0])) return lista;
+  const n = lista.length;
+  if (alternar) {
+    for (let i = 1; i < n; i++) {
+      if (lista[i] !== lista[i - 1]) continue;
+      const proximo = i + 1 === n - 1 && fechamento ? "fechamento" : lista[i + 1];
+      const opcoes = ["claro", "escuro", "destaque"].filter((c) => c !== lista[i - 1] && c !== proximo);
+      const par = { claro: "escuro", escuro: "claro", destaque: "escuro" }[lista[i - 1]];
+      lista[i] = opcoes.includes(par) ? par : opcoes[0] || par;
+    }
+  }
+  if (fechamento && n > 2) lista[n - 1] = "fechamento";
+  return lista;
+}
+
 export async function montarHtml(cliente, carrossel, { cssExtra = "", pastaImagens, imagemExemplo } = {}) {
   const estilo = carrossel.estilo || cliente.visual.template || "classico";
   const arquivoTemplate = path.join(PASTA_TEMPLATES, `${estilo}.js`);
@@ -68,15 +87,16 @@ export async function montarHtml(cliente, carrossel, { cssExtra = "", pastaImage
   };
   const estrutura = cliente.conteudo.estrutura;
   const total = carrossel.slides.length;
+  const nomesFundo = sequenciaDeFundos(carrossel.slides.map((s, i) => s.fundo || estrutura?.[i]?.fundo), {
+    alternar: visual.alternar_fundos !== false, fechamento: visual.usar_fechamento !== false,
+  });
 
   const slides = carrossel.slides
     .map((s, i) => {
       const foto = s.imagem === "exemplo"
         ? imagemExemplo
         : comoDataUri(s.imagem || (i === 0 ? visual.foto_capa : null), pastaImagens, cliente.pasta);
-      let nomeFundo = s.fundo || estrutura?.[i]?.fundo;
-      if (nomeFundo === "gradiente") nomeFundo = "destaque";
-      const fundo = visual.fundos[nomeFundo] || visual.fundos.escuro;
+      const fundo = visual.fundos[nomesFundo[i]] || visual.fundos.escuro;
       return template.slide({ visual, s, i, total, fundo, foto });
     })
     .join("\n");

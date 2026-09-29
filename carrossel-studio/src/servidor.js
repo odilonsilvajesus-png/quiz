@@ -136,6 +136,8 @@ async function previa(id, dados) {
       fonte: FONTES.includes(dados.fonte) ? dados.fonte : c.visual.fonte,
       assinatura: dados.assinatura ?? c.visual.assinatura,
       cta_final: dados.cta_final ?? c.visual.cta_final,
+      alternar_fundos: dados.alternar_fundos ?? c.visual.alternar_fundos,
+      usar_fechamento: dados.usar_fechamento ?? c.visual.usar_fechamento,
       rodape: { ...c.visual.rodape, texto_arraste: dados.texto_arraste ?? c.visual.rodape?.texto_arraste },
     },
   };
