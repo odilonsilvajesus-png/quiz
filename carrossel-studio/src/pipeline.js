@@ -9,6 +9,7 @@ import { escreverCarrossel } from "./copy.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
 import { historico, salvarHistorico, aprendizados } from "./carrosseis.js";
+import { comMedicao } from "./custos.js";
 
 export { historico };
 import { temGeradorImagem, slidesComImagem, gerarImagem, emParalelo, resolverModo } from "./imagens.js";
@@ -20,7 +21,11 @@ const slug = (t) =>
 const LIMITE_IDEIAS = 60;
 
 // Coleta de novo e analisa o conteúdo real dos melhores posts (fala dos reels, texto dos slides).
-export async function atualizarColeta(cliente, { log = () => {} } = {}) {
+export function atualizarColeta(cliente, opcoes = {}) {
+  return comMedicao(cliente.id, { tipo: "coleta", descricao: "Coleta das referências" }, () => coletarEAnalisar(cliente, opcoes));
+}
+
+async function coletarEAnalisar(cliente, { log = () => {} } = {}) {
   const coleta = await coletar(cliente, { log });
   const posts = ranquear(coleta.posts, { limite: LIMITE_IDEIAS });
   if (await aprofundar(posts, { log })) {
@@ -37,7 +42,14 @@ export async function referenciasRanqueadas(cliente, { recoletar = false, limite
   return { ...coleta, posts: ranquear(coleta.posts, { limite }) };
 }
 
-export async function gerarCarrossel(cliente, referencia, opcoes = {}) {
+// O custo (texto + imagens) fica ligado à pasta do carrossel.
+export function gerarCarrossel(cliente, referencia, opcoes = {}) {
+  return comMedicao(cliente.id, {
+    tipo: "carrossel", descricao: `A partir de ${referencia.perfil || "sugestão"}`, pasta: (r) => path.basename(r.pasta),
+  }, () => montarCarrossel(cliente, referencia, opcoes));
+}
+
+async function montarCarrossel(cliente, referencia, opcoes) {
   const { angulo, modelo: modeloId, estilo, indice = 0, log = console.log } = opcoes;
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
   const modelo = resolverModelo(cliente, modeloId);

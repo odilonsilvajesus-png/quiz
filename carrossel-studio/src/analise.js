@@ -4,6 +4,7 @@
 // Usa a OpenAI (mesma OPENAI_API_KEY). Sem chave, o post fica só com a legenda.
 import OpenAI, { toFile } from "openai";
 import { emParalelo } from "./imagens.js";
+import { registrarUso, custoTranscricao, custoTextoOpenAI } from "./custos.js";
 
 const MODELO_TRANSCRICAO = () => process.env.TRANSCRICAO_MODELO || "gpt-4o-transcribe";
 const MODELO_VISAO = () => process.env.OPENAI_MODEL || "gpt-5.5";
@@ -25,6 +26,7 @@ async function transcrever(client, urlVideo) {
     model: MODELO_TRANSCRICAO(),
     language: "pt",
   });
+  registrarUso({ servico: "transcrição", modelo: MODELO_TRANSCRICAO(), usd: custoTranscricao(MODELO_TRANSCRICAO(), resposta.usage) });
   return (resposta.text || "").trim();
 }
 
@@ -48,6 +50,7 @@ async function lerSlides(client, urls) {
       ],
     }],
   });
+  registrarUso({ servico: "leitura de slides", modelo: resposta.model, usd: custoTextoOpenAI(resposta.model, resposta.usage) });
   return (resposta.output_text || "").trim();
 }
 

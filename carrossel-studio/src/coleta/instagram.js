@@ -1,5 +1,7 @@
 // Coleta posts de perfis do Instagram pelo Apify (ator apify/instagram-scraper, pago por uso).
 // A API oficial da Meta só entrega métricas completas de contas que você administra.
+import { registrarUso } from "../custos.js";
+
 const ATOR = "apify~instagram-scraper";
 
 export function normalizarHandle(ref) {
@@ -49,6 +51,9 @@ async function rodarAtor(entrada, log) {
       await new Promise((r) => setTimeout(r, 5000));
     }
   }
+  // O Apify informa quanto a execução custou (em dólar).
+  const final = await pedir(`/actor-runs/${run.id}`).then((r) => r.data).catch(() => run);
+  registrarUso({ servico: "coleta Apify", modelo: ATOR, usd: final.usageTotalUsd ?? null });
   const itens = await pedir(`/datasets/${run.defaultDatasetId}/items?clean=true&format=json`);
   if (run.status === "FAILED" && !itens.length) throw new Error("A coleta do Instagram falhou no Apify. Tente de novo em alguns minutos.");
   if (run.status !== "SUCCEEDED") log(`Instagram: o Apify parou antes do fim (${run.status}); usando os ${itens.length} itens coletados.`);

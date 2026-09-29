@@ -4,6 +4,7 @@ import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
+import { registrarUso, custoTextoOpenAI, custoClaude } from "./custos.js";
 
 const MODELO_OPENAI = () => process.env.OPENAI_MODEL || "gpt-5.5";
 const MODELO_CLAUDE = () => process.env.CLAUDE_MODEL || "claude-opus-5-5";
@@ -29,6 +30,7 @@ export async function gerarEstruturado({ sistema, usuario, schema, nome }) {
       input: usuario,
       text: { format: zodTextFormat(schema, nome) },
     });
+    registrarUso({ servico: "texto", modelo: resposta.model, usd: custoTextoOpenAI(resposta.model, resposta.usage) });
     if (resposta.status === "incomplete") {
       throw new Error(`A resposta veio incompleta (${resposta.incomplete_details?.reason ?? "motivo desconhecido"}). Tente de novo.`);
     }
@@ -48,6 +50,7 @@ export async function gerarEstruturado({ sistema, usuario, schema, nome }) {
       system: [{ type: "text", text: sistema, cache_control: { type: "ephemeral" } }],
       messages: [{ role: "user", content: usuario }],
     });
+    registrarUso({ servico: "texto", modelo: resposta.model, usd: custoClaude(resposta.model, resposta.usage) });
     if (resposta.stop_reason === "refusal") {
       throw new Error(`O modelo recusou o pedido (${resposta.stop_details?.category ?? "sem categoria"}). Tente outra referência.`);
     }
@@ -64,6 +67,7 @@ export async function gerarTexto(prompt) {
   if (provedor() === "openai") {
     const client = new OpenAI();
     const resposta = await client.responses.create({ model: MODELO_OPENAI(), input: prompt });
+    registrarUso({ servico: "texto", modelo: resposta.model, usd: custoTextoOpenAI(resposta.model, resposta.usage) });
     return resposta.output_text;
   }
 
@@ -77,6 +81,7 @@ export async function gerarTexto(prompt) {
       output_config: { effort: "high" },
       messages: [{ role: "user", content: prompt }],
     });
+    registrarUso({ servico: "texto", modelo: resposta.model, usd: custoClaude(resposta.model, resposta.usage) });
     if (resposta.stop_reason === "refusal") throw new Error("O modelo recusou o pedido.");
     return resposta.content.filter((b) => b.type === "text").map((b) => b.text).join("\n");
   }

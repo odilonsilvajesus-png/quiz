@@ -1,4 +1,5 @@
 // Lê o mapa da marca (imagem ou PDF) com a IA e devolve a paleta, a fonte e as diretrizes.
+import { registrarUso, custoTextoOpenAI } from "./custos.js";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
@@ -49,6 +50,7 @@ Copie também as diretrizes escritas no mapa (tom, estilo, uso de cores e elemen
     }],
     text: { format: zodTextFormat(esquema, "mapa_da_marca") },
   });
+  registrarUso({ servico: "leitura do mapa", modelo: resposta.model, usd: custoTextoOpenAI(resposta.model, resposta.usage) });
   if (!resposta.output_parsed) throw new Error("Não consegui ler o mapa da marca. Tente uma imagem mais nítida.");
   return resposta.output_parsed;
 }

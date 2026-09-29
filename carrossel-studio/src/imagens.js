@@ -1,5 +1,6 @@
 // Gera as imagens dos slides com o gpt-image-2 da OpenAI.
 import fs from "node:fs";
+import { registrarUso, custoImagem } from "./custos.js";
 import OpenAI, { toFile } from "openai";
 
 const MODELO = () => process.env.IMAGEM_MODELO || "gpt-image-2";
@@ -67,6 +68,7 @@ export async function gerarImagem({ descricao, direcao, direcaoEstilo, estilo, p
     }
   }
   resposta ??= await client.images.generate({ ...base, prompt: montarPrompt(comum) });
+  registrarUso({ servico: "imagem", modelo: base.model, usd: custoImagem(base.model, resposta.usage) });
   const b64 = resposta.data?.[0]?.b64_json;
   if (!b64) throw new Error("A OpenAI não devolveu a imagem.");
   fs.writeFileSync(destino, Buffer.from(b64, "base64"));

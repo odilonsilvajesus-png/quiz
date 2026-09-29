@@ -15,6 +15,7 @@ import { gerarCarrossel, atualizarColeta } from "./pipeline.js";
 import { ultimaColeta } from "./coleta/index.js";
 import { ranquear } from "./ranking.js";
 import { iniciarTarefa, estadoTarefa } from "./tarefas.js";
+import { comMedicao, resumoDoMes, custoPorPasta, cotacao } from "./custos.js";
 import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
 import { criarZip } from "./zip.js";
@@ -36,7 +37,11 @@ const TIPOS = {
 const require = createRequire(import.meta.url);
 const PASTA_FONTE_PAINEL = path.join(path.dirname(require.resolve("@fontsource/inter/package.json")), "files");
 const { pastaCarrossel } = carrosseis;
-const listarGerados = carrosseis.listar;
+// Cada carrossel vem com o quanto custou (em reais), quando houve gasto.
+const listarGerados = (id) => {
+  const custos = custoPorPasta(id);
+  return carrosseis.listar(id).map((g) => ({ ...g, custo_brl: custos[g.pasta] ?? null }));
+};
 
 class Resposta {
   constructor(tipo, conteudo, baixarComo) {
@@ -77,6 +82,7 @@ function resumoCliente(c) {
     fonte: c.visual.fonte,
     referencias: (c.referencias.instagram?.length || 0) + (c.referencias.youtube?.length || 0),
     contagem: carrosseis.contagem(c.id),
+    gasto_mes: resumoDoMes(c.id).brl,
   };
 }
 
@@ -107,6 +113,7 @@ function detalheCliente(id) {
     documentos: listarDocumentos(c.id),
     direcionamento: c.baseConhecimento,
     exemplos: c.exemplosCarrossel.length,
+    gasto_mes: resumoDoMes(c.id).brl,
     publicacao: {
       conectado: Boolean(c.publicacao?.ig_user_id && c.publicacao?.token),
       ig_user_id: c.publicacao?.ig_user_id || "",
@@ -285,7 +292,7 @@ const rotas = [
   rota("PUT", "/api/clientes/:id/carrosseis/([\\w.-]+)", async (m, _u, req) => editarCarrossel(m[1], m[2], await corpo(req))),
   rota("PUT", "/api/clientes/:id/conteudo", async (m, _u, req) => (salvarConteudo(m[1], await corpo(req)), detalheCliente(m[1]))),
   rota("PUT", "/api/clientes/:id/voz", async (m, _u, req) => (salvarVoz(m[1], (await corpo(req)).texto), { ok: true })),
-  rota("POST", "/api/clientes/:id/voz/gerar", (m) => (carregarCliente(m[1]), iniciarTarefa(`voz:${m[1]}`, (log) => gerarVoz(m[1], log)))),
+  rota("POST", "/api/clientes/:id/voz/gerar", (m) => (carregarCliente(m[1]), iniciarTarefa(`voz:${m[1]}`, (log) => comMedicao(m[1], { tipo: "tom de voz" }, () => gerarVoz(m[1], log))))),
   rota("GET", "/api/clientes/:id/voz/gerar", (m) => estadoTarefa(`voz:${m[1]}`)),
   rota("PUT", "/api/clientes/:id/direcionamento", async (m, _u, req) => (salvarDirecionamento(m[1], (await corpo(req)).texto), { ok: true })),
   rota("POST", "/api/clientes/:id/previa", async (m, _u, req) => previa(m[1], await corpo(req))),
@@ -337,8 +344,21 @@ const rotas = [
   rota("GET", "/api/clientes/:id/sugestoes", (m) => listarSugestoes(m[1])),
   rota("POST", "/api/clientes/:id/documentos", async (m, _u, req) => (await adicionarDocumento(m[1], await corpo(req)), detalheCliente(m[1]))),
   rota("DELETE", "/api/clientes/:id/documentos/(doc-\\d+)", (m) => (removerDocumento(m[1], m[2]), detalheCliente(m[1]))),
-  rota("POST", "/api/clientes/:id/mapa-marca", async (m, _u, req) => lerMapa(m[1], await corpo(req))),
-  rota("POST", "/api/clientes/:id/sugestoes", async (m, _u, req) => gerarSugestoes(carregarCliente(m[1]), await corpo(req))),
+  rota("POST", "/api/clientes/:id/mapa-marca", async (m, _u, req) => {
+    const dados = await corpo(req);
+    return comMedicao(m[1], { tipo: "mapa da marca", descricao: dados.nome || "" }, () => lerMapa(m[1], dados));
+  }),
+  rota("POST", "/api/clientes/:id/sugestoes", async (m, _u, req) => {
+    const dados = await corpo(req);
+    return comMedicao(m[1], { tipo: "sugestões", descricao: dados.foco || "" }, () => gerarSugestoes(carregarCliente(m[1]), dados));
+  }),
+  rota("GET", "/api/clientes/:id/custos", async (m, url) => ({
+    ...resumoDoMes(m[1], url.searchParams.get("mes") || undefined), cotacao: await cotacao(),
+  })),
+  rota("GET", "/api/custos", async () => {
+    const clientes = listarClientes().map((c) => ({ id: c.id, nome: c.nome, ...resumoDoMes(c.id) }));
+    return { brl: +clientes.reduce((t, c) => t + c.brl, 0).toFixed(4), clientes: clientes.map(({ entradas, ...c }) => c), cotacao: await cotacao() };
+  }),
   rota("DELETE", "/api/clientes/:id/sugestoes", (m) => (limparSugestoes(m[1]), [])),
   rota("POST", "/api/clientes/:id/fotos", async (m, _u, req) => (adicionarFoto(m[1], (await corpo(req)).dataUrl), detalheCliente(m[1]))),
   rota("DELETE", "/api/clientes/:id/fotos/([\\w.-]+)", (m) => (removerFoto(m[1], m[2]), detalheCliente(m[1]))),

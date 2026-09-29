@@ -135,6 +135,15 @@
   .indicador { background: var(--superficie); border: 1px solid var(--linha); border-radius: 12px; padding: 10px 16px; min-width: 104px; box-shadow: var(--sombra); }
   .indicador b { display: block; font-size: 20px; letter-spacing: -.02em; }
   .indicador span { font-size: 12px; color: var(--tinta-2); }
+  button.indicador { text-align: left; cursor: pointer; font: inherit; color: inherit; }
+  button.indicador:hover { border-color: var(--marca-2); }
+  button.indicador span { display: flex; align-items: center; gap: 4px; }
+  .tabela-custos { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tabela-custos th { text-align: left; font-size: 12px; color: var(--tinta-3); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--linha); }
+  .tabela-custos td { padding: 8px; border-bottom: 1px solid var(--linha); vertical-align: top; }
+  .tabela-custos td.valor, .tabela-custos th.valor { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tabela-custos small { display: block; color: var(--tinta-3); font-size: 12px; margin-top: 2px; }
+  .resumo-custos { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
   .abas { display: flex; gap: 4px; background: var(--superficie); border: 1px solid var(--linha); border-radius: 12px; padding: 4px; margin-bottom: 22px; overflow-x: auto; box-shadow: var(--sombra); }
   .abas a { display: flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 9px; text-decoration: none; color: var(--tinta-2); font-weight: 600; white-space: nowrap; font-size: 13.5px; }
   .abas a:not(.ativa):hover { color: var(--tinta); background: var(--superficie-2); }
@@ -336,6 +345,8 @@ const ICONES = {
 const $ = (id) => document.getElementById(id);
 const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const num = (n) => Intl.NumberFormat("pt-BR", { notation: "compact" }).format(n || 0);
+const reais = (v) => (v > 0 && v < 0.01 ? "< R$ 0,01" : Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0));
+const nomeMes = () => new Date().toLocaleDateString("pt-BR", { month: "long" });
 const dataCurta = (d) => new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 const dataHora = (d) => new Date(d).toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 // Data ISO → valor do campo datetime-local (hora local).
@@ -387,6 +398,44 @@ async function acao(botao, msgEl, fn, { ok = "Salvo." } = {}) {
   } finally {
     botao.disabled = false;
   }
+}
+
+// ---------- custos ----------
+const NOME_TIPO = { carrossel: "Carrosséis", coleta: "Coletas", "tom de voz": "Tom de voz", "sugestões": "Sugestões", "mapa da marca": "Mapa da marca" };
+const NOME_ITEM = { carrossel: "Carrossel", coleta: "Coleta", "tom de voz": "Tom de voz", "sugestões": "Sugestões", "mapa da marca": "Mapa da marca" };
+const notaCotacao = (c) => `Valores em reais com dólar a ${reais(c.valor)} (${esc(c.fonte)}) e IOF de cartão internacional. Estimativa pelo uso informado pelas APIs; a fatura oficial está na OpenAI, na Anthropic e no Apify.`;
+
+async function modalCustosCliente(id) {
+  abrirModal({ titulo: `Gastos em ${nomeMes()}`, subtitulo: "Carregando...", corpo: `<div class="progresso"><div class="girando"></div></div>`, largo: true });
+  const r = await api(`/api/clientes/${id}/custos`);
+  const tipos = Object.entries(r.por_tipo);
+  $("camadaModal").querySelector(".sub").textContent = `${cliente?.nome || ""} · total ${reais(r.brl)}`;
+  $("camadaModal").querySelector(".corpo-modal").innerHTML = r.entradas.length ? `
+    <div class="resumo-custos">${tipos.map(([t, v]) => `<div class="indicador"><b>${reais(v)}</b><span>${esc(NOME_TIPO[t] || t)}</span></div>`).join("")}</div>
+    <table class="tabela-custos">
+      <thead><tr><th>Quando</th><th>O quê</th><th class="valor">Custo</th></tr></thead>
+      <tbody>${r.entradas.map((e) => `<tr>
+        <td>${esc(dataHora(e.em))}</td>
+        <td>${esc(NOME_ITEM[e.tipo] || e.tipo)}${e.descricao ? ` · ${esc(e.descricao)}` : ""}${e.falhou ? ' <span class="etiqueta perigo">falhou</span>' : ""}
+          <small>${e.itens.map((i) => `${esc(i.servico)} ×${i.vezes}${i.sem_preco ? " (sem preço)" : ""}`).join(" · ")}</small></td>
+        <td class="valor">${reais(e.brl)}</td></tr>`).join("")}</tbody>
+    </table>
+    ${r.sem_preco ? `<div class="aviso" style="margin-top:12px">${ICONES.alerta}<span>Algum modelo usado não tem preço cadastrado e ficou fora da soma.</span></div>` : ""}
+    <p class="ajuda">${notaCotacao(r.cotacao)}</p>` : `<div class="vazio">${ICONES.vazio}<div>Nenhum gasto registrado neste mês.</div></div><p class="ajuda">${notaCotacao(r.cotacao)}</p>`;
+}
+
+async function modalCustosGeral() {
+  abrirModal({ titulo: `Gastos em ${nomeMes()}`, subtitulo: "Carregando...", corpo: `<div class="progresso"><div class="girando"></div></div>` });
+  const r = await api("/api/custos");
+  $("camadaModal").querySelector(".sub").textContent = `Todos os clientes · total ${reais(r.brl)}`;
+  $("camadaModal").querySelector(".corpo-modal").innerHTML = `
+    <table class="tabela-custos">
+      <thead><tr><th>Cliente</th><th class="valor">Custo no mês</th></tr></thead>
+      <tbody>${r.clientes.map((c) => `<tr><td><a href="#/c/${esc(c.id)}" data-fechar-modal>${esc(c.nome)}</a>
+        <small>${Object.entries(c.por_tipo).map(([t, v]) => `${esc(NOME_TIPO[t] || t)} ${reais(v)}`).join(" · ") || "sem gastos"}</small></td>
+        <td class="valor">${reais(c.brl)}</td></tr>`).join("")}</tbody>
+    </table>
+    <p class="ajuda">${notaCotacao(r.cotacao)}</p>`;
 }
 
 // ---------- modal ----------
@@ -479,6 +528,7 @@ async function telaInicio() {
         <div class="indicador"><b>${clientes.length}</b><span>clientes</span></div>
         <div class="indicador"><b>${total.r}</b><span>rascunhos</span></div>
         <div class="indicador"><b>${total.p}</b><span>postados</span></div>
+        <button class="indicador" data-custos="" title="Ver o gasto por cliente"><b>${reais(clientes.reduce((t, c) => t + (c.gasto_mes || 0), 0))}</b><span>gasto em ${nomeMes()}</span></button>
       </div>
     </div>
     <div class="grade">
@@ -492,6 +542,7 @@ async function telaInicio() {
               <span class="etiqueta">${c.referencias} referências</span>
               <span class="etiqueta marca">${c.contagem.rascunho} rascunhos</span>
               <span class="etiqueta ok">${c.contagem.postado} postados</span>
+              ${c.gasto_mes ? `<span class="etiqueta">${reais(c.gasto_mes)} no mês</span>` : ""}
             </div>
           </div>
         </a>`).join("")}
@@ -561,6 +612,7 @@ async function telaCliente(id, aba, subaba) {
         <div class="indicador"><b>${c.contagem.rascunho}</b><span>rascunhos</span></div>
         <div class="indicador"><b>${c.contagem.postado}</b><span>postados</span></div>
         <div class="indicador"><b>${c.exemplos}</b><span>aprovados</span></div>
+        <button class="indicador" data-custos="${esc(c.id)}" title="Ver o detalhe dos gastos"><b>${reais(c.gasto_mes)}</b><span>gasto em ${nomeMes()}</span></button>
       </div>
     </div>
     <nav class="abas">${ABAS.map(([k, n, ic]) => `<a href="#/c/${id}/${k}" class="${k === aba ? "ativa" : ""}">${ic}${n}${k === "carrosseis" ? `<span class="contador">${c.contagem.rascunho}</span>` : ""}</a>`).join("")}</nav>
@@ -933,6 +985,7 @@ function cartaoCarrossel(g) {
             ${estilo ? `<span class="etiqueta marca">${esc(estilo)}</span>` : ""}
             ${k.referencia?.perfil ? `<span class="etiqueta">ref. ${esc(k.referencia.perfil)}</span>` : ""}
             ${g.demo ? '<span class="etiqueta aviso-e">demonstração</span>' : ""}
+            ${g.custo_brl != null ? `<span class="etiqueta" title="Custo de IA para criar este carrossel (texto + imagens)">custou ${reais(g.custo_brl)}</span>` : ""}
           </div>
         </div>
       </div>
@@ -1547,11 +1600,12 @@ document.addEventListener("click", async (e) => {
     "[data-novo-cliente]", "[data-criar]", "[data-estado]", "[data-ver-slide]", "[data-detalhe]", "[data-copiar]", "[data-publicar]",
     "[data-editar]", "[data-salvar-edicao]", "[data-aprovar]", "[data-descartar]", "[data-restaurar]", "[data-cancelar-agendamento]",
     "[data-fonte]", "[data-recoletar]", "[data-limpar-criar]", "[data-plataforma]", "[data-perfil]", "[data-selecionar]",
-    "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]",
+    "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]", "[data-custos]",
   ].join(","));
   if (!alvo) return;
   const d = alvo.dataset;
   if (d.novoCliente !== undefined) return modalNovoCliente();
+  if (d.custos !== undefined) return d.custos ? modalCustosCliente(d.custos) : modalCustosGeral();
   if (d.criar) return modalCriar([d.criar]);
   // Tela Criar: filtros, seleção e sugestões.
   if (d.fonte) { filtro.fonte = d.fonte; selecionadas.clear(); return desenharCriar(); }
