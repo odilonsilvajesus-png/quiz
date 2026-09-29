@@ -7,6 +7,7 @@ import { pastaSaida } from "./cliente.js";
 import { modelosDoCliente } from "./modelos.js";
 import { historico, aprendizados } from "./carrosseis.js";
 import { gerarEstruturado, provedor } from "./ia.js";
+import { textosDosDocumentos } from "./documentos.js";
 
 const arquivo = (clienteId) => path.join(pastaSaida(clienteId), "sugestoes.json");
 
@@ -61,6 +62,7 @@ Crie pautas de carrossel para o Instagram usando só o conhecimento abaixo sobre
 
 ${cliente.baseConhecimento ? `<base_de_conhecimento>\n${cliente.baseConhecimento}\n</base_de_conhecimento>` : ""}
 ${cliente.voz ? `<voz_do_cliente>\n${cliente.voz}\n</voz_do_cliente>` : ""}
+${textosDosDocumentos(cliente.id).map((d) => `<documento nome="${d.nome}">\n${d.texto}\n</documento>`).join("\n")}
 ${cliente.conteudo.angulos.length ? `<temas_do_cliente>\n${cliente.conteudo.angulos.join("\n")}\n</temas_do_cliente>` : ""}
 <modelos_disponiveis>
 ${modelos.map((m) => `${m.id}: ${m.nome} - ${m.descricao}`).join("\n")}

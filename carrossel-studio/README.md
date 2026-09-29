@@ -61,6 +61,12 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 Com `OPENAI_API_KEY`, os posts mais bem ranqueados de cada coleta são analisados: a **fala dos reels é transcrita** e o **texto de cada slide dos carrosséis é lido** pela IA. A cópia do carrossel se baseia nesse conteúdo real, com a legenda só como apoio. Posts que repetem a mesma legenda deixam de ser tratados como iguais. O botão com o olho, em cada ideia, mostra a transcrição, os slides e a legenda.
 O mesmo vale para o **tom de voz**: a coleta analisa a fala dos reels, os carrosséis e as legendas da própria cliente.
 
+### Documentos do cliente
+Em **Voz e direcionamento → Documentos do cliente**, suba briefing, apresentação do método, pesquisa de público, roteiros etc. Aceita **PDF, Word (.docx), TXT e MD**. O texto é extraído e entra no contexto da IA em todos os carrosséis e sugestões. PDFs escaneados (só imagem) não têm texto para extrair.
+
+### Mapa da marca
+Em **Identidade visual → Mapa da marca**, suba o mapa/guia da marca (imagem ou PDF). A IA lê as cores (e os códigos, quando estão escritos) e a fonte, mostra as cores encontradas e a paleta sugerida, e **Aplicar ao visual** preenche a paleta e a fonte na prévia. Confirme em **Salvar identidade visual**. As diretrizes escritas no mapa viram um documento do cliente automaticamente.
+
 ### Imagens: regras, observações e a foto da própria pessoa
 - **Regras obrigatórias** (Identidade visual): o que a IA nunca pode mostrar, por exemplo "público evangélico, nunca usar cruz". Valem para todas as imagens do cliente.
 - **Observação para as imagens** (na janela de criar): vale só para aquele carrossel.

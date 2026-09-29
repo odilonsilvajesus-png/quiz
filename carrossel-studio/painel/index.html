@@ -178,6 +178,17 @@
   .banco-fotos button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; display: grid; place-items: center; padding: 0; }
   .banco-fotos button svg.i { width: 13px; height: 13px; }
   .agendado-info { margin: 0 20px 14px; background: #EEF2FF; color: #3730A3; border-radius: 10px; padding: 12px 14px; font-size: 13.5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .documentos { display: grid; gap: 8px; margin-top: 4px; }
+  .documento { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--linha); border-radius: 12px; }
+  .doc-icone { width: 36px; height: 36px; border-radius: 10px; background: #F1E8FE; color: var(--marca); display: grid; place-items: center; flex: none; }
+  .doc-info { flex: 1; min-width: 0; }
+  .doc-info b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .doc-info span { font-size: 12.5px; color: var(--tinta-2); }
+  label.btn { cursor: pointer; }
+  .mapa-resultado { margin-top: 14px; background: var(--superficie-2); border-radius: 12px; padding: 14px; }
+  .amostras { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px; }
+  .amostra { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--tinta-2); max-width: 76px; text-align: center; }
+  .amostra i { width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(0,0,0,.08); }
   .agendar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--superficie-2); border-radius: 12px; padding: 12px; margin-top: 14px; }
 
   /* ---------- carrosséis ---------- */
@@ -1138,7 +1149,21 @@ function abaVoz() {
       </div>
     </div>
     <div class="cartao" style="margin-top:20px">
-      <h2>3. Temas e regras de conteúdo</h2>
+      <div class="cabecalho-cartao"><div>
+        <h2>3. Documentos do cliente</h2>
+        <p class="sub">Suba materiais como briefing, apresentação do método, pesquisa de público, roteiros ou transcrições. O texto é extraído e a IA usa em todos os carrosséis e sugestões.</p>
+      </div></div>
+      <div class="documentos">${c.documentos.map((d) => `
+        <div class="documento">
+          <span class="doc-icone">${ICONES.modelo}</span>
+          <div class="doc-info"><b>${esc(d.nome)}</b><span>${num(d.caracteres)} caracteres${d.cortado ? " (texto longo, cortado)" : ""} · ${esc(dataCurta(d.criado_em))}${d.origem === "mapa-marca" ? " · mapa da marca" : ""}</span></div>
+          <button class="btn pequeno perigo" data-remover-doc="${esc(d.id)}">${ICONES.lixo} Remover</button>
+        </div>`).join("") || '<span class="ajuda" style="margin:0">Nenhum documento enviado.</span>'}</div>
+      <div class="acoes"><label class="btn primario">${ICONES.mais} Enviar documentos<input type="file" id="novoDoc" accept=".pdf,.docx,.txt,.md,.markdown,.csv" multiple hidden></label>
+        <span class="ajuda" style="margin:0">PDF, Word (.docx), TXT ou MD.</span><span class="msg" id="msgDoc"></span></div>
+    </div>
+    <div class="cartao" style="margin-top:20px">
+      <h2>4. Temas e regras de conteúdo</h2>
       <div class="metade" style="margin-top:12px">
         <div>
           <label class="rotulo" for="angulos">Temas ou ângulos (um por linha)</label>
@@ -1162,6 +1187,28 @@ function abaVoz() {
     cliente.voz = r.texto;
     return r;
   }, { ok: (r) => `Pronto. Tom de voz gerado a partir de ${r.posts} posts (${r.analisados} com fala ou slides analisados) e salvo.` });
+  $("novoDoc").onchange = async (e) => {
+    const arquivos = [...e.target.files];
+    const erros = [];
+    for (const [i, f] of arquivos.entries()) {
+      $("msgDoc").className = "msg";
+      $("msgDoc").textContent = `Lendo ${f.name} (${i + 1} de ${arquivos.length})...`;
+      if (f.size > 20_000_000) { erros.push(`${f.name}: arquivo maior que 20 MB`); continue; }
+      try {
+        cliente = await post(`/api/clientes/${c.id}/documentos`, { nome: f.name, dataUrl: await lerArquivo(f) });
+      } catch (erro) { erros.push(`${f.name}: ${erro.message}`); }
+    }
+    if (erros.length) alert(erros.join("\n"));
+    toast(arquivos.length - erros.length ? "Documentos adicionados." : "Nenhum documento foi adicionado.");
+    abaVoz();
+  };
+  $("aba").onclick = async (e) => {
+    const b = e.target.closest("[data-remover-doc]");
+    if (!b || !confirm("Remover este documento? A IA deixa de usá-lo.")) return;
+    cliente = await api(`/api/clientes/${c.id}/documentos/${b.dataset.removerDoc}`, { method: "DELETE" });
+    toast("Documento removido.");
+    abaVoz();
+  };
   $("salvarVoz").onclick = (e) => acao(e.currentTarget, $("msgVoz"), async () => {
     await put(`/api/clientes/${c.id}/voz`, { texto: $("voz").value });
     cliente.voz = $("voz").value;
@@ -1247,6 +1294,16 @@ function abaVisual() {
   $("aba").innerHTML = `
     <div class="duas">
       <div>
+        <div class="cartao">
+          <h2>Mapa da marca</h2>
+          <p class="sub">Suba o mapa ou guia da marca (imagem ou PDF). A IA lê as cores e a fonte e monta a paleta; as diretrizes viram um documento que a IA usa ao escrever.</p>
+          <div class="acoes" style="margin-top:12px">
+            <label class="btn primario">${ICONES.paleta} Enviar mapa da marca<input type="file" id="mapaMarca" accept="image/png,image/jpeg,image/webp,application/pdf" hidden></label>
+            <span class="msg" id="msgMapa"></span>
+          </div>
+          ${status.mapa ? "" : `<div class="ajuda">Precisa da OPENAI_API_KEY no .env.</div>`}
+          <div id="resultadoMapa"></div>
+        </div>
         <div class="cartao">
           <h2>Estilo do carrossel</h2>
           <p class="sub">O layout dos slides. Dá para trocar em cada carrossel também.</p>
@@ -1346,6 +1403,40 @@ function abaVisual() {
     atualizarPrevia();
   };
   $("aba").onchange = $("aba").oninput;
+  $("mapaMarca").onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 20_000_000) return alert("Use um arquivo de até 20 MB.");
+    const msg = $("msgMapa");
+    msg.className = "msg";
+    msg.textContent = "Lendo o mapa da marca...";
+    try {
+      const r = await post(`/api/clientes/${c.id}/mapa-marca`, { nome: f.name, dataUrl: await lerArquivo(f) });
+      cliente = r.cliente;
+      const mp = r.mapa;
+      msg.textContent = "Pronto. Confira e aplique.";
+      $("resultadoMapa").innerHTML = `
+        <div class="mapa-resultado">
+          <b style="font-size:13px">Cores encontradas no mapa</b>
+          <div class="amostras">${mp.cores_encontradas.map((x) => `<span class="amostra"><i style="background:${esc(x.hex)}"></i>${esc(x.hex)}<br>${esc(x.nome)}</span>`).join("")}</div>
+          <b style="font-size:13px">Paleta sugerida para os carrosséis</b>
+          <div class="amostras">${CAMPOS_COR.map(([k, n]) => `<span class="amostra"><i style="background:${esc(mp.paleta[k])}"></i>${esc(n)}</span>`).join("")}</div>
+          <div class="ajuda" style="margin-top:0">Fonte mais parecida: <b>${esc(mp.fonte)}</b>${mp.fontes_do_mapa.length ? ` (no mapa: ${esc(mp.fontes_do_mapa.join(", "))})` : ""}. ${mp.diretrizes ? "As diretrizes do mapa foram salvas em Voz e direcionamento → Documentos." : ""}</div>
+          <div class="acoes" style="margin-top:10px"><button class="btn escuro" id="aplicarMapa">${ICONES.ok} Aplicar ao visual</button></div>
+        </div>`;
+      $("aplicarMapa").onclick = () => {
+        Object.assign(v.paleta, mp.paleta, { gradiente: mp.gradiente });
+        v.fonte = mp.fonte;
+        preencher();
+        atualizarPrevia();
+        toast("Aplicado na prévia. Clique em Salvar identidade visual para confirmar.");
+      };
+    } catch (erro) {
+      msg.className = "msg erro";
+      msg.textContent = erro.message;
+    }
+    e.target.value = "";
+  };
   $("novaFoto").onchange = async (e) => {
     for (const f of e.target.files) {
       if (f.size > 8_000_000) { alert(`${f.name}: use fotos de até 8 MB.`); continue; }

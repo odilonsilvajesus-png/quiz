@@ -1,6 +1,7 @@
 // Escreve o carrossel na voz do cliente a partir de uma referência que performou bem.
 import { z } from "zod";
 import { conteudoCompleto } from "./analise.js";
+import { textosDosDocumentos } from "./documentos.js";
 import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
 
 export const temIA = () => Boolean(provedor());
@@ -41,6 +42,7 @@ function regrasImagem(cliente, preferencia, direcaoEstilo, { regras, observacao,
 
 function promptSistema(cliente, modelo, opcoes = {}) {
   const c = cliente.conteudo;
+  const documentos = textosDosDocumentos(cliente.id);
   const estrutura = modelo.estrutura.map((s, i) => `${i + 1}. ${s.papel}: ${s.instrucao}`).join("\n");
   const exemplos = cliente.exemplosCarrossel
     .map((ex) => `### Ângulo: ${ex.angulo}\n` + ex.slides.map((s, i) => `${i + 1}. ${s.titulo} / ${s.subtitulo}`).join("\n"))
@@ -55,7 +57,10 @@ ${cliente.baseConhecimento.trim() ? `<base_de_conhecimento>
 Informações e direcionamento sobre ${cliente.nome}. Siga com prioridade.
 ${cliente.baseConhecimento}
 </base_de_conhecimento>` : ""}
-${cliente.voz.trim() ? `\n<voz_do_cliente>
+${documentos.length ? `\n<documentos_do_cliente>
+Documentos enviados sobre ${cliente.nome}. Use como fonte de verdade sobre o cliente, o método, a marca e o público.
+${documentos.map((d) => `<documento nome="${d.nome}">\n${d.texto}\n</documento>`).join("\n")}
+</documentos_do_cliente>\n` : ""}${cliente.voz.trim() ? `\n<voz_do_cliente>
 Tom de voz observado nas publicações de ${cliente.nome}. Imite este jeito de escrever.\n${cliente.voz}\n</voz_do_cliente>\n` : ""}
 <estrutura_do_carrossel>
 Modelo: ${modelo.nome}

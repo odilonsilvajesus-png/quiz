@@ -9,6 +9,8 @@ import {
 } from "./cliente.js";
 import { listarSugestoes, gerarSugestoes, limparSugestoes, sugestaoComoReferencia } from "./sugestoes.js";
 import { aprofundar, podeAnalisar } from "./analise.js";
+import { listarDocumentos, adicionarDocumento, removerDocumento, guardarTexto } from "./documentos.js";
+import { lerMapaDaMarca, podeLerMapa } from "./marca.js";
 import { referenciasRanqueadas, gerarCarrossel } from "./pipeline.js";
 import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
@@ -99,6 +101,7 @@ function detalheCliente(id) {
     },
     voz: c.voz,
     fotos: listarFotos(c.id).map((nome) => ({ nome, url: `/api/clientes/${c.id}/fotos/${nome}` })),
+    documentos: listarDocumentos(c.id),
     direcionamento: c.baseConhecimento,
     exemplos: c.exemplosCarrossel.length,
     publicacao: {
@@ -163,6 +166,25 @@ async function editarCarrossel(id, nomePasta, { slides = [], imagens = {} }) {
   }
   await renderizar(cliente, carrossel, pasta);
   return listarGerados(id).find((g) => g.pasta === nomePasta);
+}
+
+// Lê o mapa da marca, guarda o arquivo e as diretrizes (como documento) e devolve a paleta sugerida.
+// A paleta só é aplicada quando o usuário salva a identidade visual.
+async function lerMapa(id, { nome = "mapa-da-marca", dataUrl }) {
+  const cliente = carregarCliente(id);
+  const mapa = await lerMapaDaMarca({ nome, dataUrl });
+  const m = String(dataUrl).match(/^data:([\w/+.-]+);base64,(.+)$/);
+  if (m) {
+    const ext = m[1] === "application/pdf" ? "pdf" : m[1].split("/")[1].replace("jpeg", "jpg");
+    fs.mkdirSync(path.join(cliente.pasta, "assets"), { recursive: true });
+    fs.writeFileSync(path.join(cliente.pasta, "assets", `mapa-da-marca.${ext}`), Buffer.from(m[2], "base64"));
+  }
+  const linhasCores = mapa.cores_encontradas.map((c) => `- ${c.hex}: ${c.nome}`).join("\n");
+  const texto = [`Mapa da marca de ${cliente.nome}.`, linhasCores && `Cores:\n${linhasCores}`,
+    mapa.fontes_do_mapa.length && `Fontes: ${mapa.fontes_do_mapa.join(", ")}`, mapa.diretrizes && `Diretrizes:\n${mapa.diretrizes}`]
+    .filter(Boolean).join("\n\n");
+  guardarTexto(id, { nome: `Mapa da marca (${nome})`, texto, origem: "mapa-marca", substituirOrigem: true });
+  return { mapa, cliente: detalheCliente(id) };
 }
 
 function salvarLegenda(id, nomePasta, legenda) {
@@ -233,6 +255,7 @@ const rotas = [
     imagens: temGeradorImagem(),
     hospedagem: temHospedagem(),
     analise: podeAnalisar(),
+    mapa: podeLerMapa(),
     estilos: await listarEstilos(),
     apify: Boolean(process.env.APIFY_TOKEN),
     youtube: Boolean(process.env.YOUTUBE_API_KEY),
@@ -291,6 +314,9 @@ const rotas = [
   }),
   rota("POST", "/api/clientes/:id/carrosseis/([\\w.-]+)/cancelar-agendamento", (m) => carrosseis.cancelarAgendamento(m[1], m[2])),
   rota("GET", "/api/clientes/:id/sugestoes", (m) => listarSugestoes(m[1])),
+  rota("POST", "/api/clientes/:id/documentos", async (m, _u, req) => (await adicionarDocumento(m[1], await corpo(req)), detalheCliente(m[1]))),
+  rota("DELETE", "/api/clientes/:id/documentos/(doc-\\d+)", (m) => (removerDocumento(m[1], m[2]), detalheCliente(m[1]))),
+  rota("POST", "/api/clientes/:id/mapa-marca", async (m, _u, req) => lerMapa(m[1], await corpo(req))),
   rota("POST", "/api/clientes/:id/sugestoes", async (m, _u, req) => gerarSugestoes(carregarCliente(m[1]), await corpo(req))),
   rota("DELETE", "/api/clientes/:id/sugestoes", (m) => (limparSugestoes(m[1]), [])),
   rota("POST", "/api/clientes/:id/fotos", async (m, _u, req) => (adicionarFoto(m[1], (await corpo(req)).dataUrl), detalheCliente(m[1]))),
