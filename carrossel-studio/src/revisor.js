@@ -4,6 +4,7 @@ import { z } from "zod";
 import { gerarEstruturado } from "./ia.js";
 
 const NOTA_MINIMA_GANCHO = 7;
+const NOTA_MINIMA_FLUXO = 7;
 const MEDIA_MINIMA = 7.5;
 
 const esquema = z.object({
@@ -13,6 +14,7 @@ const esquema = z.object({
     clareza: z.number().describe("0 a 10"),
     tom_de_voz: z.number().describe("0 a 10"),
     estrutura: z.number().describe("0 a 10"),
+    fluxo: z.number().describe("0 a 10"),
     cta: z.number().describe("0 a 10"),
   }),
   ajustes: z.array(z.object({
@@ -29,7 +31,8 @@ export function veredito(r) {
   const notas = Object.fromEntries(Object.entries(r.notas).map(([k, v]) => [k, limitar(v)]));
   const valores = Object.values(notas);
   const media = +(valores.reduce((t, v) => t + v, 0) / valores.length).toFixed(1);
-  const aprovado = !r.bloqueios.length && notas.gancho >= NOTA_MINIMA_GANCHO && media >= MEDIA_MINIMA;
+  const aprovado = !r.bloqueios.length && notas.gancho >= NOTA_MINIMA_GANCHO
+    && (notas.fluxo ?? 10) >= NOTA_MINIMA_FLUXO && media >= MEDIA_MINIMA;
   return { ...r, notas, media, aprovado, ajustes: r.ajustes.slice(0, 5) };
 }
 
@@ -46,9 +49,11 @@ Bloqueios (qualquer um impede publicar):
 - Política partidária, acusação a pessoas, humilhar funcionário, cliente ou público.
 - Texto copiado de outro perfil.
 - Algo que contradiz o posicionamento ou as regras do cliente.
+- Tema, público ou termo central que aparece pela primeira vez só no último slide (o final fica sem nexo).
 
 Notas de 0 a 10:
-- gancho: a capa faz a pessoa parar e arrastar? Uma headline só (4 a 12 palavras), específica, que gera curiosidade, polêmica ou identificação? O slide 2 funciona sozinho como capa?
+- gancho: a capa faz a pessoa pensar "como assim?" e arrastar? Uma headline só (4 a 12 palavras), específica, que abre uma pergunta sem entregar a resposta? Conselho genérico ("Não faça X") ou capa que já conta a conclusão vale no máximo 5. O slide 2 funciona sozinho como capa?
+- fluxo: cada slide puxa o próximo, como um argumento só? Os títulos se entendem sozinhos (sem metáfora abstrata)? O último slide fecha a pergunta da capa? Nota baixa se os slides forem frases de efeito soltas ou se o final parecer desconectado.
 - clareza: uma ideia só, frases curtas, sem jargão, dentro do limite de ${modelo.palavras_max || 35} palavras por slide?
 - tom_de_voz: parece ${cliente.nome} falando? Traz algo próprio do cliente (experiência, opinião, método), e não conteúdo genérico do nicho?
 - estrutura: segue a estrutura "${modelo.nome}" slide a slide? Sem slide de "conclusão" ou "obrigado"?

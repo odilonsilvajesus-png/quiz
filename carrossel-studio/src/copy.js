@@ -23,6 +23,8 @@ function esquema(qtdSlides, comImagem, comDiagrama) {
       quem: z.string().describe("Para quem exatamente é este post: perfil, momento de vida ou do negócio, dor"),
       por_que: z.string().describe("Qual ganho a pessoa percebe até o 3º slide"),
       ideia_central: z.string().describe("A ÚNICA ideia do carrossel, em uma frase"),
+      pergunta_da_capa: z.string().describe("A pergunta que a capa deixa na cabeça do leitor (o 'como assim?') e que só o último slide responde"),
+      fio_condutor: z.string().describe("Em uma linha, como cada slide leva ao próximo até fechar a pergunta da capa"),
     }).describe("Preencha ANTES de escrever os slides"),
     ...extras,
     angulo: z.string().describe("Ângulo/tema escolhido, exatamente como aparece na lista do cliente quando houver lista"),
@@ -67,15 +69,30 @@ function regrasCta(cliente, objetivo) {
 function regrasVirais(modelo, objetivo, cliente) {
   const maxPalavras = modelo.palavras_max || 35;
   return `<regras_de_viralizacao>
-Antes de escrever, preencha "planejamento": para quem é, qual ganho a pessoa percebe até o 3º slide e a ÚNICA ideia central. Se houver duas ideias, fique com a mais forte.
+Antes de escrever, preencha "planejamento": para quem é, qual ganho a pessoa percebe até o 3º slide, a ÚNICA ideia central, a pergunta que a capa abre e o fio que leva de slide em slide até a resposta. Se houver duas ideias, fique com a mais forte.
 
 CAPA (slide 1):
 - Só a headline. "subtitulo" vazio. De 4 a 12 palavras.
-- A headline existe para fazer a pessoa ARRASTAR: curiosidade, polêmica, promessa concreta ou identificação imediata.
-- Específica, nunca genérica. Errado: "5 dicas para vender mais". Certo: "Seu cliente não sumiu. Ele desistiu no terceiro áudio."
+- A capa precisa fazer a pessoa pensar "como assim?" e arrastar para entender. Ela ABRE uma pergunta e NÃO entrega a resposta.
+- Mecanismos que funcionam:
+  • consequência escondida de algo bom: "A balança desceu 10 kg. Seu cabelo desceu junto."
+  • contradição com o que o público acredita: "Comer menos está te fazendo engordar."
+  • cena específica que o público reconhece: "Você emagreceu e todo mundo elogiou. Menos o espelho."
+  • afirmação que divide opiniões, dita com firmeza.
+- Proibido na capa: conselho ou ordem genérica ("Não faça X", "Cuide de Y"), título que já entrega a conclusão, frase que só faz sentido depois de ler o post.
+- O tema e o público do post aparecem já na capa ou no slide 2 (ex.: se o post é sobre quem usa canetinha, a canetinha está na capa ou no slide 2, nunca só no final).
 - Em "ganchos_alternativos", escreva 3 outras headlines para a capa, cada uma com um mecanismo diferente.
 
-SLIDE 2: precisa funcionar sozinho como capa, porque o Instagram reexibe o carrossel a partir dele. É um segundo gancho, nunca introdução.
+SLIDE 2: precisa funcionar sozinho como capa, porque o Instagram reexibe o carrossel a partir dele. É um segundo gancho que aprofunda a pergunta da capa, nunca introdução.
+
+FIO CONDUTOR (o que segura a pessoa até o fim):
+- O carrossel é UM argumento contínuo, não uma sequência de frases de efeito soltas. Cada slide responde à pergunta que o anterior deixou e deixa uma nova.
+- Comece os slides do meio com conectores que puxam o próximo: "Só que…", "E o pior:", "O detalhe que ninguém conta:", "Por isso…", "Aí vem a virada:".
+- Títulos concretos, que se entendem sozinhos. Nada de metáfora abstrata que só faz sentido lendo o subtítulo (errado: "O folículo não vive de promessa"; certo: "Sem proteína, o cabelo é o primeiro a pagar a conta").
+- Lista ("três pontos", "três erros") não se espreme num subtítulo: cada item ganha um slide ou uma frase curta e clara.
+- O penúltimo slide é o clímax (a virada ou a frase mais forte). O último slide FECHA o que a capa abriu (retoma a ideia ou a cena da capa com a resposta) e só então faz o CTA.
+- Nada novo no final: nenhum tema, público ou termo aparece pela primeira vez no último slide.
+- O CTA é consequência do que foi mostrado e diz por que agir (ex.: "Salva para mostrar no seu próximo retorno médico", não só "salve este post").
 
 TEXTO:
 - No máximo ${maxPalavras} palavras por slide (título + subtítulo). Frases curtas, português do dia a dia.
