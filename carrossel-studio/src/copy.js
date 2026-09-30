@@ -21,6 +21,7 @@ function esquema(qtdSlides, comImagem, comDiagrama) {
     planejamento: z.object({
       quem: z.string().describe("Para quem exatamente é este post: perfil, momento de vida ou do negócio, dor"),
       por_que: z.string().describe("Qual ganho a pessoa percebe até o 3º slide"),
+      promessa: z.string().describe("O que o carrossel vende, no formato 'X sem Y': o resultado que a pessoa quer sem o medo dela. Ex.: 'Implantar IA no WhatsApp sem perder qualidade nem irritar cliente'"),
       ideia_central: z.string().describe("A ÚNICA ideia do carrossel, em uma frase"),
       pergunta_da_capa: z.string().describe("A pergunta que a capa deixa na cabeça do leitor (o 'como assim?') e que só o último slide responde"),
       fio_condutor: z.string().describe("Em uma linha, como cada slide leva ao próximo até fechar a pergunta da capa"),
@@ -58,7 +59,7 @@ function regrasCta(cliente, objetivo) {
     conversao: `levar ao próximo passo: ${cta.conversao || "[PRÓXIMO PASSO: agendar avaliação, link na bio ou direct] (liste em pendencias)"}. Ex.: "Quer saber qual caminho faz sentido para você? Agende sua avaliação."`,
     lead: cta.entrega
       ? `comentar a palavra para receber o presente: "Quer receber ${cta.entrega}? Comenta ${palavra} que eu te mando na DM."`
-      : `comentar a palavra para receber a explicação: "Comenta ${palavra} que eu te explico como funciona."`,
+      : `comentar a palavra para dar o primeiro passo: "Quer saber se [o seu caso] está pronto para [solução]? Comenta ${palavra} que eu te mostro o primeiro passo."`,
     autoridade: `salvar: "Salva este post para lembrar antes de escolher."`,
     alcance: `compartilhar: "Manda para quem está decidindo isso agora."`,
   };
@@ -85,8 +86,9 @@ function regrasVirais(modelo, objetivo, cliente) {
   return `<metodologia_viraliza>
 PÚBLICO: quem JÁ sabe que tem o problema e está decidindo o que fazer, com quem ou qual caminho escolher. Não tente convencer que existe um problema. Mostre que existe um jeito seguro de decidir.
 Mensagem central: "Você não precisa escolher no escuro. Existe uma forma correta de avaliar, planejar e executar."
+O carrossel vende SEGURANÇA na decisão, não a novidade da solução: quem já quer a solução precisa ouvir que existe um jeito certo de fazer sem o risco que ela teme.
 
-Antes de escrever, preencha "planejamento": quem exatamente está decidindo (ex.: "mulher de 40+ comparando tratamentos para flacidez"), o ganho de arrastar, a ÚNICA ideia central, a dúvida de decisão que a capa toca e o fio condutor.
+Antes de escrever, preencha "planejamento": quem exatamente está decidindo (ex.: "mulher de 40+ comparando tratamentos para flacidez"), o ganho de arrastar, a promessa no formato "X sem Y", a ÚNICA ideia central, a dúvida de decisão que a capa toca e o fio condutor.
 
 MÉTODO DO CLIENTE: ${descreverMetodo(cliente)}
 
@@ -96,6 +98,7 @@ GANCHO (slide 1): só a headline, "subtitulo" vazio, de 4 a 12 palavras.
   • Alerta antes da decisão: "Antes de fazer harmonização facial, entenda isso." / "Se você vai contratar uma mentoria, observe isso antes."
   • Causa escondida: "Sua dor no joelho pode não estar começando no joelho." / "O problema talvez não seja o anúncio."
   • Erro de etapa: "O erro não está em querer emagrecer. Está em pular a avaliação." / "O primeiro passo para X não é Y."
+  • Decisão + não comece por aí: "Vai colocar IA no atendimento? Não comece pela ferramenta." / "Vai fazer lente de contato? Não comece pelo formato do dente."
   • Nem todo mundo: "Nem todo sorriso bonito começa pelas lentes de contato."
   • Prova: "O que mudou esse resultado não foi X. Foi Y."
   • Promessa: "Existe um jeito de X sem Y."
@@ -110,7 +113,7 @@ DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide
 - O TÍTULO de cada slide carrega a informação concreta; o subtítulo só apoia. Quem ler apenas os títulos em sequência precisa entender o argumento inteiro.
   Ruim: "Antes da ferramenta, vem o mapa." Bom: "Defina o que a IA responde e quando ela chama uma pessoa."
 - Nada de aforismo ou frase de efeito no título ("O problema não é X", "Tudo começa em Y") sem dizer, no próprio título, qual é o problema de verdade.
-- No slide do método: se o método tiver nome, use o nome; se não tiver, descreva as etapas concretas em vez de "no nosso método". Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
+- No slide do método: use o nome do método (ou "nosso método") e SEMPRE as etapas concretas na ordem. Nunca só "no nosso método" sem dizer o que acontece. Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
 
 TEXTO ENXUTO: título com até ${LIMITE_TITULO} palavras; subtítulo com UMA frase curta; no máximo ${maxPalavras} palavras por slide. Português do dia a dia; explique qualquer termo técnico.
 
