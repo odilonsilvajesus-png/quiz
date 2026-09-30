@@ -45,6 +45,7 @@ function regrasImagem(cliente, preferencia, direcaoEstilo, { regras, observacao,
   return `Imagens (serão geradas por IA a partir do que você escrever):${regras ? `\n- REGRAS OBRIGATÓRIAS DO CLIENTE PARA IMAGENS (nunca desrespeite): ${regras}` : ""}${observacao ? `\n- Observação para as imagens deste carrossel: ${observacao}` : ""}${comPessoa ? `\n- A protagonista das imagens é a PRÓPRIA ${cliente.nome}, a partir de uma foto real dela. Descreva cenas com ela (roupa, lugar, gesto, expressão), sem descrever o rosto.` : ""}${direcaoEstilo ? `\n- Tipo de imagem que este estilo visual pede: ${direcaoEstilo}` : ""}
 - Preencha "direcao_de_arte" com UM conceito visual para o carrossel inteiro, tirado do tema e do público de ${cliente.nome}: a mesma personagem principal em todos os slides (idade, aparência, roupa), o mesmo ambiente, a mesma luz e o mesmo clima emocional.${preferencia ? ` Preferência visual do cliente: ${preferencia}.` : ""}
 - Em cada slide, preencha "imagem" com a cena que ILUSTRA LITERALMENTE aquele texto: se o slide fala de comer escondida à noite, mostre a personagem comendo escondida à noite. A imagem precisa fazer sentido mesmo para quem ler só aquele slide.
+- CAPA: a imagem mostra a EMOÇÃO da headline. De preferência a personagem olhando para a câmera com uma expressão forte que combine com a frase (surpresa, dúvida, riso, cansaço, alívio), ou o objeto do tema em close (celular, café, notebook, prato). Fundo limpo e escuro o bastante para receber texto branco grande por cima.
 - Mostre ação, gesto e expressão concretos. Nada de imagem genérica, simbólica demais, de banco de imagens ou sem relação com a frase.
 - Respeite o posicionamento do cliente: nada que contradiga a base de conhecimento (ex.: se o cliente é contra dieta, não mostre balança, fita métrica ou prato de salada como solução).
 - Nunca peça texto, letras, números ou logotipos dentro da imagem.`;
@@ -61,67 +62,64 @@ function regrasCta(cliente, objetivo) {
     lead: `LEAD (CTA duplo): salvar o post e comentar ${palavra} para receber ${entrega}.`,
     conversao: `CONVERSÃO: levar ao próximo passo comercial: ${cta.conversao || "[PRÓXIMO PASSO: link na bio, direct ou formulário] (liste em pendencias)"}.`,
   };
+  if (objetivo === "lead") {
+    return `CTA deste post (obrigatório): RECOMPENSA. O último slide oferece um presente e pede o comentário para entregar:
+  título no formato "Quer receber ${cta.entrega || "[O PRESENTE]"}?" e subtítulo "Comenta ${cta.palavra_chave || "[PALAVRA]"} que eu te mando na DM."
+  A legenda termina com o mesmo pedido. ${cta.entrega && cta.palavra_chave ? "" : "Liste em pendencias o que faltar (presente ou palavra)."}`;
+  }
   if (tipos[objetivo]) return `CTA deste post (obrigatório): ${tipos[objetivo]}`;
   return `CTA: escolha UM objetivo que combine com o conteúdo e use o CTA dele:\n${Object.values(tipos).map((t) => `  - ${t}`).join("\n")}\n  Em estruturas de identificação ou contraponto, uma pergunta fácil de responder também funciona.`;
 }
 
 // Regras de copy viral que valem para todos os clientes e todos os modelos.
+// Limite de palavras por slide (título + subtítulo). Texto demais é o que mais derruba a retenção.
+export const LIMITE_TITULO = 10;
+export const limitePalavras = (modelo) => Math.min(modelo.palavras_max || 28, 28);
+
 function regrasVirais(modelo, objetivo, cliente) {
-  const maxPalavras = modelo.palavras_max || 35;
+  const maxPalavras = limitePalavras(modelo);
   return `<regras_de_viralizacao>
-Antes de escrever, preencha "planejamento": para quem é, qual ganho a pessoa percebe até o 3º slide, a ÚNICA ideia central, a pergunta que a capa abre e o fio que leva de slide em slide até a resposta. Se houver duas ideias, fique com a mais forte.
+Antes de escrever, preencha "planejamento": para quem é (o público com nome, ex.: "social medias iniciantes"), o que a pessoa ganha se arrastar, a ÚNICA ideia central, a pergunta que a capa abre e o fio que leva de slide em slide até a resposta.
 
-CAPA (slide 1):
-- Só a headline. "subtitulo" vazio. De 4 a 12 palavras.
-- A capa precisa fazer a pessoa pensar "como assim?" e arrastar para entender. Ela ABRE uma pergunta e NÃO entrega a resposta.
-- Fórmulas que funcionam:
-  • problema + consequência: "Seu conteúdo pode estar afastando clientes sem você perceber."
-  • resultado + contradição: "Você não precisa postar mais para vender mais."
-  • erro + curiosidade: "O erro que faz seu conteúdo parecer bom… e vender pouco."
-  • consequência escondida de algo bom: "A balança desceu 10 kg. Seu cabelo desceu junto."
-  • pergunta provocativa: "E se o problema não fosse falta de clientes?"
-  • segredo: "Existe uma parte da sua estratégia que quase ninguém olha."
-  • contraste: "Enquanto você tenta convencer, seus concorrentes estão fazendo outra coisa."
-- Proibido na capa: conselho ou ordem genérica ("Não faça X", "Cuide de Y"), título que já entrega a conclusão, frase que só faz sentido depois de ler o post.
-- O tema e o público do post aparecem já na capa ou no slide 2 (ex.: se o post é sobre quem usa canetinha, a canetinha está na capa ou no slide 2, nunca só no final).
-- Em "ganchos_alternativos", escreva 3 outras headlines para a capa, cada uma com um mecanismo diferente.
+CAPA (slide 1): só a headline, "subtitulo" vazio, de 4 a 12 palavras.
+- Teste do 1 segundo: quem lê sabe na hora O QUE vai ganhar se arrastar e sente que é PARA ELE.
+- Nomeie o público ou a situação dele ("social media", "quem usa canetinha", "mãe que trabalha fora").
+- Prometa algo prático e concreto (uma lista, uma rotina, um roteiro, um erro, o jeito mais rápido) ou um contraste.
+- Use UMA destas fórmulas:
+  1. Contraste X x Y: "Velho Instagram x novo Instagram" / "O que seu cliente pede x o que você deve entregar"
+  2. Número + público + resultado: "3 coisas que não podem faltar em uma proposta de social media"
+  3. "Se eu…" em primeira pessoa: "Se eu precisasse conquistar meu primeiro cliente hoje"
+  4. O mais rápido ou o mais simples: "O jeito mais simples de criar 1 semana de conteúdo"
+  5. Como X sem Y: "Como prospectar clientes sem ser chato"
+  6. Presente ou recurso: "Roteiro grátis para um dia de stories"
+  7. Situação ou POV: "Fechou um cliente novo? Faça isso antes do primeiro post."
+  8. Erro + consequência: "Esse erro faz seu Instagram perder clientes"
+  9. Resultado + história: "Copiei essa estratégia e viralizou"
+- Linguagem de conversa, palavras simples. Marque 1 palavra de destaque com *asteriscos*.
+- Proibido na capa: metáfora ou frase poética ("O folículo não vive de promessa"), conselho genérico ("Cuide da sua saúde"), título genérico já visto mil vezes ("5 dicas de marketing", "Como vender mais"), frase que só faz sentido depois de ler o post.
+- Em "ganchos_alternativos", 3 outras headlines com fórmulas DIFERENTES da usada na capa.
 
-SLIDE 2: precisa funcionar sozinho como capa, porque o Instagram reexibe o carrossel a partir dele. É um segundo gancho que aprofunda a pergunta da capa, nunca introdução.
+SLIDE 2: em uma frase, o contexto e por que vale continuar. Funciona sozinho como capa (o Instagram reexibe o carrossel a partir dele). Nunca introdução chata.${objetivo === "lead" ? " Pode antecipar o presente: \"No final tem um presente pra você.\"" : ""}
 
-CONSCIÊNCIA (vale para qualquer estrutura, é o que cria conexão):
-- Não tente convencer. Conduza a pessoa até o ponto em que a solução passa a fazer sentido: atenção → curiosidade → identificação → tensão → descoberta → novo jeito de ver → desejo → ação.
-- Quebra de padrão: desafie a explicação que o público já tem para o próprio problema ("Talvez o problema não seja X").
-- Dor em camadas: não pare na dor funcional ("você não vende"). Mostre a cena concreta e o que ela custa em dinheiro, emoção, identidade ("começa a duvidar se é bom no que faz") ou futuro.
-- Identificação: use o diálogo interno do público, os pensamentos que ele nunca falou em voz alta ("Será que meu preço está alto?", "Será que o problema sou eu?").
-- Erro oculto: em algum slide, mostre que o problema aparente não é o real: "Você acha que é X. Mas o verdadeiro problema é Y." Esse é o momento que faz a pessoa salvar e compartilhar.
-- Nova perspectiva: depois de derrubar a explicação antiga, coloque outra no lugar ("Não é X. É Y."). Criticar sem oferecer um novo jeito de ver só frustra.
-- Solução: mostre o mecanismo (o que fazer, como pensar, por que funciona), simples de entender, sem entregar tudo.
-- CTA: o próximo microcompromisso que a pessoa está pronta para assumir. Quem acabou de descobrir o problema comenta, salva ou segue; não recebe oferta agressiva.
+CONTEÚDO (slides do meio):
+- Uma ideia por slide. Em lista ou passo a passo, numere no título ("1.", "2." ou "Passo 1:").
+- Cada slide entrega algo útil e concreto: o que fazer, o erro, o jeito certo, um exemplo. Nada de opinião vaga.
+- Para comparar, use Errado → Certo.
+- Quando existir, mostre o erro oculto: "Você acha que é X. Mas é Y." É o que faz salvar e compartilhar.
+- Traga algo do próprio cliente (experiência, método, caso real da base). Conteúdo que qualquer perfil do nicho postaria não serve.
+- Títulos que se entendem sozinhos; cada slide puxa o próximo.
 
-FIO CONDUTOR (o que segura a pessoa até o fim):
-- O carrossel é UM argumento contínuo, não uma sequência de frases de efeito soltas. Cada slide responde à pergunta que o anterior deixou e deixa uma nova.
-- Comece os slides do meio com conectores que puxam o próximo: "Só que…", "E o pior:", "O detalhe que ninguém conta:", "Por isso…", "Aí vem a virada:".
-- Títulos concretos, que se entendem sozinhos. Nada de metáfora abstrata que só faz sentido lendo o subtítulo (errado: "O folículo não vive de promessa"; certo: "Sem proteína, o cabelo é o primeiro a pagar a conta").
-- Lista ("três pontos", "três erros") não se espreme num subtítulo: cada item ganha um slide ou uma frase curta e clara.
-- O penúltimo slide é o clímax (a virada ou a frase mais forte). O último slide FECHA o que a capa abriu (retoma a ideia ou a cena da capa com a resposta) e só então faz o CTA.
-- Nada novo no final: nenhum tema, público ou termo aparece pela primeira vez no último slide.
-- O CTA é consequência do que foi mostrado e diz por que agir (ex.: "Salva para mostrar no seu próximo retorno médico", não só "salve este post").
+TEXTO ENXUTO (texto demais é o que mais derruba a retenção):
+- Título com até ${LIMITE_TITULO} palavras. Subtítulo com UMA frase curta. No máximo ${maxPalavras} palavras por slide somando os dois.
+- Português do dia a dia, sem jargão.
 
-TEXTO:
-- No máximo ${maxPalavras} palavras por slide (título + subtítulo). Frases curtas, português do dia a dia.
-- Um destaque por slide.
-- A micro-dor específica vence a frase genérica: uma cena que o público reconhece na hora ("o cliente que some depois do orçamento" vence "clientes difíceis").
-- Traga algo do próprio cliente (experiência, opinião, história, método) tirado da base. Conteúdo que qualquer perfil do nicho postaria não serve.
-
-PROIBIDO:
-- Slide de "conclusão", "resumo" ou "obrigado por ler".
-- Promessa de resultado garantido ("vai", "garantido", "dobra"). Use "pode", "no caso de X".
-- Jargão técnico sem explicar, linguagem de guru, emoji nos slides.
-- Número, caso, depoimento ou história que não esteja na base do cliente.
-- Humilhar alguém, opinião partidária ou acusar pessoas.
-
+FINAL:
+- O penúltimo slide é o mais forte. O último fecha a promessa da capa e faz o CTA. Nada novo aparece no final.
 ${regrasCta(cliente, objetivo)}
-- O último slide leva o CTA, e "cta_botao" é o texto curto do botão desse slide. A legenda termina com o mesmo CTA.
+- "cta_botao" é o texto curto do botão do último slide.
+- Legenda: 2 a 4 linhas que retomam a capa, terminando com o mesmo CTA.
+
+PROIBIDO: slide de "conclusão" ou "obrigado por ler"; promessa de resultado garantido (use "pode"); emoji nos slides; número, caso ou depoimento que não esteja na base; humilhar alguém; opinião partidária.
 </regras_de_viralizacao>`;
 }
 
@@ -250,7 +248,7 @@ export async function escolherEstrutura(cliente, referencia, { observacao } = {}
     }),
     sistema: `Você escolhe a estrutura de roteiro de um carrossel do Instagram pelo TIPO do conteúdo. Opções:
 ${opcoes.map((m) => `- ${m.id} (${m.nome}): ${m.quando_usar}`).join("\n")}
-${opcoes.some((m) => m.id === "n3") ? "Na dúvida, escolha n3. Use outra só quando o conteúdo for claramente daquele tipo." : ""}`,
+Prefira os formatos práticos (lista, errado-certo), que são os que mais viralizam. Use n3 quando o conteúdo for sobre mudar a forma como o público enxerga um problema. Na dúvida, escolha lista.`,
     usuario: `Cliente: ${cliente.nome}${cliente.descricao ? ` (${cliente.descricao})` : ""}
 
 Conteúdo que vai virar carrossel:

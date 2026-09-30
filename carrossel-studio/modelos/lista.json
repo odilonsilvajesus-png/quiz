@@ -1,0 +1,18 @@
+{
+  "id": "lista",
+  "nome": "Lista prática",
+  "descricao": "Número + público + resultado na capa, um item por slide e presente no final. O formato que mais salva e compartilha.",
+  "ordem": -3,
+  "viral": true,
+  "palavras_max": 26,
+  "quando_usar": "Dicas, ferramentas, erros, passos, rotina, roteiro, 'coisas que…', 'o que fazer quando…'. Qualquer conteúdo que vire itens práticos.",
+  "estrutura": [
+    { "papel": "Capa", "fundo": "escuro", "instrucao": "SÓ a headline: número + público + resultado ('3 coisas que não podem faltar em uma proposta de social media'), ou 'Se eu…', ou 'O jeito mais simples de…'. Subtítulo vazio." },
+    { "papel": "Por que importa", "fundo": "claro", "instrucao": "Em uma frase, o problema que essa lista resolve e por que vale ver até o fim. Funciona sozinho como capa." },
+    { "papel": "Item 1", "fundo": "escuro", "instrucao": "Título '1. [o item]'. Subtítulo: como fazer, em uma frase concreta." },
+    { "papel": "Item 2", "fundo": "claro", "instrucao": "Título '2. [o item]'. Subtítulo: como fazer, em uma frase concreta." },
+    { "papel": "Item 3", "fundo": "escuro", "instrucao": "Título '3. [o item]'. Subtítulo: como fazer, em uma frase concreta." },
+    { "papel": "O item que ninguém faz", "fundo": "destaque", "instrucao": "O item mais forte ou o erro oculto ('Você acha que é X. Mas é Y.'). É o slide que faz salvar." },
+    { "papel": "CTA", "fundo": "escuro", "instrucao": "Fecha a promessa da capa e faz o CTA do objetivo (de preferência o presente: 'Quer receber…? Comenta PALAVRA que eu te mando na DM')." }
+  ]
+}

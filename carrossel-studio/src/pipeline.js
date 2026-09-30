@@ -60,7 +60,10 @@ async function montarCarrossel(cliente, referencia, opcoes) {
     log("Escolhendo a estrutura pelo tipo do conteúdo...");
     ({ modelo, motivo: motivoEstrutura } = await escolherEstrutura(cliente, referencia, { observacao }));
   }
-  const objetivoEscolhido = opcoes.objetivo || cliente.conteudo.cta?.objetivo_padrao || "auto";
+  // Com palavra-chave e presente cadastrados, o automático vira Lead: o final oferece o presente pelo comentário.
+  const ctaCliente = cliente.conteudo.cta || {};
+  let objetivoEscolhido = opcoes.objetivo || ctaCliente.objetivo_padrao || "auto";
+  if (objetivoEscolhido === "auto" && ctaCliente.palavra_chave && ctaCliente.entrega) objetivoEscolhido = "lead";
   const objetivo = objetivoEscolhido === "auto" ? undefined : objetivoEscolhido;
   const estiloFinal = estilo || cliente.visual.template || "classico";
   const infoEstilo = (await listarEstilos()).find((e) => e.id === estiloFinal);

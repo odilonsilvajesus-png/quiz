@@ -1,0 +1,18 @@
+{
+  "id": "errado-certo",
+  "nome": "Errado x Certo",
+  "descricao": "Contraste na capa e um par errado → certo por slide. Fácil de ler, gera identificação e salvamento.",
+  "ordem": -2,
+  "viral": true,
+  "palavras_max": 24,
+  "quando_usar": "Comparações, 'chato vs que funciona', 'velho x novo', 'o que pedem x o que entregar', erros comuns com a correção.",
+  "estrutura": [
+    { "papel": "Capa: contraste", "fundo": "escuro", "instrucao": "SÓ a headline em contraste X x Y ('Carrossel chato vs carrossel que viraliza', 'O que seu cliente pede x o que você deve entregar'). Subtítulo vazio." },
+    { "papel": "Errado x Certo 1", "fundo": "claro", "instrucao": "Título 'Errado: [o que a maioria faz]'. Subtítulo 'Certo: [o que fazer]', curto e concreto. Funciona sozinho como capa." },
+    { "papel": "Errado x Certo 2", "fundo": "escuro", "instrucao": "Título 'Errado: [erro]'. Subtítulo 'Certo: [correção]'." },
+    { "papel": "Errado x Certo 3", "fundo": "claro", "instrucao": "Título 'Errado: [erro]'. Subtítulo 'Certo: [correção]'." },
+    { "papel": "Errado x Certo 4", "fundo": "escuro", "instrucao": "Título 'Errado: [erro]'. Subtítulo 'Certo: [correção]'." },
+    { "papel": "A virada", "fundo": "destaque", "instrucao": "A frase que resume a diferença entre os dois lados, a mais forte do post." },
+    { "papel": "CTA", "fundo": "escuro", "instrucao": "CTA do objetivo, de preferência o presente: 'Quer receber [o presente]? Comenta PALAVRA que eu te mando na DM'." }
+  ]
+}
