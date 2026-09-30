@@ -1,0 +1,19 @@
+{
+  "id": "n3",
+  "nome": "N3",
+  "descricao": "Engenharia de consciência: interrompe o scroll, faz a pessoa se reconhecer, muda a interpretação do problema e só então mostra o caminho.",
+  "ordem": -1,
+  "viral": true,
+  "palavras_max": 40,
+  "quando_usar": "Padrão para quase tudo: qualquer problema do público em que a explicação que ele tem está errada ou incompleta. Use sempre que houver uma dor, uma crença a mudar ou um caminho a mostrar.",
+  "estrutura": [
+    { "papel": "Gancho", "fundo": "escuro", "instrucao": "SÓ a headline, de 4 a 12 palavras. Cria uma lacuna de curiosidade e NÃO entrega a resposta. Use uma destas fórmulas: problema + consequência, resultado + contradição, erro + curiosidade, pergunta provocativa, segredo, contraste. Subtítulo vazio." },
+    { "papel": "Quebra de padrão", "fundo": "claro", "instrucao": "Desafia a explicação que o público já tem para o próprio problema: o 'como assim?'. Contraintuitiva, inversão, desconstrução, contraste ou paradoxo ('Talvez o problema não seja X'). Funciona sozinho como capa." },
+    { "papel": "Dor", "fundo": "escuro", "instrucao": "Aprofunda o problema em uma cena concreta (o que a pessoa faz, vê e sente) e vai além da dor funcional: financeira, emocional, de identidade ou de futuro." },
+    { "papel": "Identificação", "fundo": "claro", "instrucao": "Descreve comportamentos e o diálogo interno do público, do jeito que ele pensa e nunca falou em voz alta ('Será que…?'). 2 a 4 itens curtos que ele reconhece na hora. O leitor precisa pensar: 'isso foi escrito para mim'." },
+    { "papel": "Erro oculto", "fundo": "destaque", "instrucao": "O momento AHA: 'Você acha que é X. Mas o verdadeiro problema é Y.' Mostra que o problema aparente não é o real e explica por que o que a pessoa fazia não funcionava." },
+    { "papel": "Nova perspectiva", "fundo": "escuro", "instrucao": "Coloca uma nova explicação no lugar da antiga, no formato Antes → Depois ('Não é X. É Y.'). Deve gerar a pergunta 'como eu faço isso?', não 'como eu compro isso?'." },
+    { "papel": "Solução", "fundo": "claro", "instrucao": "Mostra o MECANISMO da solução: o que fazer, como pensar e por que funciona. Simples de entender e poderoso de aplicar. Pode conectar ao método do cliente, sem entregar tudo e sem vender." },
+    { "papel": "CTA", "fundo": "destaque", "instrucao": "Fecha a pergunta da capa e propõe o próximo microcompromisso compatível com o nível de consciência (comentar a palavra, salvar para revisar, seguir para o próximo conteúdo). Nada de oferta agressiva." }
+  ]
+}

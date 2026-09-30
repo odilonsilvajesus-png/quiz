@@ -74,16 +74,29 @@ Antes de escrever, preencha "planejamento": para quem é, qual ganho a pessoa pe
 CAPA (slide 1):
 - Só a headline. "subtitulo" vazio. De 4 a 12 palavras.
 - A capa precisa fazer a pessoa pensar "como assim?" e arrastar para entender. Ela ABRE uma pergunta e NÃO entrega a resposta.
-- Mecanismos que funcionam:
+- Fórmulas que funcionam:
+  • problema + consequência: "Seu conteúdo pode estar afastando clientes sem você perceber."
+  • resultado + contradição: "Você não precisa postar mais para vender mais."
+  • erro + curiosidade: "O erro que faz seu conteúdo parecer bom… e vender pouco."
   • consequência escondida de algo bom: "A balança desceu 10 kg. Seu cabelo desceu junto."
-  • contradição com o que o público acredita: "Comer menos está te fazendo engordar."
-  • cena específica que o público reconhece: "Você emagreceu e todo mundo elogiou. Menos o espelho."
-  • afirmação que divide opiniões, dita com firmeza.
+  • pergunta provocativa: "E se o problema não fosse falta de clientes?"
+  • segredo: "Existe uma parte da sua estratégia que quase ninguém olha."
+  • contraste: "Enquanto você tenta convencer, seus concorrentes estão fazendo outra coisa."
 - Proibido na capa: conselho ou ordem genérica ("Não faça X", "Cuide de Y"), título que já entrega a conclusão, frase que só faz sentido depois de ler o post.
 - O tema e o público do post aparecem já na capa ou no slide 2 (ex.: se o post é sobre quem usa canetinha, a canetinha está na capa ou no slide 2, nunca só no final).
 - Em "ganchos_alternativos", escreva 3 outras headlines para a capa, cada uma com um mecanismo diferente.
 
 SLIDE 2: precisa funcionar sozinho como capa, porque o Instagram reexibe o carrossel a partir dele. É um segundo gancho que aprofunda a pergunta da capa, nunca introdução.
+
+CONSCIÊNCIA (vale para qualquer estrutura, é o que cria conexão):
+- Não tente convencer. Conduza a pessoa até o ponto em que a solução passa a fazer sentido: atenção → curiosidade → identificação → tensão → descoberta → novo jeito de ver → desejo → ação.
+- Quebra de padrão: desafie a explicação que o público já tem para o próprio problema ("Talvez o problema não seja X").
+- Dor em camadas: não pare na dor funcional ("você não vende"). Mostre a cena concreta e o que ela custa em dinheiro, emoção, identidade ("começa a duvidar se é bom no que faz") ou futuro.
+- Identificação: use o diálogo interno do público, os pensamentos que ele nunca falou em voz alta ("Será que meu preço está alto?", "Será que o problema sou eu?").
+- Erro oculto: em algum slide, mostre que o problema aparente não é o real: "Você acha que é X. Mas o verdadeiro problema é Y." Esse é o momento que faz a pessoa salvar e compartilhar.
+- Nova perspectiva: depois de derrubar a explicação antiga, coloque outra no lugar ("Não é X. É Y."). Criticar sem oferecer um novo jeito de ver só frustra.
+- Solução: mostre o mecanismo (o que fazer, como pensar, por que funciona), simples de entender, sem entregar tudo.
+- CTA: o próximo microcompromisso que a pessoa está pronta para assumir. Quem acabou de descobrir o problema comenta, salva ou segue; não recebe oferta agressiva.
 
 FIO CONDUTOR (o que segura a pessoa até o fim):
 - O carrossel é UM argumento contínuo, não uma sequência de frases de efeito soltas. Cada slide responde à pergunta que o anterior deixou e deixa uma nova.
@@ -236,7 +249,8 @@ export async function escolherEstrutura(cliente, referencia, { observacao } = {}
       motivo: z.string().describe("Uma frase explicando a escolha"),
     }),
     sistema: `Você escolhe a estrutura de roteiro de um carrossel do Instagram pelo TIPO do conteúdo. Opções:
-${opcoes.map((m) => `- ${m.id} (${m.nome}): ${m.quando_usar}`).join("\n")}`,
+${opcoes.map((m) => `- ${m.id} (${m.nome}): ${m.quando_usar}`).join("\n")}
+${opcoes.some((m) => m.id === "n3") ? "Na dúvida, escolha n3. Use outra só quando o conteúdo for claramente daquele tipo." : ""}`,
     usuario: `Cliente: ${cliente.nome}${cliente.descricao ? ` (${cliente.descricao})` : ""}
 
 Conteúdo que vai virar carrossel:

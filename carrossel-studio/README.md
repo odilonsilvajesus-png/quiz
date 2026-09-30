@@ -89,7 +89,7 @@ Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já p
 - **Foto do perfil:** o painel puxa sozinho a foto do Instagram de cada cliente (pela conexão do Instagram, grátis, ou pelo Apify) e mostra no menu, nos cartões e no topo do cliente, com o número de seguidores. Em **Perfil e referências** há o botão **Atualizar foto**.
 
 ### Escrita viral e revisor
-- **Estruturas:** Ensino, Narrativa, Sequência, Contraponto e Identificação. No modelo **Automático**, a IA escolhe a estrutura pelo tipo do conteúdo (com o modelo barato do `LEITURA_MODELO`).
+- **Estruturas:** N3 (gancho, quebra de padrão, dor, identificação, erro oculto, nova perspectiva, solução, CTA), Ensino, Narrativa, Sequência, Contraponto e Identificação. No modelo **Automático**, a IA escolhe a estrutura pelo tipo do conteúdo (na dúvida, N3) (com o modelo barato do `LEITURA_MODELO`).
 - **Capa só com a headline** (4 a 12 palavras) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
 - **Slide 2** funciona sozinho como capa. Limite de palavras por slide, dor específica, nada inventado, sem promessa de resultado.
 - **CTA pelo objetivo** (Alcance, Autoridade, Lead, Conversão), escolhido na hora de criar. Palavra-chave, entrega e próximo passo ficam em **Voz e direcionamento → Temas, regras e chamada para ação**.

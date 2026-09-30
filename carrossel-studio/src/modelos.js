@@ -20,7 +20,7 @@ export const estruturasVirais = () => listarModelos().filter((m) => m.viral);
 export const MODELO_AUTOMATICO = {
   id: "auto",
   nome: "Automático",
-  descricao: "A IA escolhe a estrutura pelo tipo do conteúdo: Ensino, Narrativa, Sequência, Contraponto ou Identificação.",
+  descricao: "A IA escolhe a estrutura pelo tipo do conteúdo. Na dúvida, usa o N3; as outras (Ensino, Narrativa, Sequência, Contraponto, Identificação) quando o conteúdo é claramente daquele tipo.",
   automatico: true,
   estrutura: [],
 };

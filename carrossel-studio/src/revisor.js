@@ -15,6 +15,7 @@ const esquema = z.object({
     tom_de_voz: z.number().describe("0 a 10"),
     estrutura: z.number().describe("0 a 10"),
     fluxo: z.number().describe("0 a 10"),
+    conexao: z.number().describe("0 a 10"),
     cta: z.number().describe("0 a 10"),
   }),
   ajustes: z.array(z.object({
@@ -32,7 +33,7 @@ export function veredito(r) {
   const valores = Object.values(notas);
   const media = +(valores.reduce((t, v) => t + v, 0) / valores.length).toFixed(1);
   const aprovado = !r.bloqueios.length && notas.gancho >= NOTA_MINIMA_GANCHO
-    && (notas.fluxo ?? 10) >= NOTA_MINIMA_FLUXO && media >= MEDIA_MINIMA;
+    && (notas.fluxo ?? 10) >= NOTA_MINIMA_FLUXO && (notas.conexao ?? 10) >= NOTA_MINIMA_FLUXO && media >= MEDIA_MINIMA;
   return { ...r, notas, media, aprovado, ajustes: r.ajustes.slice(0, 5) };
 }
 
@@ -53,6 +54,7 @@ Bloqueios (qualquer um impede publicar):
 
 Notas de 0 a 10:
 - gancho: a capa faz a pessoa pensar "como assim?" e arrastar? Uma headline só (4 a 12 palavras), específica, que abre uma pergunta sem entregar a resposta? Conselho genérico ("Não faça X") ou capa que já conta a conclusão vale no máximo 5. O slide 2 funciona sozinho como capa?
+- conexao: o leitor se reconhece (dor em cena concreta, diálogo interno do público, "isso foi escrito para mim")? Existe um erro oculto ("você acha que é X, mas é Y") e uma nova perspectiva no lugar da explicação antiga? Nota baixa se o texto só informa ou dá conselho sem mudar a forma como a pessoa enxerga o problema.
 - fluxo: cada slide puxa o próximo, como um argumento só? Os títulos se entendem sozinhos (sem metáfora abstrata)? O último slide fecha a pergunta da capa? Nota baixa se os slides forem frases de efeito soltas ou se o final parecer desconectado.
 - clareza: uma ideia só, frases curtas, sem jargão, dentro do limite de ${modelo.palavras_max || 35} palavras por slide?
 - tom_de_voz: parece ${cliente.nome} falando? Traz algo próprio do cliente (experiência, opinião, método), e não conteúdo genérico do nicho?
