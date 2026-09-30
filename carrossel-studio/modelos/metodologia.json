@@ -1,47 +1,47 @@
 {
   "id": "metodologia",
   "nome": "Metodologia Viraliza",
-  "descricao": "Uma estrutura só, feita para vender e gerar interessados: fala com quem já sabe que tem o problema e está decidindo com quem resolver, mostra o erro comum, o passo correto e o método do cliente como consequência lógica.",
+  "descricao": "Uma estrutura só, feita para vender e gerar interessados: parte de uma dor que a pessoa já sente, mostra que o caminho que ela segue não traz resultado e por quê, apresenta o novo caminho, o valor dele, a solução na prática e que podemos ajudar.",
   "estrutura": [
     {
       "papel": "Gancho",
       "fundo": "escuro",
-      "instrucao": "SÓ a headline, em uma frase, como nos exemplos Z4. Toca numa dúvida, medo ou desejo de quem já sabe que tem o problema e está decidindo o que fazer. Subtítulo vazio."
+      "instrucao": "SÓ a headline, em uma frase: a dor que a pessoa já sente, dita com as palavras dela, ou o sinal de que o caminho dela não está funcionando. Subtítulo vazio."
     },
     {
-      "papel": "Identificação",
+      "papel": "A dor",
       "fundo": "claro",
-      "instrucao": "O cenário real de quem está decidindo: o que ela já quer (2 ou 3 desejos concretos) e o medo que ainda trava ('Você já decidiu automatizar o WhatsApp. Mas tem medo de irritar cliente.'). Faz a pessoa pensar 'sou eu'. Funciona sozinho como capa."
+      "instrucao": "O cenário que a pessoa vive hoje, concreto, para ela pensar 'sou eu': o que acontece, o que ela sente, o que já perdeu. Funciona sozinho como capa."
     },
     {
-      "papel": "Problema oculto",
+      "papel": "O caminho atual",
       "fundo": "escuro",
-      "instrucao": "O que a pessoa não vê: o que acontece quando se pula o passo correto ('Quando a IA entra sem diagnóstico, ela só acelera o problema') e 2 ou 3 consequências concretas. Ou a causa real está em outro lugar ('Sua dor no joelho pode não começar no joelho')."
+      "instrucao": "O que ela já faz (ou pensa em fazer) para resolver: as tentativas comuns do público. E o fato: isso não está trazendo o resultado que ela quer."
     },
     {
-      "papel": "Erro comum",
+      "papel": "Por que não funciona",
       "fundo": "destaque",
-      "instrucao": "'O erro não é [querer a solução]. É [decidir só por preço, moda, indicação, pressa, ferramenta ou resultado de outra pessoa].' E o risco concreto desse erro."
+      "instrucao": "A causa real de o caminho atual não dar resultado, explicada de forma simples e concreta. É o 'ah, então é isso' do carrossel."
     },
     {
-      "papel": "Passo correto",
+      "papel": "O novo caminho",
       "fundo": "claro",
-      "instrucao": "A etapa que deveria vir antes da decisão (avaliação, diagnóstico, mapeamento, planejamento). Pode vir como 3 ou 4 perguntas curtas que a pessoa precisa responder antes de decidir."
+      "instrucao": "A virada: o caminho diferente que resolve a causa do slide anterior. Apresente como uma ideia nova e lógica, não como propaganda."
     },
     {
-      "papel": "Protocolo",
+      "papel": "O valor do novo caminho",
       "fundo": "escuro",
-      "instrucao": "O método do cliente como consequência lógica: nome do método (ou 'nosso método') e as etapas concretas na ordem, começando pelo primeiro passo. Sem cara de propaganda."
+      "instrucao": "O que muda na vida ou no negócio da pessoa seguindo esse caminho, no formato 'X sem Y': o resultado que ela quer sem o problema que ela teme."
     },
     {
-      "papel": "Benefício",
+      "papel": "A solução",
       "fundo": "claro",
-      "instrucao": "O que esse caminho garante na prática, no formato 'X sem Y': o resultado que a pessoa quer sem o medo do slide 2 (mais segurança, previsibilidade, clareza)."
+      "instrucao": "Como esse caminho funciona na prática: as etapas concretas, na ordem, descritas pelo que acontece. Sem 'no nosso método' ou 'no nosso protocolo'."
     },
     {
-      "papel": "CTA",
+      "papel": "Podemos ajudar",
       "fundo": "destaque",
-      "instrucao": "Convite suave para o próximo passo, ligado ao primeiro passo do método: 'Quer saber se [o seu caso] está pronto para [solução]? Comenta [PALAVRA] que eu te mostro o primeiro passo.' Segurança, nunca pressão."
+      "instrucao": "Mostra que o cliente pode ajudar a pessoa a seguir esse caminho, com um convite suave para o próximo passo conforme o objetivo (comentar a palavra, direct, avaliação). Segurança, nunca pressão."
     }
   ]
 }

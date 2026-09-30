@@ -89,7 +89,7 @@ Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já p
 - **Foto do perfil:** o painel puxa sozinho a foto do Instagram de cada cliente (pela conexão do Instagram, grátis, ou pelo Apify) e mostra no menu, nos cartões e no topo do cliente, com o número de seguidores. Em **Perfil e referências** há o botão **Atualizar foto**.
 
 ### Escrita viral e revisor
-- **Metodologia única (Metodologia Viraliza):** gancho → identificação → problema oculto → erro comum → passo correto → método do cliente → benefício → CTA suave. Fala com quem já sabe que tem o problema e está decidindo com quem resolver. O nome do método e o primeiro passo ficam na aba **Metodologia**.
+- **Metodologia única (Metodologia Viraliza):** a dor que a pessoa já sente → o caminho que ela segue não dá resultado → por que não dá → o novo caminho → o valor dele → a solução na prática → podemos ajudar. Nunca "no nosso método": o revisor reprova e o carrossel é reescrito. A solução do cliente (nome opcional e como funciona) fica na aba **Metodologia**.
 - **Capa só com a headline** (uma frase) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
 - **Slide 2** funciona sozinho como capa. Texto dos slides no tamanho da estrutura Z4 (frases inteiras, sem limite fixo de palavras), dor específica, nada inventado, sem promessa de resultado.
 - **CTA pelo objetivo** (Alcance, Autoridade, Lead, Conversão), escolhido na hora de criar. Palavra-chave, entrega e próximo passo ficam em **Voz e direcionamento → Temas, regras e chamada para ação**.

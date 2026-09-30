@@ -68,59 +68,65 @@ function regrasCta(cliente, objetivo) {
   return `CTA: por padrão, leve a uma conversa ou avaliação. Opções:\n${Object.values(tipos).map((t) => `  - ${t}`).join("\n")}`;
 }
 
-function descreverMetodo(cliente) {
+function descreverSolucao(cliente) {
   const m = cliente.conteudo.metodo || {};
-  if (m.nome || m.primeiro_passo) {
-    return `${m.nome ? `Nome: ${m.nome}.` : "Sem nome próprio: chame de \"nosso método\"."}${m.primeiro_passo ? ` Primeiro passo e o que ele analisa: ${m.primeiro_passo}.` : ""}`;
-  }
-  return "Use o método, protocolo ou processo descrito na base do cliente. Se não houver nome, chame de \"nosso método\" e liste em pendencias o nome do método.";
+  const partes = [m.nome && `Nome: ${m.nome} (pode aparecer UMA vez, no slide da solução ou do "podemos ajudar").`, m.primeiro_passo && `Como começa: ${m.primeiro_passo}.`].filter(Boolean);
+  return partes.length ? partes.join(" ") : "Use o serviço, processo ou forma de trabalho descrita na base do cliente.";
 }
+
+// Expressões que viram vício quando a IA escreve o slide da solução.
+export const VICIO_METODO = /\b(aqui\s+)?n[oa]\s+noss[oa]\s+(m[ée]todo|protocolo|metodologia|processo)\b/i;
 
 // A Metodologia Viraliza: vale para todos os clientes. Regras de um cliente específico ficam nos documentos dele.
 function regrasVirais(modelo, objetivo, cliente) {
   return `<metodologia_viraliza>
-PÚBLICO: quem JÁ sabe que tem o problema e está decidindo o que fazer, com quem ou qual caminho escolher. Não tente convencer que existe um problema. Mostre que existe um jeito seguro de decidir.
-Mensagem central: "Você não precisa escolher no escuro. Existe uma forma correta de avaliar, planejar e executar."
-O carrossel vende SEGURANÇA na decisão, não a novidade da solução: quem já quer a solução precisa ouvir que existe um jeito certo de fazer sem o risco que ela teme.
+PÚBLICO: quem JÁ sente a dor e já tenta resolver do jeito comum, sem resultado. Não tente convencer que existe um problema.
+O FIO DO CARROSSEL, nesta ordem:
+1. apresentar uma dor que a pessoa já sente;
+2. mostrar que o caminho que ela segue não gera resultado;
+3. explicar por que não gera resultado;
+4. introduzir o novo caminho;
+5. agregar valor a esse novo caminho;
+6. trazer a solução na prática;
+7. mostrar que podemos ajudar.
+Cada slide é consequência do anterior: é um argumento só, do começo ao fim.
 
-Antes de escrever, preencha "planejamento": quem exatamente está decidindo (ex.: "mulher de 40+ comparando tratamentos para flacidez"), o ganho de arrastar, a promessa no formato "X sem Y", a ÚNICA ideia central, a dúvida de decisão que a capa toca e o fio condutor.
+Antes de escrever, preencha "planejamento": quem exatamente sente a dor (ex.: "dono de clínica que sobe a verba e não vê agenda cheia"), o ganho de arrastar, a promessa no formato "X sem Y", a ÚNICA ideia central, a pergunta que a capa deixa e o fio condutor.
 
-MÉTODO DO CLIENTE: ${descreverMetodo(cliente)}
+SOLUÇÃO DO CLIENTE: ${descreverSolucao(cliente)}
 
 GANCHO (slide 1): só a headline, "subtitulo" vazio, em uma frase.
-- Toca numa dúvida real de decisão, no medo de escolher errado ou num desejo específico. Não precisa ser exagerado: precisa gerar identificação imediata em quem está decidindo.
+- Toca numa dor que a pessoa já sente, no caminho que ela já tenta sem resultado ou num desejo específico. Precisa gerar identificação imediata.
 - Use um destes tipos:
-  • Alerta antes da decisão: "Antes de fazer harmonização facial, entenda isso." / "Se você vai contratar uma mentoria, observe isso antes."
+  • Dor direta: "Você sobe a verba e as vendas não acompanham." / "Seu WhatsApp responde rápido, mas o cliente some."
+  • Caminho que não funciona: "Cortar carboidrato não está te fazendo emagrecer." / "Trocar de criativo não vai salvar sua campanha."
   • Causa escondida: "Sua dor no joelho pode não estar começando no joelho." / "O problema talvez não seja o anúncio."
-  • Erro de etapa: "O erro não está em querer emagrecer. Está em pular a avaliação." / "O primeiro passo para X não é Y."
-  • Decisão + não comece por aí: "Vai colocar IA no atendimento? Não comece pela ferramenta." / "Vai fazer lente de contato? Não comece pelo formato do dente."
+  • Alerta antes da decisão: "Antes de colocar IA no seu WhatsApp, entenda isso."
   • Nem todo mundo: "Nem todo sorriso bonito começa pelas lentes de contato."
-  • Prova: "O que mudou esse resultado não foi X. Foi Y."
   • Promessa: "Existe um jeito de X sem Y."
   • História (só com caso que esteja na base): "Uma paciente chegou querendo X. O problema era Y."
-- Use o termo que o público usa (o procedimento, o serviço, a decisão). Marque 1 palavra de destaque com *asteriscos*.
-- Teste de 1 segundo: quem está rolando o feed entende SOBRE O QUE é e se é com ELE só lendo a capa. A headline nomeia a situação ou o objeto concreto do público (o WhatsApp, o chatbot, a harmonização, a mentoria) e o risco ou ganho concreto.
-  Ruim: "Antes da IA falar, defina quando calar." (jogo de palavras, abstrato). Bom: "Seu chatbot pode estar espantando cliente no WhatsApp." / "Antes de colocar IA no seu WhatsApp, entenda isso."
+- Use o termo que o público usa (o procedimento, o serviço, a situação). Marque 1 palavra de destaque com *asteriscos*.
+- Teste de 1 segundo: quem está rolando o feed entende SOBRE O QUE é e se é com ELE só lendo a capa. A headline nomeia a situação ou o objeto concreto do público e o risco ou ganho concreto.
+  Ruim: "Antes da IA falar, defina quando calar." (jogo de palavras, abstrato). Bom: "Seu chatbot pode estar espantando cliente no WhatsApp."
 - Proibido: pergunta genérica ("Você sofre com dor nas costas?"), metáfora, trocadilho, jogo de palavras, frase de efeito que precisa ser decifrada, conselho genérico, "Conheça nossos tratamentos".
 - Em "ganchos_alternativos", 3 outras headlines de tipos DIFERENTES da capa.
 
 DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide puxando o próximo.
-- O TÍTULO de cada slide carrega a informação concreta; o subtítulo só apoia. Quem ler apenas os títulos em sequência precisa entender o argumento inteiro.
-  Ruim: "Antes da ferramenta, vem o mapa." Bom: "Defina o que a IA responde e quando ela chama uma pessoa."
-- Nada de aforismo ou frase de efeito no título ("O problema não é X", "Tudo começa em Y") sem dizer, no próprio título, qual é o problema de verdade.
-- No slide do método: use o nome do método (ou "nosso método") e SEMPRE as etapas concretas na ordem. Nunca só "no nosso método" sem dizer o que acontece. Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
+- O TÍTULO de cada slide carrega a informação concreta; o subtítulo continua e detalha. Quem ler apenas os títulos em sequência precisa entender o argumento inteiro.
+- Nada de aforismo ou frase de efeito no título sem dizer, no próprio título, qual é o ponto de verdade.
+- A solução é descrita pelo que acontece na prática (as etapas, o que se analisa, o que muda), com fatores concretos tirados da base do cliente.
+- NUNCA escreva "no nosso método", "aqui no nosso método", "no nosso protocolo", "na nossa metodologia" ou variações. O cliente aparece só no último slide, como quem pode ajudar ("posso te ajudar", "a gente te ajuda").
 
-TEXTO DOS SLIDES (estrutura Z4): cada slide é uma ideia completa, em frases inteiras, do tamanho que a ideia pedir. O título é a frase principal; o subtítulo continua e detalha (os fatores que se avaliam, as causas possíveis, as etapas, as perguntas). Pode listar itens. Português do dia a dia; explique qualquer termo técnico.
-Exemplos de carrossel Z4 (tom, ritmo e tamanho de texto):
-Odontologia: 1. "Nem todo sorriso bonito começa pelas lentes de contato." 2. "Muita gente procura lentes porque quer dentes mais brancos, alinhados e proporcionais." 3. "Mas, em alguns casos, o melhor caminho pode começar por clareamento, gengivoplastia, alinhadores ou ajuste de mordida." 4. "O erro é copiar o sorriso de outra pessoa sem avaliar seu rosto, sua gengiva, sua mordida e sua estrutura dental." 5. "No nosso protocolo, o planejamento do sorriso vem antes de qualquer procedimento." 6. "Assim, conseguimos construir um resultado mais harmônico, funcional e natural." 7. "Quer saber qual caminho faz sentido para o seu sorriso? Agende sua avaliação."
-Tráfego pago: 1. "O problema talvez não seja o anúncio." 2. "Muita gente acha que precisa trocar criativo, subir verba ou testar outro público." 3. "Mas, às vezes, o problema está na oferta, na página, no atendimento ou no funil." 4. "Começar pelo tráfego sem diagnóstico pode fazer você gastar mais para descobrir pouco." 5. "No nosso protocolo, antes de escalar campanhas, analisamos oferta, criativos, página, métricas, CRM e conversão." 6. "Assim, o tráfego deixa de ser aposta e passa a ser uma etapa de crescimento previsível." 7. "Quer entender onde sua campanha está travando? Solicite uma análise."
+TEXTO DOS SLIDES: cada slide é uma ideia completa, em frases inteiras, do tamanho que a ideia pedir. Pode listar itens (tentativas comuns, causas, etapas). Português do dia a dia; explique qualquer termo técnico.
+Exemplo de carrossel nesse fio (tom, ritmo e tamanho de texto; não copie):
+1. "Você sobe a verba e as *vendas* não acompanham." 2. "Todo mês é igual: mais investimento, mais cliques, e o caixa no mesmo lugar." 3. "Aí você troca o criativo, testa outro público e sobe a verba de novo. E nada muda." 4. "Isso não funciona porque o anúncio quase nunca é onde a venda trava. Ela trava na oferta, na página ou no atendimento." 5. "O caminho é descobrir onde a venda trava antes de gastar mais." 6. "Assim cada real vai para o ponto que segura a venda, e o tráfego deixa de ser aposta." 7. "Na prática: analisar oferta, página, métricas e atendimento, corrigir o gargalo e só então escalar." 8. "Se você quer descobrir onde a sua venda está travando, eu posso te ajudar. Comenta ANÁLISE."
 
-CTA (último slide): convite suave, com segurança e sem pressão.
+CTA (último slide, "podemos ajudar"): mostra que o cliente pode ajudar e faz um convite suave, com segurança e sem pressão.
 ${regrasCta(cliente, objetivo)}
 - "cta_botao" é o texto curto do botão do último slide.
-- Legenda: 3 a 6 linhas que resumem gancho, erro comum e passo correto, terminando com o mesmo CTA.
+- Legenda: 3 a 6 linhas que resumem a dor, por que o caminho atual não funciona e o novo caminho, terminando com o mesmo CTA.
 
-CHECKLIST antes de responder: fala com quem já sabe que tem o problema? O gancho toca uma dúvida real de decisão? Mostra um erro comum? Explica por que o passo correto importa? Conecta ao método do cliente? O CTA leva a avaliação, conversa ou comentário? Transmite segurança em vez de pressão?
+CHECKLIST antes de responder: começa por uma dor que a pessoa já sente? Mostra que o caminho atual não gera resultado e explica por quê? Apresenta o novo caminho e o valor dele? A solução está descrita na prática? O final mostra que podemos ajudar, sem pressão? Nenhum "no nosso método"?
 
 PROIBIDO: promessa de resultado garantido (use "pode"); emoji nos slides; número, caso, depoimento ou antes e depois que não estejam na base; humilhar alguém; opinião partidária; slide de "conclusão" ou "obrigado por ler".
 </metodologia_viraliza>`;

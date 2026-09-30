@@ -1613,7 +1613,7 @@ function corDoFundo(fundo, p) {
   return { bg: p.escura, fg: p.texto_claro };
 }
 
-// A metodologia única dos carrosséis e o método do cliente, que ela usa no slide do protocolo.
+// A metodologia única dos carrosséis e a solução do cliente, que ela usa no slide da solução.
 function abaModelos() {
   const c = cliente;
   const m = c.modelos[0];
@@ -1626,16 +1626,16 @@ function abaModelos() {
           <p class="sub">${esc(m.descricao)}</p>
           <div class="tira" style="margin-top:14px">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
           <ol class="passos-metodo">${m.estrutura.map((s) => `<li><b>${esc(s.papel)}</b><span>${esc(s.instrucao)}</span></li>`).join("")}</ol>
-          <div class="ajuda">A mensagem central: <i>"Você não precisa escolher no escuro. Existe uma forma correta de avaliar, planejar e executar."</i></div>
+          <div class="ajuda">O fio: <i>dor que a pessoa já sente → o caminho que ela segue não dá resultado → por quê → o novo caminho → o valor dele → a solução → podemos ajudar.</i></div>
         </div>
         <div class="cartao">
-          <h2>Método de ${esc(c.nome)}</h2>
-          <p class="sub">Aparece no slide do protocolo como consequência lógica da explicação. Sem isso, a IA usa o que estiver na base de conhecimento.</p>
-          <label class="rotulo" for="metodoNome">Nome do método ou protocolo</label>
+          <h2>Solução de ${esc(c.nome)}</h2>
+          <p class="sub">Entra no slide da solução, descrita pelo que acontece na prática (sem "no nosso método"). Sem isso, a IA usa o que estiver na base de conhecimento.</p>
+          <label class="rotulo" for="metodoNome">Nome do método ou serviço (opcional)</label>
           <input id="metodoNome" class="campo" placeholder="Ex.: Protocolo Face Natural" value="${esc(metodo.nome || "")}">
-          <label class="rotulo" for="metodoPasso">Primeiro passo e o que ele analisa</label>
+          <label class="rotulo" for="metodoPasso">Como funciona na prática</label>
           <textarea id="metodoPasso" class="campo" rows="3" placeholder="Ex.: avaliação facial completa: proporção, estrutura óssea, qualidade da pele, grau de flacidez e expectativa da paciente">${esc(metodo.primeiro_passo || "")}</textarea>
-          <div class="acoes"><button class="btn primario" id="salvarMetodo">${ICONES.ok} Salvar método</button><button class="btn" id="verPrevia">${ICONES.olho} Ver prévia</button><span class="msg" id="msgMetodo"></span></div>
+          <div class="acoes"><button class="btn primario" id="salvarMetodo">${ICONES.ok} Salvar solução</button><button class="btn" id="verPrevia">${ICONES.olho} Ver prévia</button><span class="msg" id="msgMetodo"></span></div>
         </div>
       </div>
       <div class="coluna-fixa" id="areaPrevia" hidden>

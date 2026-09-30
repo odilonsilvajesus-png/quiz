@@ -2,6 +2,7 @@
 // Se não passar (bloqueio, gancho abaixo de 7 ou média abaixo de 7,5), o pipeline reescreve uma vez.
 import { z } from "zod";
 import { gerarEstruturado } from "./ia.js";
+import { VICIO_METODO } from "./copy.js";
 
 const NOTA_MINIMA_GANCHO = 7;
 const NOTA_MINIMA_FLUXO = 7;
@@ -25,6 +26,18 @@ const esquema = z.object({
   })).describe("No máximo 5, os de maior impacto. Vazio se estiver ótimo."),
   resumo: z.string().describe("Uma frase com o veredito e o principal ponto de melhora"),
 });
+
+// Conferência feita pelo sistema: o vício "no nosso método" reprova e força a reescrita.
+function vicioMetodo(copy) {
+  return copy.slides
+    .map((s, i) => ({ i, texto: `${s.titulo} ${s.subtitulo || ""}` }))
+    .filter((x) => VICIO_METODO.test(x.texto))
+    .map((x) => ({
+      onde: `slide ${x.i + 1}`,
+      problema: 'Usa "no nosso método/protocolo"',
+      sugestao: "Descreva a solução pelo que acontece na prática, sem citar \"nosso método\". O cliente aparece só no último slide, como quem pode ajudar.",
+    }));
+}
 
 const limitar = (n) => Math.max(0, Math.min(10, Number(n) || 0));
 
@@ -54,11 +67,11 @@ Bloqueios (qualquer um impede publicar):
 
 Notas de 0 a 10:
 - gancho: toca numa dúvida real de decisão, no medo de escolher errado ou num desejo específico, com o termo que o público usa? Quem está decidindo se reconhece na hora? Passa no teste de 1 segundo (dá para saber sobre o que é e se é comigo só lendo a capa)? Pergunta genérica ("Você sofre com…?"), metáfora, trocadilho, jogo de palavras, frase que precisa ser decifrada, conselho genérico ou título batido vale no máximo 5. O slide 2 funciona sozinho como capa?
-- conexao: fala com quem já sabe que tem o problema e está decidindo? A pessoa se reconhece no cenário (já pesquisou, comparou, tem medo de escolher errado)? Mostra um erro comum e por que o passo correto importa? Vende segurança na decisão ("X sem Y": o resultado sem o medo), e não a novidade da solução? Nota baixa se o texto for genérico ou só informativo.
+- conexao: fala com quem já sente a dor e já tenta resolver do jeito comum? A pessoa se reconhece no cenário (já pesquisou, comparou, tem medo de escolher errado)? Mostra um erro comum e por que o passo correto importa? Vende segurança na decisão ("X sem Y": o resultado sem o medo), e não a novidade da solução? Nota baixa se o texto for genérico ou só informativo.
 - fluxo: cada slide puxa o próximo, como um argumento só? Lendo só os títulos em sequência dá para entender o argumento (a informação concreta está no título, não escondida no subtítulo)? Títulos em forma de aforismo ou frase de efeito derrubam a nota para no máximo 6. O último slide fecha a pergunta da capa? Nota baixa se os slides forem frases de efeito soltas ou se o final parecer desconectado.
 - clareza: uma ideia completa por slide, em frases inteiras e sem jargão? Cada slide do meio entrega algo prático e concreto?
 - tom_de_voz: parece ${cliente.nome} falando? Traz algo próprio do cliente (experiência, opinião, método), e não conteúdo genérico do nicho?
-- estrutura: segue a "${modelo.nome}" slide a slide (gancho, identificação, problema oculto, erro comum, passo correto, método do cliente, benefício, CTA)? O método do cliente aparece como consequência lógica, sem cara de propaganda?
+- estrutura: segue a "${modelo.nome}" slide a slide (dor que a pessoa já sente, o caminho atual que não dá resultado, por que não dá, o novo caminho, o valor dele, a solução na prática, podemos ajudar)? Cada slide é consequência do anterior? "No nosso método", "no nosso protocolo" ou variações valem no máximo 4.
 - cta: o último slide e a legenda levam a avaliação, conversa ou comentário${objetivo && objetivo !== "auto" ? ` (objetivo "${objetivo}")` : ""}, transmitindo segurança em vez de pressão?
 
 Seja rigoroso com o gancho: dê 9 ou 10 só para um dos melhores ganchos do mês.
@@ -72,5 +85,6 @@ ${copy.slides.map((s, i) => `${i + 1}. ${s.titulo}${s.subtitulo ? ` / ${s.subtit
 Botão do último slide: ${copy.cta_botao || "(nenhum)"}
 Legenda: ${copy.legenda}`,
   });
-  return veredito(r);
+  const vicios = vicioMetodo(copy);
+  return veredito({ ...r, ajustes: [...vicios, ...r.ajustes] }, { reprovar: vicios.length > 0 });
 }

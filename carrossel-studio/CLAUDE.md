@@ -29,7 +29,7 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/pipeline.js`: referência → copy (`src/copy.js`) → imagens (`src/imagens.js`) → PNGs (`src/render.js`).
 - `src/ia.js`: provedor de texto (OpenAI por padrão, Claude com `IA_PROVEDOR=anthropic`).
 - `templates/*.js`: estilos visuais. Cada um exporta `info` (nome, descricao, imagens, fontes, direcao_imagem, formato_texto, diagrama), `css()` e `slide()`. Peças comuns em `templates/_comum.js`. Um arquivo novo aparece sozinho no painel.
-- `modelos/metodologia.json`: a metodologia única dos carrosséis (Z4: gancho, identificação, problema oculto, erro comum, passo correto, método do cliente, benefício, CTA). Modelos antigos em `modelos/arquivo/`, fora do painel. Não voltar a oferecer vários modelos: a decisão foi ter uma metodologia só.
+- `modelos/metodologia.json`: a metodologia única dos carrosséis (dor que a pessoa já sente, caminho atual que não dá resultado, por que não dá, novo caminho, valor dele, solução na prática, podemos ajudar; nunca "no nosso método", que o revisor reprova). Modelos antigos em `modelos/arquivo/`, fora do painel. Não voltar a oferecer vários modelos: a decisão foi ter uma metodologia só.
 - `clientes/<id>/`: kit do cliente (base de conhecimento, voz, exemplos, assets). **Fica fora do Git**, exceto `clientes/_modelo/`.
 - `saida/`: carrosséis gerados (fora do Git).
 
