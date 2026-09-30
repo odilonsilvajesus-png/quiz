@@ -2,12 +2,11 @@
   "id": "metodologia",
   "nome": "Metodologia Viraliza",
   "descricao": "Uma estrutura só, feita para vender e gerar interessados: fala com quem já sabe que tem o problema e está decidindo com quem resolver, mostra o erro comum, o passo correto e o método do cliente como consequência lógica.",
-  "palavras_max": 28,
   "estrutura": [
     {
       "papel": "Gancho",
       "fundo": "escuro",
-      "instrucao": "SÓ a headline, de 4 a 12 palavras. Toca numa dúvida, medo ou desejo de quem já sabe que tem o problema e está decidindo o que fazer. Subtítulo vazio."
+      "instrucao": "SÓ a headline, em uma frase, como nos exemplos Z4. Toca numa dúvida, medo ou desejo de quem já sabe que tem o problema e está decidindo o que fazer. Subtítulo vazio."
     },
     {
       "papel": "Identificação",

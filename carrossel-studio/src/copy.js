@@ -32,7 +32,7 @@ function esquema(qtdSlides, comImagem, comDiagrama) {
     slides: z
       .array(z.object(slide))
       .describe(`Exatamente ${qtdSlides} slides, na ordem da estrutura. No slide 1 (capa), "subtitulo" é vazio.`),
-    ganchos_alternativos: z.array(z.string()).describe("3 outras headlines para a capa, de 4 a 12 palavras, cada uma com um mecanismo diferente (curiosidade, polêmica, identificação)"),
+    ganchos_alternativos: z.array(z.string()).describe("3 outras headlines para a capa, uma frase cada, cada uma com um mecanismo diferente (curiosidade, polêmica, identificação)"),
     cta_botao: z.string().describe("Texto do botão do último slide, em caixa alta, até 22 caracteres, coerente com o CTA. Ex.: SALVE ESTE POST, COMENTE AGENDA"),
     legenda: z.string().describe("Legenda do post para o Instagram, terminando com o mesmo CTA do último slide"),
     pendencias: z.array(z.string()).describe("Marcadores [ENTRE COLCHETES] usados que alguém precisa preencher. Vazio se nenhum."),
@@ -68,10 +68,6 @@ function regrasCta(cliente, objetivo) {
   return `CTA: por padrão, leve a uma conversa ou avaliação. Opções:\n${Object.values(tipos).map((t) => `  - ${t}`).join("\n")}`;
 }
 
-// Limite de palavras por slide (título + subtítulo). Texto demais é o que mais derruba a retenção.
-export const LIMITE_TITULO = 10;
-export const limitePalavras = (modelo) => Math.min(modelo.palavras_max || 28, 28);
-
 function descreverMetodo(cliente) {
   const m = cliente.conteudo.metodo || {};
   if (m.nome || m.primeiro_passo) {
@@ -82,7 +78,6 @@ function descreverMetodo(cliente) {
 
 // A Metodologia Viraliza: vale para todos os clientes. Regras de um cliente específico ficam nos documentos dele.
 function regrasVirais(modelo, objetivo, cliente) {
-  const maxPalavras = limitePalavras(modelo);
   return `<metodologia_viraliza>
 PÚBLICO: quem JÁ sabe que tem o problema e está decidindo o que fazer, com quem ou qual caminho escolher. Não tente convencer que existe um problema. Mostre que existe um jeito seguro de decidir.
 Mensagem central: "Você não precisa escolher no escuro. Existe uma forma correta de avaliar, planejar e executar."
@@ -92,7 +87,7 @@ Antes de escrever, preencha "planejamento": quem exatamente está decidindo (ex.
 
 MÉTODO DO CLIENTE: ${descreverMetodo(cliente)}
 
-GANCHO (slide 1): só a headline, "subtitulo" vazio, de 4 a 12 palavras.
+GANCHO (slide 1): só a headline, "subtitulo" vazio, em uma frase.
 - Toca numa dúvida real de decisão, no medo de escolher errado ou num desejo específico. Não precisa ser exagerado: precisa gerar identificação imediata em quem está decidindo.
 - Use um destes tipos:
   • Alerta antes da decisão: "Antes de fazer harmonização facial, entenda isso." / "Se você vai contratar uma mentoria, observe isso antes."
@@ -115,7 +110,10 @@ DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide
 - Nada de aforismo ou frase de efeito no título ("O problema não é X", "Tudo começa em Y") sem dizer, no próprio título, qual é o problema de verdade.
 - No slide do método: use o nome do método (ou "nosso método") e SEMPRE as etapas concretas na ordem. Nunca só "no nosso método" sem dizer o que acontece. Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
 
-TEXTO ENXUTO: título com até ${LIMITE_TITULO} palavras; subtítulo com UMA frase curta; no máximo ${maxPalavras} palavras por slide. Português do dia a dia; explique qualquer termo técnico.
+TEXTO DOS SLIDES (estrutura Z4): cada slide é uma ideia completa, em frases inteiras, do tamanho que a ideia pedir. O título é a frase principal; o subtítulo continua e detalha (os fatores que se avaliam, as causas possíveis, as etapas, as perguntas). Pode listar itens. Português do dia a dia; explique qualquer termo técnico.
+Exemplos de carrossel Z4 (tom, ritmo e tamanho de texto):
+Odontologia: 1. "Nem todo sorriso bonito começa pelas lentes de contato." 2. "Muita gente procura lentes porque quer dentes mais brancos, alinhados e proporcionais." 3. "Mas, em alguns casos, o melhor caminho pode começar por clareamento, gengivoplastia, alinhadores ou ajuste de mordida." 4. "O erro é copiar o sorriso de outra pessoa sem avaliar seu rosto, sua gengiva, sua mordida e sua estrutura dental." 5. "No nosso protocolo, o planejamento do sorriso vem antes de qualquer procedimento." 6. "Assim, conseguimos construir um resultado mais harmônico, funcional e natural." 7. "Quer saber qual caminho faz sentido para o seu sorriso? Agende sua avaliação."
+Tráfego pago: 1. "O problema talvez não seja o anúncio." 2. "Muita gente acha que precisa trocar criativo, subir verba ou testar outro público." 3. "Mas, às vezes, o problema está na oferta, na página, no atendimento ou no funil." 4. "Começar pelo tráfego sem diagnóstico pode fazer você gastar mais para descobrir pouco." 5. "No nosso protocolo, antes de escalar campanhas, analisamos oferta, criativos, página, métricas, CRM e conversão." 6. "Assim, o tráfego deixa de ser aposta e passa a ser uma etapa de crescimento previsível." 7. "Quer entender onde sua campanha está travando? Solicite uma análise."
 
 CTA (último slide): convite suave, com segurança e sem pressão.
 ${regrasCta(cliente, objetivo)}
@@ -169,7 +167,7 @@ ${exemplos}
 ${regrasVirais(modelo, opcoes.objetivo, cliente)}
 
 Regras de formato:
-- Exatamente ${modelo.estrutura.length} slides, cada um com "titulo" (curto e direto, 1 a 3 linhas, até ${c.limites.titulo_max_caracteres} caracteres) e "subtitulo" (reforço em tom mais baixo, até ${c.limites.subtitulo_max_caracteres} caracteres). Na capa, "subtitulo" é vazio.
+- Exatamente ${modelo.estrutura.length} slides, cada um com "titulo" (a frase principal do slide, até ${c.limites.titulo_max_caracteres} caracteres) e "subtitulo" (continuação e detalhe, até ${c.limites.subtitulo_max_caracteres} caracteres). Na capa, "subtitulo" é vazio.
 - Em cada título, marque de 1 a 4 palavras-chave de destaque entre asteriscos, assim: "Você não precisa de *mais disciplina.*". Só uma marcação por título.
 - ${c.regra_de_ouro || "Um tema por carrossel."}
 ${c.angulos?.length ? `- Escolha o ângulo mais adequado desta lista: ${c.angulos.join("; ")}.` : ""}

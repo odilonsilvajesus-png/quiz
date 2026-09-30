@@ -90,8 +90,8 @@ Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já p
 
 ### Escrita viral e revisor
 - **Metodologia única (Metodologia Viraliza):** gancho → identificação → problema oculto → erro comum → passo correto → método do cliente → benefício → CTA suave. Fala com quem já sabe que tem o problema e está decidindo com quem resolver. O nome do método e o primeiro passo ficam na aba **Metodologia**.
-- **Capa só com a headline** (4 a 12 palavras) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
-- **Slide 2** funciona sozinho como capa. Limite de palavras por slide, dor específica, nada inventado, sem promessa de resultado.
+- **Capa só com a headline** (uma frase) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
+- **Slide 2** funciona sozinho como capa. Texto dos slides no tamanho da estrutura Z4 (frases inteiras, sem limite fixo de palavras), dor específica, nada inventado, sem promessa de resultado.
 - **CTA pelo objetivo** (Alcance, Autoridade, Lead, Conversão), escolhido na hora de criar. Palavra-chave, entrega e próximo passo ficam em **Voz e direcionamento → Temas, regras e chamada para ação**.
 - **Revisor** sempre ligado: dá nota de 0 a 10 para gancho, clareza, tom de voz, estrutura e CTA, e aponta bloqueios. Abaixo de 7 no gancho ou 7,5 de média, o carrossel é reescrito uma vez com os ajustes. A nota aparece no carrossel.
 
