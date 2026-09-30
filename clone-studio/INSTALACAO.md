@@ -30,7 +30,16 @@ O FFmpeg (que edita os vídeos) **não precisa instalar**: ele vem junto com a p
 
 ## 3. Baixe o projeto
 
-No VS Code, abra o terminal: menu **Terminal → New Terminal**. Cole os comandos abaixo, um de cada vez:
+> O repositório é **privado**: o GitHub vai pedir login. Senha comum não funciona no terminal. O jeito mais fácil é pelo próprio VS Code:
+>
+> 1. `Ctrl+Shift+P` (Mac: `Cmd+Shift+P`) → digite **Git: Clone** → Enter.
+> 2. Cole `https://github.com/odilonsilvajesus-png/quiz.git`, escolha uma pasta e, quando pedir, clique em **Allow / Sign in with GitHub** e autorize no navegador.
+> 3. Abra o projeto clonado, clique no nome do branch no canto inferior esquerdo e escolha **origin/claude/stoic-keller-otye8r**.
+> 4. Abra o terminal (**Terminal → New Terminal**) e rode `cd clone-studio` e depois `npm install`.
+>
+> Se preferir o terminal, no Windows o Git costuma abrir uma janela de login do GitHub sozinho no primeiro `git clone`.
+
+Pelo terminal: no VS Code, abra **Terminal → New Terminal** e cole os comandos abaixo, um de cada vez:
 
 ```bash
 git clone https://github.com/odilonsilvajesus-png/quiz.git
@@ -105,6 +114,9 @@ O Claude mostra as alterações antes de aplicar; você aceita ou recusa cada um
 
 | Sintoma | Solução |
 |---|---|
+| `git clone` dá `Repository not found`, `Authentication failed` ou pede senha | O repositório é privado: faça o clone pelo **Git: Clone** do VS Code (passo 3), que faz login no GitHub pelo navegador. |
+| `pathspec 'claude/stoic-keller-otye8r' did not match` ou `cd: clone-studio: não existe` | O clone não terminou (veja a linha acima) ou você não está dentro da pasta `quiz`. |
+| PowerShell: `npm.ps1 não pode ser carregado porque a execução de scripts foi desabilitada` | Rode uma vez `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` e confirme com `S`, ou use `npm.cmd install` no lugar de `npm install`. |
 | `node` ou `git` "não é reconhecido" | Reinicie o computador depois de instalar; confira com `node -v` e `git --version`. |
 | `npm install` falha no Windows com erro de permissão | Feche o VS Code, abra de novo e rode dentro da pasta `clone-studio`. |
 | "Não foi possível conectar à API" na página | O terminal com `npm run dev` precisa estar aberto e sem erro. |
