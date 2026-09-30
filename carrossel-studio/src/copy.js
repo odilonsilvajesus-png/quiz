@@ -101,10 +101,16 @@ GANCHO (slide 1): só a headline, "subtitulo" vazio, de 4 a 12 palavras.
   • Promessa: "Existe um jeito de X sem Y."
   • História (só com caso que esteja na base): "Uma paciente chegou querendo X. O problema era Y."
 - Use o termo que o público usa (o procedimento, o serviço, a decisão). Marque 1 palavra de destaque com *asteriscos*.
-- Proibido: pergunta genérica ("Você sofre com dor nas costas?"), metáfora, conselho genérico, "Conheça nossos tratamentos".
+- Teste de 1 segundo: quem está rolando o feed entende SOBRE O QUE é e se é com ELE só lendo a capa. A headline nomeia a situação ou o objeto concreto do público (o WhatsApp, o chatbot, a harmonização, a mentoria) e o risco ou ganho concreto.
+  Ruim: "Antes da IA falar, defina quando calar." (jogo de palavras, abstrato). Bom: "Seu chatbot pode estar espantando cliente no WhatsApp." / "Antes de colocar IA no seu WhatsApp, entenda isso."
+- Proibido: pergunta genérica ("Você sofre com dor nas costas?"), metáfora, trocadilho, jogo de palavras, frase de efeito que precisa ser decifrada, conselho genérico, "Conheça nossos tratamentos".
 - Em "ganchos_alternativos", 3 outras headlines de tipos DIFERENTES da capa.
 
-DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide puxando o próximo. Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
+DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide puxando o próximo.
+- O TÍTULO de cada slide carrega a informação concreta; o subtítulo só apoia. Quem ler apenas os títulos em sequência precisa entender o argumento inteiro.
+  Ruim: "Antes da ferramenta, vem o mapa." Bom: "Defina o que a IA responde e quando ela chama uma pessoa."
+- Nada de aforismo ou frase de efeito no título ("O problema não é X", "Tudo começa em Y") sem dizer, no próprio título, qual é o problema de verdade.
+- No slide do método: se o método tiver nome, use o nome; se não tiver, descreva as etapas concretas em vez de "no nosso método". Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
 
 TEXTO ENXUTO: título com até ${LIMITE_TITULO} palavras; subtítulo com UMA frase curta; no máximo ${maxPalavras} palavras por slide. Português do dia a dia; explique qualquer termo técnico.
 
