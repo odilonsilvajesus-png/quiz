@@ -16,7 +16,7 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/cliente.js`: leitura/gravação do kit do cliente (`clientes/<id>/cliente.json`), paleta → fundos, normalização de formatos antigos.
 - `src/carrosseis.js`: estados do carrossel (rascunho, agendado, postado, descartado com motivo); o agendador roda no `servidor.js` a cada minuto e aprendizados para o prompt.
 - `src/analise.js`: conteúdo real dos posts (transcrição da fala dos reels e leitura do texto dos slides), usado nas referências e no tom de voz.
-- `src/copy.js`: escrita do carrossel. `regrasVirais` (capa só com headline, slide 2 como segundo gancho, limite de palavras, travas) e `regrasCta` (CTA pelo objetivo: alcance, autoridade, lead, conversão) valem para todos os clientes. `escolherEstrutura` é o modo Automático. Regras de um cliente específico (fé, marca pessoal) ficam nos documentos dele, nunca aqui.
+- `src/copy.js`: escrita do carrossel. `regrasVirais` (capa só com headline, slide 2 como segundo gancho, limite de palavras, travas) e `regrasCta` (CTA pelo objetivo: alcance, autoridade, lead, conversão) valem para todos os clientes. Regras de um cliente específico (fé, marca pessoal) ficam nos documentos dele, nunca aqui.
 - `src/revisor.js`: revisor sempre ligado; notas de 0 a 10 e bloqueios. Abaixo de 7 no gancho ou 7,5 de média, o pipeline reescreve uma vez.
 - `src/perfil.js`: foto do perfil do Instagram do cliente (API oficial se conectado, senão Apify), buscada sozinha em segundo plano no máximo uma vez por dia; fica em `clientes/<id>/assets/perfil.jpg`.
 - `src/dashboard.js`: números do dashboard (`#/dashboard`): produção, publicação, nota do revisor e gasto do mês e dos últimos 30 dias.
@@ -29,7 +29,7 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/pipeline.js`: referência → copy (`src/copy.js`) → imagens (`src/imagens.js`) → PNGs (`src/render.js`).
 - `src/ia.js`: provedor de texto (OpenAI por padrão, Claude com `IA_PROVEDOR=anthropic`).
 - `templates/*.js`: estilos visuais. Cada um exporta `info` (nome, descricao, imagens, fontes, direcao_imagem, formato_texto, diagrama), `css()` e `slide()`. Peças comuns em `templates/_comum.js`. Um arquivo novo aparece sozinho no painel.
-- `modelos/*.json`: estruturas de texto (papel, instrução e fundo de cada slide).
+- `modelos/metodologia.json`: a metodologia única dos carrosséis (Z4: gancho, identificação, problema oculto, erro comum, passo correto, método do cliente, benefício, CTA). Modelos antigos em `modelos/arquivo/`, fora do painel. Não voltar a oferecer vários modelos: a decisão foi ter uma metodologia só.
 - `clientes/<id>/`: kit do cliente (base de conhecimento, voz, exemplos, assets). **Fica fora do Git**, exceto `clientes/_modelo/`.
 - `saida/`: carrosséis gerados (fora do Git).
 

@@ -1,0 +1,16 @@
+{
+  "id": "metodologia",
+  "nome": "Metodologia Viraliza",
+  "descricao": "Uma estrutura só, feita para vender e gerar interessados: fala com quem já sabe que tem o problema e está decidindo com quem resolver, mostra o erro comum, o passo correto e o método do cliente como consequência lógica.",
+  "palavras_max": 28,
+  "estrutura": [
+    { "papel": "Gancho", "fundo": "escuro", "instrucao": "SÓ a headline, de 4 a 12 palavras. Toca numa dúvida, medo ou desejo de quem já sabe que tem o problema e está decidindo o que fazer. Subtítulo vazio." },
+    { "papel": "Identificação", "fundo": "claro", "instrucao": "O cenário real de quem está decidindo: já pesquisou, comparou, tentou, e está com medo de escolher errado. Uma frase que faz a pessoa pensar 'sou eu'. Funciona sozinho como capa." },
+    { "papel": "Problema oculto", "fundo": "escuro", "instrucao": "O que a pessoa não vê: o que funcionou para outra pessoa pode não servir para ela, ou a causa real está em outro lugar ('Sua dor no joelho pode não começar no joelho')." },
+    { "papel": "Erro comum", "fundo": "destaque", "instrucao": "'O erro é escolher [solução] só por [preço, moda, indicação, pressa, resultado de outra pessoa].' E o risco concreto desse erro." },
+    { "papel": "Passo correto", "fundo": "claro", "instrucao": "A etapa que deveria vir antes da decisão (avaliação, diagnóstico, planejamento) e os fatores concretos que ela analisa." },
+    { "papel": "Protocolo", "fundo": "escuro", "instrucao": "O método do cliente como consequência lógica da explicação: 'No nosso [método], o primeiro passo é…'. Sem cara de propaganda." },
+    { "papel": "Benefício", "fundo": "claro", "instrucao": "O que esse passo garante na prática: o resultado certo, com mais segurança, naturalidade, previsibilidade ou clareza." },
+    { "papel": "CTA", "fundo": "destaque", "instrucao": "Convite suave para o próximo passo, conforme o objetivo: avaliação, direct com a palavra, comentar a palavra. Segurança, nunca pressão." }
+  ]
+}

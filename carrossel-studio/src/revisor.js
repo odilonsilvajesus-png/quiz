@@ -69,13 +69,13 @@ Bloqueios (qualquer um impede publicar):
 - Tema, público ou termo central que aparece pela primeira vez só no último slide (o final fica sem nexo).
 
 Notas de 0 a 10:
-- gancho: passa no teste do 1 segundo? Quem lê sabe na hora o que vai ganhar se arrastar e sente que é para ele (público nomeado, promessa prática ou contraste)? Metáfora ou frase poética, conselho genérico ou título genérico já visto mil vezes ("5 dicas de…", "Como vender mais") vale no máximo 5. O slide 2 funciona sozinho como capa?
-- conexao: o leitor se reconhece (dor em cena concreta, diálogo interno do público, "isso foi escrito para mim")? Existe um erro oculto ("você acha que é X, mas é Y") e uma nova perspectiva no lugar da explicação antiga? Nota baixa se o texto só informa ou dá conselho sem mudar a forma como a pessoa enxerga o problema.
+- gancho: toca numa dúvida real de decisão, no medo de escolher errado ou num desejo específico, com o termo que o público usa? Quem está decidindo se reconhece na hora? Pergunta genérica ("Você sofre com…?"), metáfora, conselho genérico ou título batido vale no máximo 5. O slide 2 funciona sozinho como capa?
+- conexao: fala com quem já sabe que tem o problema e está decidindo? A pessoa se reconhece no cenário (já pesquisou, comparou, tem medo de escolher errado)? Mostra um erro comum e por que o passo correto importa? Nota baixa se o texto for genérico ou só informativo.
 - fluxo: cada slide puxa o próximo, como um argumento só? Os títulos se entendem sozinhos (sem metáfora abstrata)? O último slide fecha a pergunta da capa? Nota baixa se os slides forem frases de efeito soltas ou se o final parecer desconectado.
 - clareza: uma ideia só, frases curtas, sem jargão, dentro do limite de ${limitePalavras(modelo)} palavras por slide? Cada slide do meio entrega algo prático e concreto?
 - tom_de_voz: parece ${cliente.nome} falando? Traz algo próprio do cliente (experiência, opinião, método), e não conteúdo genérico do nicho?
-- estrutura: segue a estrutura "${modelo.nome}" slide a slide? Sem slide de "conclusão" ou "obrigado"?
-- cta: o último slide e a legenda levam ao próximo passo certo${objetivo && objetivo !== "auto" ? ` para o objetivo "${objetivo}"` : ""}?
+- estrutura: segue a "${modelo.nome}" slide a slide (gancho, identificação, problema oculto, erro comum, passo correto, método do cliente, benefício, CTA)? O método do cliente aparece como consequência lógica, sem cara de propaganda?
+- cta: o último slide e a legenda levam a avaliação, conversa ou comentário${objetivo && objetivo !== "auto" ? ` (objetivo "${objetivo}")` : ""}, transmitindo segurança em vez de pressão?
 
 Seja rigoroso com o gancho: dê 9 ou 10 só para um dos melhores ganchos do mês.
 

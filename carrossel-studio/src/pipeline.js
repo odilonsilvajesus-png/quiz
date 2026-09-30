@@ -5,7 +5,7 @@ import { pastaSaida, caminhoFoto } from "./cliente.js";
 import { coletar, ultimaColeta, salvarColeta } from "./coleta/index.js";
 import { aprofundar } from "./analise.js";
 import { ranquear } from "./ranking.js";
-import { escreverCarrossel, escolherEstrutura } from "./copy.js";
+import { escreverCarrossel } from "./copy.js";
 import { revisarCarrossel } from "./revisor.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
@@ -51,19 +51,15 @@ export function gerarCarrossel(cliente, referencia, opcoes = {}) {
 }
 
 async function montarCarrossel(cliente, referencia, opcoes) {
-  const { angulo, modelo: modeloId, estilo, indice = 0, log = console.log } = opcoes;
+  const { angulo, estilo, indice = 0, log = console.log } = opcoes;
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
   const observacao = (opcoes.observacao || "").trim();
-  let modelo = resolverModelo(cliente, modeloId);
-  let motivoEstrutura;
-  if (modelo.automatico) {
-    log("Escolhendo a estrutura pelo tipo do conteúdo...");
-    ({ modelo, motivo: motivoEstrutura } = await escolherEstrutura(cliente, referencia, { observacao }));
-  }
-  // Com palavra-chave e presente cadastrados, o automático vira Lead: o final oferece o presente pelo comentário.
+  const modelo = resolverModelo(cliente);
+  // Objetivo automático: com palavra-chave, o final pede o comentário (gera interessados); senão, o próximo passo comercial.
   const ctaCliente = cliente.conteudo.cta || {};
   let objetivoEscolhido = opcoes.objetivo || ctaCliente.objetivo_padrao || "auto";
-  if (objetivoEscolhido === "auto" && ctaCliente.palavra_chave && ctaCliente.entrega) objetivoEscolhido = "lead";
+  if (objetivoEscolhido === "auto" && ctaCliente.palavra_chave) objetivoEscolhido = "lead";
+  else if (objetivoEscolhido === "auto" && ctaCliente.conversao) objetivoEscolhido = "conversao";
   const objetivo = objetivoEscolhido === "auto" ? undefined : objetivoEscolhido;
   const estiloFinal = estilo || cliente.visual.template || "classico";
   const infoEstilo = (await listarEstilos()).find((e) => e.id === estiloFinal);
@@ -93,7 +89,7 @@ async function montarCarrossel(cliente, referencia, opcoes) {
       trecho: referencia.texto.slice(0, 300),
       outlier: referencia.ranking?.outlier ?? null,
     },
-    modelo: { id: modelo.id, nome: modelo.nome, ...(motivoEstrutura ? { automatico: true, motivo: motivoEstrutura } : {}) },
+    modelo: { id: modelo.id, nome: modelo.nome },
     objetivo: objetivoEscolhido,
     estilo: estiloFinal,
     ...copy,

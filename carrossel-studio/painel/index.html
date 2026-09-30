@@ -285,6 +285,9 @@
   .modelo { display: flex; flex-direction: column; gap: 12px; }
   .modelo.padrao { border-color: var(--marca-2); box-shadow: 0 0 0 3px rgba(123,77,255,.22); }
   .tira { display: flex; gap: 4px; }
+  .passos-metodo { margin: 16px 0 10px; padding-left: 20px; display: grid; gap: 8px; font-size: 13.5px; }
+  .passos-metodo li b { display: block; }
+  .passos-metodo li span { color: var(--tinta-2); }
   .tira span { flex: 1; aspect-ratio: 1080/1350; border-radius: 5px; display: flex; align-items: flex-end; padding: 4px; font-size: 8.5px; line-height: 1.15; overflow: hidden; }
   .modelo ol { margin: 8px 0 0; padding-left: 18px; color: var(--tinta-2); font-size: 13px; line-height: 1.55; }
   details summary { cursor: pointer; font-weight: 600; font-size: 13px; color: var(--tinta-2); }
@@ -721,8 +724,6 @@ async function modalNovoCliente() {
       <label class="rotulo" for="nNome">Nome</label><input id="nNome" class="campo" placeholder="Ex.: Maria Silva">
       <label class="rotulo" for="nInsta">Instagram do cliente</label><input id="nInsta" class="campo" placeholder="@perfil ou link">
       <label class="rotulo" for="nDesc">Profissão, nicho e método</label><input id="nDesc" class="campo" placeholder="Ex.: Nutricionista comportamental, mulheres 30+">
-      <label class="rotulo" for="nModelo">Modelo de carrossel padrão</label>
-      <select id="nModelo" class="campo"><option value="auto">Automático (a IA escolhe a estrutura)</option>${modelos.map((x) => `<option value="${x.id}">${esc(x.nome)}</option>`).join("")}</select>
       <label class="rotulo">Cores principais</label>
       <div class="cores-rapidas">
         <label class="cor-rapida"><input type="color" id="nEscura" value="#1A1A1A">Fundo escuro</label>
@@ -735,7 +736,7 @@ async function modalNovoCliente() {
   m.querySelector("#criar").onclick = (e) => acao(e.currentTarget, $("msgNovo"), async () => {
     const escura = $("nEscura").value, clara = $("nClara").value, destaque = $("nDestaque").value;
     const { id } = await post("/api/clientes", {
-      nome: $("nNome").value, instagram: $("nInsta").value, descricao: $("nDesc").value, modelo: $("nModelo").value,
+      nome: $("nNome").value, instagram: $("nInsta").value, descricao: $("nDesc").value,
       paleta: { escura, clara, destaque, destaque2: escurecer(destaque), texto_claro: "#FFFFFF", texto_escuro: escura },
     });
     fecharModal();
@@ -755,7 +756,7 @@ const ABAS = [
   ["carrosseis", "Carrosséis", ICONES.camadas],
   ["perfil", "Perfil e referências", ICONES.alvo],
   ["voz", "Voz e direcionamento", ICONES.voz],
-  ["modelos", "Modelos", ICONES.modelo],
+  ["modelos", "Metodologia", ICONES.modelo],
   ["visual", "Identidade visual", ICONES.paleta],
 ];
 
@@ -1043,8 +1044,6 @@ function modalCriar(refIds) {
     corpo: `
       <div class="resumo-ref">${resumo}</div>
       <div class="escolhas">
-        <div><label class="rotulo" for="gModelo">Modelo (estrutura)</label>
-          <select id="gModelo" class="campo">${opt(c.modelos.map((x) => [x.id, x.nome]), sugestaoUnica?.modelo || c.conteudo.modelo_padrao)}</select></div>
         <div><label class="rotulo" for="gEstilo">Estilo visual</label>
           <select id="gEstilo" class="campo">${opt(status.estilos.map((x) => [x.id, x.nome]), c.visual.template)}</select></div>
         <div><label class="rotulo" for="gTema">Tema</label>
@@ -1074,7 +1073,7 @@ function modalCriar(refIds) {
   avisarLead();
   m.querySelector("#gerar").onclick = async () => {
     const opcoes = {
-      modelo: $("gModelo").value, estilo: $("gEstilo").value, angulo: $("gTema").value, imagens: $("gImagens").value,
+      estilo: $("gEstilo").value, angulo: $("gTema").value, imagens: $("gImagens").value,
       observacao: $("gObs").value, obsImagem: $("gObsImg").value, objetivo: $("gObjetivo").value,
       fotoPessoa: m.querySelector('input[name="gFoto"]:checked')?.value || "",
     };
@@ -1614,46 +1613,43 @@ function corDoFundo(fundo, p) {
   return { bg: p.escura, fg: p.texto_claro };
 }
 
+// A metodologia única dos carrosséis e o método do cliente, que ela usa no slide do protocolo.
 function abaModelos() {
   const c = cliente;
+  const m = c.modelos[0];
+  const metodo = c.conteudo.metodo || {};
   $("aba").innerHTML = `
-    <div class="barra"><div><h2>Modelos de carrossel</h2><p class="sub">A estrutura do texto, slide a slide. Escolha o padrão deste cliente; dá para trocar em cada carrossel.</p></div></div>
-    <div class="grade" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">
-      ${c.modelos.map((m) => `
-        <div class="cartao modelo ${m.id === c.conteudo.modelo_padrao ? "padrao" : ""}">
-          <div class="cabecalho-cartao" style="margin:0"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta marca">Padrão</span>' : ""}</div>
-          <div class="sub" style="margin:0;font-size:13px">${esc(m.descricao)}</div>
-          ${m.automatico ? `<div class="chips">${c.modelos.filter((x) => x.viral).map((x) => `<span class="etiqueta marca">${esc(x.nome)}</span>`).join("")}</div>
-          <div class="ajuda" style="margin:0">A cada carrossel, a IA lê o conteúdo e escolhe a estrutura certa. A escolhida aparece no carrossel.</div>` : `<div class="tira">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
-          <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>`}
-          <div class="acoes" style="margin-top:auto">
-            ${m.id === c.conteudo.modelo_padrao ? "" : `<button class="btn escuro pequeno" data-padrao="${m.id}">Usar como padrão</button>`}
-            ${m.automatico ? "" : `<button class="btn pequeno" data-ver="${m.id}">${ICONES.olho} Ver prévia</button>`}
-          </div>
-        </div>`).join("")}
-    </div>
-    <div id="areaPrevia" style="margin-top:22px" hidden>
-      <h2 id="tituloPrevia" style="margin-bottom:10px"></h2>
-      <iframe class="previa" id="previaModelo" title="Prévia do modelo"></iframe>
+    <div class="duas">
+      <div>
+        <div class="cartao">
+          <h2>${esc(m.nome)}</h2>
+          <p class="sub">${esc(m.descricao)}</p>
+          <div class="tira" style="margin-top:14px">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
+          <ol class="passos-metodo">${m.estrutura.map((s) => `<li><b>${esc(s.papel)}</b><span>${esc(s.instrucao)}</span></li>`).join("")}</ol>
+          <div class="ajuda">A mensagem central: <i>"Você não precisa escolher no escuro. Existe uma forma correta de avaliar, planejar e executar."</i></div>
+        </div>
+        <div class="cartao">
+          <h2>Método de ${esc(c.nome)}</h2>
+          <p class="sub">Aparece no slide do protocolo como consequência lógica da explicação. Sem isso, a IA usa o que estiver na base de conhecimento.</p>
+          <label class="rotulo" for="metodoNome">Nome do método ou protocolo</label>
+          <input id="metodoNome" class="campo" placeholder="Ex.: Protocolo Face Natural" value="${esc(metodo.nome || "")}">
+          <label class="rotulo" for="metodoPasso">Primeiro passo e o que ele analisa</label>
+          <textarea id="metodoPasso" class="campo" rows="3" placeholder="Ex.: avaliação facial completa: proporção, estrutura óssea, qualidade da pele, grau de flacidez e expectativa da paciente">${esc(metodo.primeiro_passo || "")}</textarea>
+          <div class="acoes"><button class="btn primario" id="salvarMetodo">${ICONES.ok} Salvar método</button><button class="btn" id="verPrevia">${ICONES.olho} Ver prévia</button><span class="msg" id="msgMetodo"></span></div>
+        </div>
+      </div>
+      <div class="coluna-fixa" id="areaPrevia" hidden>
+        <h2 style="margin-bottom:10px">Prévia no visual de ${esc(c.nome)}</h2>
+        <iframe class="previa" id="previaModelo" title="Prévia da metodologia"></iframe>
+      </div>
     </div>`;
 
-  $("aba").onclick = async (e) => {
-    const alvo = e.target.closest("[data-padrao],[data-ver]");
-    if (!alvo) return;
-    if (alvo.dataset.padrao) {
-      await acao(alvo, null, async () => {
-        cliente = await put(`/api/clientes/${c.id}/conteudo`, { modelo_padrao: alvo.dataset.padrao });
-        abaModelos();
-        toast("Modelo padrão atualizado.");
-      });
-    }
-    if (alvo.dataset.ver) {
-      const m = c.modelos.find((x) => x.id === alvo.dataset.ver);
-      $("areaPrevia").hidden = false;
-      $("tituloPrevia").textContent = `Prévia: ${m.nome}`;
-      $("previaModelo").srcdoc = await post(`/api/clientes/${c.id}/previa`, { modelo: m.id });
-      $("areaPrevia").scrollIntoView({ behavior: "smooth" });
-    }
+  $("salvarMetodo").onclick = (e) => acao(e.currentTarget, $("msgMetodo"), async () => {
+    cliente = await put(`/api/clientes/${c.id}/conteudo`, { metodo: { nome: $("metodoNome").value, primeiro_passo: $("metodoPasso").value } });
+  });
+  $("verPrevia").onclick = async () => {
+    $("areaPrevia").hidden = false;
+    $("previaModelo").srcdoc = await post(`/api/clientes/${c.id}/previa`, {});
   };
 }
 

@@ -3,7 +3,6 @@ import { z } from "zod";
 import { conteudoCompleto } from "./analise.js";
 import { textosDosDocumentos } from "./documentos.js";
 import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
-import { estruturasVirais } from "./modelos.js";
 
 export const temIA = () => Boolean(provedor());
 
@@ -51,76 +50,73 @@ function regrasImagem(cliente, preferencia, direcaoEstilo, { regras, observacao,
 - Nunca peça texto, letras, números ou logotipos dentro da imagem.`;
 }
 
-// CTA pelo objetivo do post. Palavra-chave, entrega e próximo passo vêm do cadastro do cliente.
+// CTA pelo objetivo do post. Palavra-chave, presente e próximo passo vêm do cadastro do cliente.
 function regrasCta(cliente, objetivo) {
   const cta = cliente.conteudo.cta || {};
-  const palavra = cta.palavra_chave ? `a palavra ${cta.palavra_chave}` : "uma PALAVRA curta ligada ao tema, em caixa alta";
-  const entrega = cta.entrega || "[O QUE A PESSOA RECEBE] (liste em pendencias)";
+  const palavra = cta.palavra_chave || "[PALAVRA]";
   const tipos = {
-    alcance: "ALCANCE: pedir para seguir o perfil ou mandar o post para alguém que precisa ler.",
-    autoridade: "AUTORIDADE: pedir para salvar o post para usar depois.",
-    lead: `LEAD (CTA duplo): salvar o post e comentar ${palavra} para receber ${entrega}.`,
-    conversao: `CONVERSÃO: levar ao próximo passo comercial: ${cta.conversao || "[PRÓXIMO PASSO: link na bio, direct ou formulário] (liste em pendencias)"}.`,
+    conversao: `levar ao próximo passo: ${cta.conversao || "[PRÓXIMO PASSO: agendar avaliação, link na bio ou direct] (liste em pendencias)"}. Ex.: "Quer saber qual caminho faz sentido para você? Agende sua avaliação."`,
+    lead: cta.entrega
+      ? `comentar a palavra para receber o presente: "Quer receber ${cta.entrega}? Comenta ${palavra} que eu te mando na DM."`
+      : `comentar a palavra para receber a explicação: "Comenta ${palavra} que eu te explico como funciona."`,
+    autoridade: `salvar: "Salva este post para lembrar antes de escolher."`,
+    alcance: `compartilhar: "Manda para quem está decidindo isso agora."`,
   };
-  if (objetivo === "lead") {
-    return `CTA deste post (obrigatório): RECOMPENSA. O último slide oferece um presente e pede o comentário para entregar:
-  título no formato "Quer receber ${cta.entrega || "[O PRESENTE]"}?" e subtítulo "Comenta ${cta.palavra_chave || "[PALAVRA]"} que eu te mando na DM."
-  A legenda termina com o mesmo pedido. ${cta.entrega && cta.palavra_chave ? "" : "Liste em pendencias o que faltar (presente ou palavra)."}`;
-  }
-  if (tipos[objetivo]) return `CTA deste post (obrigatório): ${tipos[objetivo]}`;
-  return `CTA: escolha UM objetivo que combine com o conteúdo e use o CTA dele:\n${Object.values(tipos).map((t) => `  - ${t}`).join("\n")}\n  Em estruturas de identificação ou contraponto, uma pergunta fácil de responder também funciona.`;
+  const faltaPalavra = objetivo === "lead" && !cta.palavra_chave ? " Liste em pendencias que falta a palavra-chave." : "";
+  if (tipos[objetivo]) return `CTA deste post (obrigatório): ${tipos[objetivo]}${faltaPalavra}`;
+  return `CTA: por padrão, leve a uma conversa ou avaliação. Opções:\n${Object.values(tipos).map((t) => `  - ${t}`).join("\n")}`;
 }
 
-// Regras de copy viral que valem para todos os clientes e todos os modelos.
 // Limite de palavras por slide (título + subtítulo). Texto demais é o que mais derruba a retenção.
 export const LIMITE_TITULO = 10;
 export const limitePalavras = (modelo) => Math.min(modelo.palavras_max || 28, 28);
 
+function descreverMetodo(cliente) {
+  const m = cliente.conteudo.metodo || {};
+  if (m.nome || m.primeiro_passo) {
+    return `${m.nome ? `Nome: ${m.nome}.` : "Sem nome próprio: chame de \"nosso método\"."}${m.primeiro_passo ? ` Primeiro passo e o que ele analisa: ${m.primeiro_passo}.` : ""}`;
+  }
+  return "Use o método, protocolo ou processo descrito na base do cliente. Se não houver nome, chame de \"nosso método\" e liste em pendencias o nome do método.";
+}
+
+// A Metodologia Viraliza: vale para todos os clientes. Regras de um cliente específico ficam nos documentos dele.
 function regrasVirais(modelo, objetivo, cliente) {
   const maxPalavras = limitePalavras(modelo);
-  return `<regras_de_viralizacao>
-Antes de escrever, preencha "planejamento": para quem é (o público com nome, ex.: "social medias iniciantes"), o que a pessoa ganha se arrastar, a ÚNICA ideia central, a pergunta que a capa abre e o fio que leva de slide em slide até a resposta.
+  return `<metodologia_viraliza>
+PÚBLICO: quem JÁ sabe que tem o problema e está decidindo o que fazer, com quem ou qual caminho escolher. Não tente convencer que existe um problema. Mostre que existe um jeito seguro de decidir.
+Mensagem central: "Você não precisa escolher no escuro. Existe uma forma correta de avaliar, planejar e executar."
 
-CAPA (slide 1): só a headline, "subtitulo" vazio, de 4 a 12 palavras.
-- Teste do 1 segundo: quem lê sabe na hora O QUE vai ganhar se arrastar e sente que é PARA ELE.
-- Nomeie o público ou a situação dele ("social media", "quem usa canetinha", "mãe que trabalha fora").
-- Prometa algo prático e concreto (uma lista, uma rotina, um roteiro, um erro, o jeito mais rápido) ou um contraste.
-- Use UMA destas fórmulas:
-  1. Contraste X x Y: "Velho Instagram x novo Instagram" / "O que seu cliente pede x o que você deve entregar"
-  2. Número + público + resultado: "3 coisas que não podem faltar em uma proposta de social media"
-  3. "Se eu…" em primeira pessoa: "Se eu precisasse conquistar meu primeiro cliente hoje"
-  4. O mais rápido ou o mais simples: "O jeito mais simples de criar 1 semana de conteúdo"
-  5. Como X sem Y: "Como prospectar clientes sem ser chato"
-  6. Presente ou recurso: "Roteiro grátis para um dia de stories"
-  7. Situação ou POV: "Fechou um cliente novo? Faça isso antes do primeiro post."
-  8. Erro + consequência: "Esse erro faz seu Instagram perder clientes"
-  9. Resultado + história: "Copiei essa estratégia e viralizou"
-- Linguagem de conversa, palavras simples. Marque 1 palavra de destaque com *asteriscos*.
-- Proibido na capa: metáfora ou frase poética ("O folículo não vive de promessa"), conselho genérico ("Cuide da sua saúde"), título genérico já visto mil vezes ("5 dicas de marketing", "Como vender mais"), frase que só faz sentido depois de ler o post.
-- Em "ganchos_alternativos", 3 outras headlines com fórmulas DIFERENTES da usada na capa.
+Antes de escrever, preencha "planejamento": quem exatamente está decidindo (ex.: "mulher de 40+ comparando tratamentos para flacidez"), o ganho de arrastar, a ÚNICA ideia central, a dúvida de decisão que a capa toca e o fio condutor.
 
-SLIDE 2: em uma frase, o contexto e por que vale continuar. Funciona sozinho como capa (o Instagram reexibe o carrossel a partir dele). Nunca introdução chata.${objetivo === "lead" ? " Pode antecipar o presente: \"No final tem um presente pra você.\"" : ""}
+MÉTODO DO CLIENTE: ${descreverMetodo(cliente)}
 
-CONTEÚDO (slides do meio):
-- Uma ideia por slide. Em lista ou passo a passo, numere no título ("1.", "2." ou "Passo 1:").
-- Cada slide entrega algo útil e concreto: o que fazer, o erro, o jeito certo, um exemplo. Nada de opinião vaga.
-- Para comparar, use Errado → Certo.
-- Quando existir, mostre o erro oculto: "Você acha que é X. Mas é Y." É o que faz salvar e compartilhar.
-- Traga algo do próprio cliente (experiência, método, caso real da base). Conteúdo que qualquer perfil do nicho postaria não serve.
-- Títulos que se entendem sozinhos; cada slide puxa o próximo.
+GANCHO (slide 1): só a headline, "subtitulo" vazio, de 4 a 12 palavras.
+- Toca numa dúvida real de decisão, no medo de escolher errado ou num desejo específico. Não precisa ser exagerado: precisa gerar identificação imediata em quem está decidindo.
+- Use um destes tipos:
+  • Alerta antes da decisão: "Antes de fazer harmonização facial, entenda isso." / "Se você vai contratar uma mentoria, observe isso antes."
+  • Causa escondida: "Sua dor no joelho pode não estar começando no joelho." / "O problema talvez não seja o anúncio."
+  • Erro de etapa: "O erro não está em querer emagrecer. Está em pular a avaliação." / "O primeiro passo para X não é Y."
+  • Nem todo mundo: "Nem todo sorriso bonito começa pelas lentes de contato."
+  • Prova: "O que mudou esse resultado não foi X. Foi Y."
+  • Promessa: "Existe um jeito de X sem Y."
+  • História (só com caso que esteja na base): "Uma paciente chegou querendo X. O problema era Y."
+- Use o termo que o público usa (o procedimento, o serviço, a decisão). Marque 1 palavra de destaque com *asteriscos*.
+- Proibido: pergunta genérica ("Você sofre com dor nas costas?"), metáfora, conselho genérico, "Conheça nossos tratamentos".
+- Em "ganchos_alternativos", 3 outras headlines de tipos DIFERENTES da capa.
 
-TEXTO ENXUTO (texto demais é o que mais derruba a retenção):
-- Título com até ${LIMITE_TITULO} palavras. Subtítulo com UMA frase curta. No máximo ${maxPalavras} palavras por slide somando os dois.
-- Português do dia a dia, sem jargão.
+DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide puxando o próximo. Traga fatores concretos (o que se avalia, as causas possíveis) tirados da base do cliente. O método do cliente aparece como consequência lógica da explicação, nunca como propaganda.
 
-FINAL:
-- O penúltimo slide é o mais forte. O último fecha a promessa da capa e faz o CTA. Nada novo aparece no final.
+TEXTO ENXUTO: título com até ${LIMITE_TITULO} palavras; subtítulo com UMA frase curta; no máximo ${maxPalavras} palavras por slide. Português do dia a dia; explique qualquer termo técnico.
+
+CTA (último slide): convite suave, com segurança e sem pressão.
 ${regrasCta(cliente, objetivo)}
 - "cta_botao" é o texto curto do botão do último slide.
-- Legenda: 2 a 4 linhas que retomam a capa, terminando com o mesmo CTA.
+- Legenda: 3 a 6 linhas que resumem gancho, erro comum e passo correto, terminando com o mesmo CTA.
 
-PROIBIDO: slide de "conclusão" ou "obrigado por ler"; promessa de resultado garantido (use "pode"); emoji nos slides; número, caso ou depoimento que não esteja na base; humilhar alguém; opinião partidária.
-</regras_de_viralizacao>`;
+CHECKLIST antes de responder: fala com quem já sabe que tem o problema? O gancho toca uma dúvida real de decisão? Mostra um erro comum? Explica por que o passo correto importa? Conecta ao método do cliente? O CTA leva a avaliação, conversa ou comentário? Transmite segurança em vez de pressão?
+
+PROIBIDO: promessa de resultado garantido (use "pode"); emoji nos slides; número, caso, depoimento ou antes e depois que não estejam na base; humilhar alguém; opinião partidária; slide de "conclusão" ou "obrigado por ler".
+</metodologia_viraliza>`;
 }
 
 function promptSistema(cliente, modelo, opcoes = {}) {
@@ -232,29 +228,6 @@ function limpar(resultado, cliente) {
 function capaSoHeadline(resultado) {
   if (resultado.slides[0]) resultado.slides[0].subtitulo = "";
   return resultado;
-}
-
-// Modo Automático: escolhe a estrutura viral pelo tipo do conteúdo, com um modelo barato (LEITURA_MODELO).
-export async function escolherEstrutura(cliente, referencia, { observacao } = {}) {
-  const opcoes = estruturasVirais();
-  if (!temIA()) return { modelo: opcoes[0], motivo: "Modo demonstração." };
-  const conteudo = referencia.plataforma === "sugestao" ? referencia.texto : conteudoCompleto(referencia);
-  const r = await gerarEstruturado({
-    nome: "estrutura",
-    modeloOpenAI: process.env.LEITURA_MODELO || undefined,
-    schema: z.object({
-      estrutura: z.enum(opcoes.map((m) => m.id)),
-      motivo: z.string().describe("Uma frase explicando a escolha"),
-    }),
-    sistema: `Você escolhe a estrutura de roteiro de um carrossel do Instagram pelo TIPO do conteúdo. Opções:
-${opcoes.map((m) => `- ${m.id} (${m.nome}): ${m.quando_usar}`).join("\n")}
-Prefira os formatos práticos (lista, errado-certo), que são os que mais viralizam. Use n3 quando o conteúdo for sobre mudar a forma como o público enxerga um problema. Na dúvida, escolha lista.`,
-    usuario: `Cliente: ${cliente.nome}${cliente.descricao ? ` (${cliente.descricao})` : ""}
-
-Conteúdo que vai virar carrossel:
-${conteudo.slice(0, 6000)}${observacao ? `\n\nObservação do usuário: ${observacao}` : ""}`,
-  });
-  return { modelo: opcoes.find((m) => m.id === r.estrutura) || opcoes[0], motivo: r.motivo };
 }
 
 // opcoes.modelo: { nome, estrutura } escolhido na biblioteca de modelos (ver modelos.js).

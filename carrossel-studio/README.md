@@ -54,7 +54,7 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 | **Carrosséis** | Separado em **Rascunhos**, **Agendados**, **Postados** e **Descartados**. Em cada rascunho: **Postar no Instagram** (agora ou agendado), **Editar**, **Baixar** (ZIP), **Aprovar como exemplo** e **Descartar**. |
 | **Perfil e referências** | Dados do cliente, referências (Instagram e YouTube) e a **conexão para postar direto no Instagram**. |
 | **Voz e direcionamento** | Tom de voz coletado das legendas, direcionamento manual e temas/regras. |
-| **Modelos** | Estruturas de texto, com prévia. |
+| **Metodologia** | A estrutura única dos carrosséis e o método do cliente (nome e primeiro passo), com prévia. |
 | **Identidade visual** | Estilo, imagens com IA, cores, fontes, foto e logo, com prévia ao vivo. |
 
 ### Conteúdo real das referências (não só a legenda)
@@ -89,7 +89,7 @@ Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já p
 - **Foto do perfil:** o painel puxa sozinho a foto do Instagram de cada cliente (pela conexão do Instagram, grátis, ou pelo Apify) e mostra no menu, nos cartões e no topo do cliente, com o número de seguidores. Em **Perfil e referências** há o botão **Atualizar foto**.
 
 ### Escrita viral e revisor
-- **Estruturas:** Lista prática, Errado x Certo, N3 (gancho, quebra de padrão, dor e identificação, erro oculto, nova perspectiva, CTA), Ensino, Narrativa, Sequência, Contraponto e Identificação. No modelo **Automático**, a IA escolhe a estrutura pelo tipo do conteúdo (prefere Lista prática e Errado x Certo) (com o modelo barato do `LEITURA_MODELO`).
+- **Metodologia única (Metodologia Viraliza):** gancho → identificação → problema oculto → erro comum → passo correto → método do cliente → benefício → CTA suave. Fala com quem já sabe que tem o problema e está decidindo com quem resolver. O nome do método e o primeiro passo ficam na aba **Metodologia**.
 - **Capa só com a headline** (4 a 12 palavras) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
 - **Slide 2** funciona sozinho como capa. Limite de palavras por slide, dor específica, nada inventado, sem promessa de resultado.
 - **CTA pelo objetivo** (Alcance, Autoridade, Lead, Conversão), escolhido na hora de criar. Palavra-chave, entrega e próximo passo ficam em **Voz e direcionamento → Temas, regras e chamada para ação**.
@@ -135,10 +135,8 @@ Alguns estilos pedem um jeito de escrever diferente, e a IA recebe essas regras 
 Copie um arquivo de `templates/` (ex.: `editorial.js`), mude `info` (nome e descrição), o CSS e o HTML do slide.
 Ele aparece sozinho na aba **Identidade visual**.
 
-### Criar um modelo de carrossel novo
-Copie um arquivo de `modelos/` (ex.: `lista-de-dicas.json`) e mude `id`, `nome`, `descricao` e a `estrutura`.
-Cada slide tem `papel`, `instrucao` (o que a IA deve escrever) e `fundo` (`escuro`, `claro` ou `destaque`).
-Ele aparece sozinho na aba **Modelos de carrossel** de todos os clientes.
+### Metodologia dos carrosséis
+A estrutura fica em `modelos/metodologia.json` (papel, instrução e fundo de cada slide). Os modelos antigos estão guardados em `modelos/arquivo/` e não aparecem no painel.
 
 ## Como funciona o ranking
 

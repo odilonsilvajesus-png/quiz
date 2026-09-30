@@ -316,8 +316,11 @@ export function salvarImagemCliente(id, campo, dataUrl) {
 
 const OBJETIVOS = ["auto", "alcance", "autoridade", "lead", "conversao"];
 
-export function salvarConteudo(id, { modelo_padrao, angulos, cta_legenda, proibir_travessao, cta }) {
+export function salvarConteudo(id, { modelo_padrao, angulos, cta_legenda, proibir_travessao, cta, metodo }) {
   alterarConfig(id, (c) => {
+    if (metodo) {
+      c.conteudo.metodo = { nome: String(metodo.nome || "").trim(), primeiro_passo: String(metodo.primeiro_passo || "").trim() };
+    }
     if (cta) {
       const atual = c.conteudo.cta || {};
       c.conteudo.cta = {

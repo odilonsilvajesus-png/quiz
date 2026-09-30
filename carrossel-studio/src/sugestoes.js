@@ -59,6 +59,8 @@ export async function gerarSugestoes(cliente, { quantidade = 8, foco = "" } = {}
       schema,
       sistema: `Você é estrategista de conteúdo de ${cliente.nome}${cliente.descricao ? ` (${cliente.descricao})` : ""}.
 Crie pautas de carrossel para o Instagram usando só o conhecimento abaixo sobre o cliente, o público e o método. Cada pauta precisa ser específica (nada genérico), ter um gancho forte e um objetivo comercial coerente com a base.
+As pautas seguem a Metodologia Viraliza: falam com quem JÁ sabe que tem o problema e está decidindo o que fazer ou com quem. Cada uma gira em torno de uma decisão real do público, um erro comum nessa decisão e o passo correto (avaliação, diagnóstico, planejamento) que leva ao método do cliente.
+Ganchos no estilo: "Antes de [decisão], entenda isso", "[Sintoma] pode não estar começando em [lugar óbvio]", "O erro não está em querer X. Está em pular Y", "Nem todo [resultado] começa por [solução óbvia]".
 
 ${cliente.baseConhecimento ? `<base_de_conhecimento>\n${cliente.baseConhecimento}\n</base_de_conhecimento>` : ""}
 ${cliente.voz ? `<voz_do_cliente>\n${cliente.voz}\n</voz_do_cliente>` : ""}

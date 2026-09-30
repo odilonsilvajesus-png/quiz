@@ -23,7 +23,7 @@ import * as carrosseis from "./carrosseis.js";
 import { publicarCarrossel, testarConexao, temHospedagem } from "./publicar.js";
 import { criarZip } from "./zip.js";
 import { createRequire } from "node:module";
-import { listarModelos, modelosDoCliente, resolverModelo, estruturasVirais } from "./modelos.js";
+import { listarModelos, modelosDoCliente, resolverModelo } from "./modelos.js";
 import { montarHtml, listarEstilos, renderizar, exportarJpeg } from "./render.js";
 import { imagemExemplo, slidesComImagem, temGeradorImagem, resolverModo } from "./imagens.js";
 import { nomeProvedor } from "./ia.js";
@@ -104,6 +104,7 @@ function detalheCliente(id) {
       cta_legenda: c.conteudo.cta_legenda || "",
       proibir_travessao: Boolean(c.conteudo.proibir_travessao),
       cta: c.conteudo.cta,
+      metodo: c.conteudo.metodo || { nome: "", primeiro_passo: "" },
     },
     visual: {
       paleta: c.visual.paleta,
@@ -153,9 +154,7 @@ async function previa(id, dados) {
   };
   const infoEstilo = (await listarEstilos()).find((e) => e.id === (dados.template || c.visual.template));
   const modoImagens = resolverModo(dados.imagens?.modo || c.visual.imagens?.modo, infoEstilo);
-  // No Automático, a prévia mostra a primeira estrutura viral (Ensino).
-  const escolhido = resolverModelo(c, dados.modelo);
-  const modelo = escolhido.automatico ? estruturasVirais()[0] : escolhido;
+  const modelo = resolverModelo(c);
   const comImagem = new Set(slidesComImagem(modoImagens, modelo.estrutura.length));
   const estilo = dados.template || c.visual.template;
   const exemplo = c.exemplosCarrossel.find((e) => e.slides.length === modelo.estrutura.length);
