@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Negócio dos Gigantes | Dom Pedrinho</title>
+<meta name="description" content="Uma manhã exclusiva para pais e responsáveis da Dom Pedrinho apresentarem seus negócios, conhecerem outros profissionais e criarem novas oportunidades. 17 de outubro, das 8h30 às 11h30." />
+<meta name="theme-color" content="#0B3552" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Negócio dos Gigantes | Dom Pedrinho" />
+<meta property="og:description" content="Grandes conexões começam dentro da nossa própria comunidade. 17 de outubro, das 8h30 às 11h30." />
+<meta property="og:image" content="img/hero.jpg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@800;900&display=swap" rel="stylesheet" />
+<link rel="preload" as="image" href="img/hero.jpg" />
+<style>
+  :root {
+    --azul: #0072BD;
+    --azul-medio: #3383C8;
+    --azul-claro: #0593D1;
+    --marinho: #0B3552;
+    --marinho-escuro: #082840;
+    --amarelo: #FFD543;
+    --branco: #FFFFFF;
+    --offwhite: #F6F8FB;
+    --linha: #D7E1EB;
+    --texto: #0B3552;
+    --texto-suave: #48627A;
+    --erro: #B4553B;
+    --erro-fundo: #FBF1EE;
+    --raio: 10px;
+    --max: 1160px;
+    --titulo: "Nunito", "Poppins", system-ui, sans-serif;
+    --corpo: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--branco);
+    color: var(--texto);
+    font-family: var(--corpo);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--titulo); font-weight: 800; letter-spacing: -0.01em; line-height: 1.12; margin: 0; }
+  p { margin: 0 0 1em; }
+  p:last-child { margin-bottom: 0; }
+  .container { width: 100%; max-width: var(--max); margin: 0 auto; padding: 0 22px; }
+  .section { padding: 76px 0; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--azul); margin-bottom: 18px;
+  }
+  .eyebrow::before { content: ""; width: 9px; height: 9px; background: currentColor; transform: rotate(45deg); flex: none; }
+  .titulo-secao { font-size: clamp(28px, 6.4vw, 44px); color: var(--marinho); text-transform: uppercase; }
+  .lead { font-size: 18px; color: var(--texto-suave); }
+
+  /* Botões */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    min-height: 58px; padding: 16px 30px; border: 0; border-radius: var(--raio);
+    font-family: var(--corpo); font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease;
+  }
+  .btn-amarelo { background: var(--amarelo); color: var(--marinho); box-shadow: 0 10px 24px -12px rgba(255, 213, 67, .75); }
+  .btn-amarelo:hover { background: #FFDC5E; transform: translateY(-1px); }
+  .btn-amarelo:active { transform: translateY(0); }
+  .btn:focus-visible { outline: 3px solid var(--azul-claro); outline-offset: 3px; }
+  .btn .seta { width: 18px; height: 18px; flex: none; }
+  .btn[disabled] { opacity: .7; cursor: progress; }
+
+  /* Logomarca — arquivo oficial, nunca recriado */
+  .logo-slot { display: inline-flex; align-items: center; }
+  .logo-slot img { height: 52px; width: auto; }
+  .logo-reservado {
+    display: none; align-items: center; justify-content: center; text-align: center;
+    min-width: 170px; height: 52px; padding: 0 14px; border: 1.5px dashed #9FB4C8; border-radius: 8px;
+    font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6A8197; line-height: 1.3;
+  }
+  .logo-slot.sem-arquivo img { display: none; }
+  .logo-slot.sem-arquivo .logo-reservado { display: inline-flex; }
+
+  /* Topo */
+  .topo { background: var(--branco); border-bottom: 1px solid var(--linha); position: relative; z-index: 5; }
+  .topo .container { display: flex; align-items: center; justify-content: space-between; min-height: 76px; gap: 16px; }
+  .topo-link { display: none; font-size: 14px; font-weight: 600; color: var(--marinho); text-decoration: none; letter-spacing: .04em; }
+  .topo-link:hover { color: var(--azul); }
+
+  /* HERO */
+  .hero { position: relative; color: var(--branco); background: var(--marinho); overflow: hidden; isolation: isolate; }
+  .hero-foto { position: absolute; inset: 0; z-index: -2; }
+  .hero-foto img { width: 100%; height: 100%; object-fit: cover; object-position: 60% center; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(11, 53, 82, .86) 0%, rgba(11, 53, 82, .93) 55%, rgba(8, 40, 64, .97) 100%);
+  }
+  .hero-losangos { position: absolute; z-index: -1; right: -70px; top: 40px; width: 260px; height: 260px; opacity: .5; pointer-events: none; }
+  .hero .container { padding-top: 58px; padding-bottom: 64px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px; margin-bottom: 26px;
+    font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(255, 255, 255, .86);
+  }
+  .hero-tag::before { content: ""; width: 28px; height: 2px; background: var(--amarelo); }
+  .hero h1 { font-size: clamp(44px, 13vw, 92px); font-weight: 900; line-height: .98; text-transform: uppercase; letter-spacing: -0.015em; }
+  .hero h1 .linha { display: block; }
+  .hero h1 .destaque { color: var(--amarelo); }
+  .hero-frase { margin-top: 26px; font-family: var(--titulo); font-weight: 800; font-size: clamp(21px, 5vw, 28px); line-height: 1.3; max-width: 640px; }
+  .hero-texto { margin-top: 16px; max-width: 600px; font-size: 18px; color: rgba(255, 255, 255, .86); }
+  .hero-info {
+    display: grid; grid-template-columns: 1fr; gap: 0; margin: 34px 0 34px; max-width: 620px;
+    border-top: 1px solid rgba(255, 255, 255, .22);
+  }
+  .hero-info div { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, .22); display: flex; align-items: baseline; gap: 14px; }
+  .hero-info dt { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .62); width: 74px; flex: none; }
+  .hero-info dd { margin: 0; white-space: nowrap; font-size: 19px; font-weight: 600; }
+  .hero .btn { width: 100%; }
+  .hero-nota { margin-top: 16px; font-size: 14.5px; color: rgba(255, 255, 255, .72); max-width: 520px; }
+
+  /* APRESENTAÇÃO */
+  .apresentacao { background: var(--offwhite); }
+  .grid-2 { display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center; }
+  .foto-moldura { position: relative; }
+  .foto-moldura img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+  .foto-moldura::before {
+    content: ""; position: absolute; left: -10px; bottom: -10px; width: 58%; height: 58%;
+    border-left: 3px solid var(--amarelo); border-bottom: 3px solid var(--amarelo); border-radius: 0 0 0 6px; z-index: 0;
+  }
+  .foto-moldura img { position: relative; z-index: 1; }
+  .apresentacao .titulo-secao { margin-bottom: 24px; }
+  .apresentacao .texto p { color: var(--texto-suave); }
+  .apresentacao .texto p.forte { color: var(--marinho); font-weight: 600; border-left: 3px solid var(--azul); padding-left: 18px; margin-top: 26px; }
+
+  /* O QUE VOCÊ ENCONTRARÁ */
+  .encontrara .cabecalho { max-width: 720px; margin-bottom: 42px; }
+  .lista-editorial { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--linha); }
+  .lista-editorial li { display: flex; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--linha); align-items: flex-start; }
+  .lista-editorial .num { font-family: var(--titulo); font-weight: 800; font-size: 15px; color: var(--azul); letter-spacing: .04em; padding-top: 3px; min-width: 26px; }
+  .lista-editorial p { margin: 0; font-size: 17.5px; color: var(--marinho); font-weight: 500; }
+
+  /* PROGRAMAÇÃO */
+  .programacao { background: var(--marinho); color: var(--branco); position: relative; overflow: hidden; }
+  .programacao .eyebrow { color: var(--amarelo); }
+  .programacao .titulo-secao { color: var(--branco); margin-bottom: 14px; }
+  .programacao .sub { color: rgba(255, 255, 255, .7); margin-bottom: 44px; }
+  .cronograma { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255, 255, 255, .16); }
+  .cronograma li { display: grid; grid-template-columns: 84px 1fr; gap: 18px; padding: 22px 0; border-bottom: 1px solid rgba(255, 255, 255, .16); align-items: baseline; }
+  .cronograma time { font-family: var(--titulo); font-weight: 800; font-size: 22px; color: var(--amarelo); letter-spacing: .01em; }
+  .cronograma span { font-size: 17.5px; color: var(--branco); }
+  .programacao-losango { position: absolute; width: 340px; height: 340px; right: -150px; bottom: -150px; border: 1px solid rgba(255, 213, 67, .25); transform: rotate(45deg); pointer-events: none; }
+  .programacao-losango::after { content: ""; position: absolute; inset: 40px; border: 1px solid rgba(255, 255, 255, .1); }
+
+  /* 60 SEGUNDOS */
+  .pitch .grid-2 { align-items: start; }
+  .pitch .titulo-secao { margin-bottom: 26px; }
+  .tempo {
+    display: flex; align-items: center; gap: 22px; padding: 26px 26px; margin: 0 0 30px;
+    background: var(--azul); color: var(--branco); border-radius: 8px; position: relative; overflow: hidden;
+  }
+  .tempo::after { content: ""; position: absolute; right: -40px; top: -40px; width: 130px; height: 130px; border: 2px solid rgba(255, 255, 255, .18); transform: rotate(45deg); }
+  .tempo strong { font-family: var(--titulo); font-weight: 900; font-size: clamp(64px, 18vw, 96px); line-height: .85; color: var(--amarelo); }
+  .tempo .rotulo { font-family: var(--titulo); font-weight: 800; font-size: 22px; line-height: 1.1; text-transform: uppercase; }
+  .tempo .rotulo small { display: block; font-family: var(--corpo); font-weight: 500; font-size: 15px; text-transform: none; color: rgba(255, 255, 255, .85); margin-top: 6px; }
+  .pitch h3 { font-family: var(--corpo); font-size: 14px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--azul); margin-bottom: 14px; }
+  .roteiro { list-style: none; margin: 0 0 30px; padding: 0; counter-reset: r; }
+  .roteiro li { counter-increment: r; position: relative; padding: 13px 0 13px 46px; border-bottom: 1px solid var(--linha); font-size: 17.5px; font-weight: 500; }
+  .roteiro li::before {
+    content: counter(r); position: absolute; left: 0; top: 13px; width: 30px; height: 30px; border-radius: 50%;
+    background: var(--offwhite); border: 1px solid var(--linha); color: var(--azul);
+    font-size: 14px; font-weight: 700; display: grid; place-items: center; line-height: 1;
+  }
+  .destaque-box { background: var(--offwhite); border-left: 4px solid var(--amarelo); padding: 20px 22px; font-weight: 600; color: var(--marinho); border-radius: 0 6px 6px 0; }
+
+  /* QUEM PODE PARTICIPAR */
+  .quem { background: var(--offwhite); }
+  .quem .titulo-secao { margin-bottom: 18px; }
+  .quem .intro { color: var(--texto-suave); margin-bottom: 30px; }
+  .lista-check { list-style: none; margin: 0 0 34px; padding: 0; display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--linha); }
+  .lista-check li { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--linha); font-size: 17.5px; font-weight: 500; }
+  .lista-check li::before { content: ""; width: 10px; height: 10px; background: var(--azul); transform: rotate(45deg); margin-top: 9px; flex: none; }
+  .faixa-destaque { background: var(--marinho); color: var(--branco); padding: 28px 26px; border-radius: 8px; position: relative; overflow: hidden; }
+  .faixa-destaque p { font-family: var(--titulo); font-weight: 800; font-size: 21px; line-height: 1.35; position: relative; }
+  .faixa-destaque p em { font-style: normal; color: var(--amarelo); }
+  .faixa-destaque::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--amarelo); }
+
+  /* Faixa de foto */
+  .faixa-foto { position: relative; height: 260px; overflow: hidden; background: var(--marinho); }
+  .faixa-foto img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+  .faixa-foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0, 114, 189, .55), rgba(11, 53, 82, .35)); }
+
+  /* INSCRIÇÃO */
+  .inscricao { background: var(--offwhite); scroll-margin-top: 0; }
+  .inscricao .cabecalho { max-width: 720px; margin-bottom: 36px; }
+  .inscricao .titulo-secao { margin-bottom: 18px; }
+  .inscricao .cabecalho p { color: var(--texto-suave); }
+  .form-wrap { max-width: 820px; }
+  .etapas-indice { display: flex; gap: 6px; margin-bottom: 18px; }
+  .etapas-indice span { flex: 1; height: 4px; border-radius: 4px; background: var(--linha); transition: background-color .3s ease; }
+  .etapas-indice span.ok { background: var(--azul); }
+  fieldset.etapa {
+    border: 1px solid var(--linha); background: var(--branco); border-radius: 12px;
+    margin: 0 0 18px; padding: 28px 20px 10px; min-width: 0;
+  }
+  .etapa-cab { float: left; width: 100%; padding: 0; display: flex; gap: 16px; align-items: center; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--linha); }
+  .etapa-num {
+    width: 44px; height: 44px; flex: none; display: grid; place-items: center; position: relative;
+    font-family: var(--titulo); font-weight: 800; font-size: 17px; color: var(--marinho);
+  }
+  .etapa-num::before { content: ""; position: absolute; inset: 6px; background: var(--amarelo); transform: rotate(45deg); border-radius: 3px; z-index: 0; }
+  .etapa-num b { position: relative; z-index: 1; }
+  .etapa-cab small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+  .etapa-cab .etapa-titulo { display: block; font-family: var(--titulo); font-weight: 800; font-size: 20px; color: var(--marinho); text-transform: uppercase; padding: 0; line-height: 1.2; }
+  .etapa > .campos, .etapa > .check:first-of-type { clear: both; }
+  .campos { display: grid; grid-template-columns: 1fr; gap: 0 20px; }
+  .campo { margin-bottom: 20px; min-width: 0; }
+  .campo.cheio { grid-column: 1 / -1; }
+  .campo label, .campo .rotulo-grupo { display: block; font-size: 15px; font-weight: 600; color: var(--marinho); margin-bottom: 8px; line-height: 1.4; }
+  .campo .opc { font-weight: 500; color: var(--texto-suave); font-size: 13.5px; }
+  .campo .obr { color: var(--azul); margin-left: 2px; }
+  .campo input[type="text"], .campo input[type="email"], .campo input[type="tel"], .campo input[type="url"], .campo select, .campo textarea {
+    width: 100%; min-height: 54px; padding: 14px 16px; background: var(--branco); color: var(--marinho);
+    border: 1.5px solid #C9D6E3; border-radius: 8px; font-family: var(--corpo); font-size: 16px; line-height: 1.4;
+    transition: border-color .15s ease, box-shadow .15s ease; appearance: none; -webkit-appearance: none;
+  }
+  .campo textarea { min-height: 104px; resize: vertical; }
+  .campo select {
+    padding-right: 44px; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%230B3552' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center;
+  }
+  .campo input::placeholder, .campo textarea::placeholder { color: #8DA0B3; }
+  .campo input:focus, .campo select:focus, .campo textarea:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 4px rgba(0, 114, 189, .14); }
+  .campo .ajuda { display: block; margin-top: 6px; font-size: 13.5px; color: var(--texto-suave); }
+  .contador { display: flex; justify-content: flex-end; font-size: 13px; color: var(--texto-suave); margin-top: 6px; }
+  .erro-msg { display: none; margin-top: 7px; font-size: 14px; font-weight: 500; color: var(--erro); }
+  .campo.invalido input, .campo.invalido select, .campo.invalido textarea { border-color: var(--erro); background: var(--erro-fundo); }
+  .campo.invalido .erro-msg, .check.invalido .erro-msg, .grupo.invalido .erro-msg { display: block; }
+  .oculto { display: none !important; }
+
+  .opcoes { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .opcao { position: relative; }
+  .opcao input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .opcao label {
+    display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 12px 16px; margin: 0;
+    border: 1.5px solid #C9D6E3; border-radius: 8px; background: var(--branco); cursor: pointer;
+    font-size: 16px; font-weight: 500; color: var(--marinho); transition: border-color .15s, background-color .15s;
+  }
+  .opcao label::before {
+    content: ""; width: 20px; height: 20px; flex: none; border: 1.5px solid #9FB4C8; border-radius: 5px; background: var(--branco) center / 12px no-repeat;
+    transition: background-color .15s, border-color .15s;
+  }
+  .opcao input:checked + label { border-color: var(--azul); background: #EEF6FC; }
+  .opcao input:checked + label::before {
+    background-color: var(--azul); border-color: var(--azul);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' fill='none' stroke='white' stroke-width='2.2'/%3E%3C/svg%3E");
+  }
+  .opcao input:focus-visible + label { box-shadow: 0 0 0 4px rgba(0, 114, 189, .2); border-color: var(--azul); }
+  .grupo.invalido .opcao label { border-color: #E2B7AA; }
+
+  .check { border: 1.5px solid #C9D6E3; border-radius: 10px; padding: 18px 18px; margin-bottom: 14px; background: var(--branco); transition: border-color .15s, background-color .15s; }
+  .check.marcado { border-color: var(--azul); background: #F4F9FD; }
+  .check.invalido { border-color: var(--erro); background: var(--erro-fundo); }
+  .check-linha { display: flex; gap: 14px; align-items: flex-start; cursor: pointer; }
+  .check-linha input {
+    appearance: none; -webkit-appearance: none; width: 24px; height: 24px; flex: none; margin: 1px 0 0;
+    border: 1.5px solid #9FB4C8; border-radius: 6px; background: var(--branco) center / 13px no-repeat; cursor: pointer;
+  }
+  .check-linha input:checked {
+    background-color: var(--azul); border-color: var(--azul);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' fill='none' stroke='white' stroke-width='2.2'/%3E%3C/svg%3E");
+  }
+  .check-linha input:focus-visible { outline: 3px solid rgba(0, 114, 189, .35); outline-offset: 2px; }
+  .check-linha span { font-size: 16px; font-weight: 500; color: var(--marinho); line-height: 1.5; }
+  .check-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
+  .check-tag.obr { background: var(--marinho); color: var(--branco); }
+  .check-tag.opc { background: var(--offwhite); color: var(--texto-suave); border: 1px solid var(--linha); }
+  .check-nota { margin: 12px 0 0 38px; font-size: 14px; color: var(--texto-suave); line-height: 1.55; padding-top: 12px; border-top: 1px dashed var(--linha); }
+  .check .erro-msg { margin-left: 38px; }
+
+  .envio { padding: 26px 0 0; }
+  .envio .btn { width: 100%; }
+  .envio-nota { margin-top: 16px; font-size: 15px; color: var(--texto-suave); text-align: center; }
+  .erro-geral { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 8px; background: var(--erro-fundo); color: var(--erro); font-size: 15px; font-weight: 500; }
+  .erro-geral.ativo { display: block; }
+
+  /* Confirmação */
+  .confirmacao { scroll-margin-top: 20px; display: none; background: var(--branco); border: 1px solid var(--linha); border-radius: 14px; overflow: hidden; max-width: 820px; }
+  .confirmacao.ativa { display: block; }
+  .confirmacao-topo { background: var(--marinho); color: var(--branco); padding: 38px 26px 34px; position: relative; overflow: hidden; }
+  .confirmacao-topo::after { content: ""; position: absolute; width: 160px; height: 160px; right: -60px; top: -60px; border: 2px solid rgba(255, 213, 67, .4); transform: rotate(45deg); }
+  .selo { width: 56px; height: 56px; display: grid; place-items: center; margin-bottom: 22px; position: relative; }
+  .selo::before { content: ""; position: absolute; inset: 8px; background: var(--amarelo); transform: rotate(45deg); border-radius: 4px; }
+  .selo svg { position: relative; width: 22px; height: 22px; }
+  .confirmacao h2 { font-size: clamp(30px, 8vw, 44px); text-transform: uppercase; }
+  .confirmacao-topo p { margin-top: 14px; font-size: 18px; color: rgba(255, 255, 255, .88); }
+  .confirmacao-corpo { padding: 30px 26px 34px; }
+  .confirmacao-corpo p { color: var(--texto-suave); }
+  .confirmacao-data { display: flex; flex-wrap: wrap; gap: 0; margin: 26px 0; border: 1px solid var(--linha); border-radius: 8px; overflow: hidden; }
+  .confirmacao-data div { flex: 1 1 200px; padding: 16px 18px; }
+  .confirmacao-data div + div { border-top: 1px solid var(--linha); }
+  .confirmacao-data small { display: block; font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); }
+  .confirmacao-data strong { font-family: var(--titulo); font-weight: 800; font-size: 22px; color: var(--marinho); }
+  .confirmacao .lembrete { background: var(--offwhite); border-left: 4px solid var(--amarelo); padding: 18px 20px; color: var(--marinho); font-weight: 600; border-radius: 0 6px 6px 0; }
+  .confirmacao .final { margin-top: 26px; font-family: var(--titulo); font-weight: 800; font-size: 24px; color: var(--azul); text-transform: uppercase; }
+
+  /* Rodapé */
+  .rodape { background: var(--marinho-escuro); color: var(--branco); padding: 60px 0 calc(40px + env(safe-area-inset-bottom)); }
+  .rodape-titulo { font-family: var(--titulo); font-weight: 900; font-size: 30px; text-transform: uppercase; line-height: 1.05; }
+  .rodape-titulo span { color: var(--amarelo); }
+  .rodape-data { margin-top: 10px; font-size: 16px; font-weight: 600; color: rgba(255, 255, 255, .9); }
+  .rodape-texto { margin-top: 14px; color: rgba(255, 255, 255, .7); max-width: 520px; font-size: 15.5px; }
+  .rodape-grid { display: grid; grid-template-columns: 1fr; gap: 34px; }
+  .rodape-logo { background: var(--branco); border-radius: 10px; padding: 16px 20px; display: inline-flex; }
+  .rodape h4 { font-family: var(--corpo); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .6); margin: 22px 0 10px; }
+  .canais { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .canais a { color: var(--branco); text-decoration: none; font-weight: 500; border-bottom: 1px solid rgba(255, 255, 255, .25); }
+  .canais a:hover { border-color: var(--amarelo); }
+  .canais-reservado { border: 1.5px dashed rgba(255, 255, 255, .3); border-radius: 8px; padding: 14px 16px; font-size: 13px; color: rgba(255, 255, 255, .55); letter-spacing: .04em; }
+  .rodape-base { margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .12); font-size: 13px; color: rgba(255, 255, 255, .5); }
+
+  /* CTA fixo mobile */
+  .cta-fixo {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, .96); border-top: 1px solid var(--linha);
+    box-shadow: 0 -8px 24px -16px rgba(11, 53, 82, .4);
+    transform: translateY(110%); transition: transform .3s ease;
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  }
+  .cta-fixo.visivel { transform: translateY(0); }
+  .cta-fixo .btn { width: 100%; min-height: 52px; font-size: 15px; }
+  .cta-fixo .linha-info { display: none; }
+
+  /* Revelação suave */
+  .revela { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .revela.visto { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .revela { opacity: 1; transform: none; transition: none; }
+    .cta-fixo { transition: none; }
+  }
+
+  /* Tablet / desktop */
+  @media (min-width: 640px) {
+    .campos { grid-template-columns: 1fr 1fr; }
+    .opcoes { grid-template-columns: 1fr 1fr; }
+    fieldset.etapa { padding: 34px 32px 16px; }
+    .hero .btn { width: auto; }
+    .hero-info { grid-template-columns: repeat(3, auto); justify-content: start; gap: 0 40px; border-top: 0; }
+    .hero-info div { flex-direction: column; gap: 4px; border-bottom: 0; border-left: 2px solid var(--amarelo); padding: 2px 0 2px 16px; }
+    .hero-info dt { width: auto; }
+    .confirmacao-data div + div { border-top: 0; border-left: 1px solid var(--linha); }
+    .confirmacao-topo, .confirmacao-corpo { padding-left: 40px; padding-right: 40px; }
+    .envio .btn { width: auto; min-width: 380px; }
+    .envio { text-align: center; }
+    .lista-check { grid-template-columns: 1fr 1fr; column-gap: 40px; }
+  }
+  @media (min-width: 900px) {
+    body { font-size: 18px; }
+    .container { padding: 0 40px; }
+    .section { padding: 112px 0; }
+    .topo-link { display: inline-block; }
+    .logo-slot img, .logo-reservado { height: 60px; }
+    .hero .container { padding-top: 96px; padding-bottom: 110px; }
+    .hero::before { background: linear-gradient(90deg, rgba(11, 53, 82, .96) 0%, rgba(11, 53, 82, .88) 48%, rgba(0, 114, 189, .45) 100%); }
+    .hero-losangos { right: 6%; top: auto; bottom: 70px; width: 300px; height: 300px; opacity: .55; }
+    .hero-texto { font-size: 19px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; gap: 72px; }
+    .apresentacao .grid-2 { grid-template-columns: 1.05fr 1fr; }
+    .pitch .grid-2 { grid-template-columns: 1.1fr .9fr; }
+    .pitch .foto-moldura img { aspect-ratio: 4 / 5; }
+    .quem .lista-check { grid-template-columns: 1fr; }
+    .lista-editorial { grid-template-columns: 1fr 1fr; column-gap: 56px; }
+    .cronograma li { grid-template-columns: 140px 1fr; padding: 24px 0; }
+    .cronograma time { font-size: 26px; }
+    .cronograma span { font-size: 19px; }
+    .programacao .wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 72px; align-items: start; }
+    .programacao .sub { margin-bottom: 0; }
+    .quem .wrap { display: grid; grid-template-columns: 1fr 1.3fr; gap: 72px; align-items: start; }
+    .faixa-foto { height: 380px; }
+    .inscricao .layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 64px; align-items: start; }
+    .inscricao .cabecalho { position: sticky; top: 40px; }
+    .rodape-grid { grid-template-columns: 1.4fr 1fr; gap: 64px; }
+    .cta-fixo { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!--
+  =====================================================================
+  CONFIGURAÇÃO (editar antes de publicar)
+  - Logomarca: salvar o arquivo OFICIAL da Dom Pedrinho em
+      img/logo-dom-pedrinho.png
+    Ele é exibido exatamente como fornecido (sem recolorir, cortar ou
+    distorcer). Enquanto o arquivo não existir, o espaço fica reservado.
+  - Endereço de envio, unidades e canais oficiais: ver o objeto
+    window.NDG_CONFIG no final da página.
+  =====================================================================
+-->
+
+<header class="topo">
+  <div class="container">
+    <a class="logo-slot" href="#topo" aria-label="Escola Dom Pedrinho">
+      <img src="img/logo-dom-pedrinho.png" alt="Escola Dom Pedrinho" />
+      <span class="logo-reservado" aria-hidden="true">Logomarca oficial<br />Dom Pedrinho</span>
+    </a>
+    <a class="topo-link" href="#inscricao">Fazer inscrição</a>
+  </div>
+</header>
+
+<main id="topo">
+
+  <!-- 1. HERO -->
+  <section class="hero" aria-labelledby="titulo-evento">
+    <div class="hero-foto" aria-hidden="true">
+      <img src="img/hero.jpg" alt="" fetchpriority="high" />
+    </div>
+    <svg class="hero-losangos" viewBox="0 0 200 200" aria-hidden="true">
+      <rect x="58" y="58" width="84" height="84" transform="rotate(45 100 100)" fill="none" stroke="#FFD543" stroke-width="1.2" />
+      <rect x="40" y="40" width="120" height="120" transform="rotate(45 100 100)" fill="none" stroke="#FFFFFF" stroke-opacity=".25" stroke-width="1" />
+      <rect x="88" y="88" width="24" height="24" transform="rotate(45 100 100)" fill="#FFD543" />
+    </svg>
+    <div class="container">
+      <p class="hero-tag">Escola Dom Pedrinho apresenta</p>
+      <h1 id="titulo-evento"><span class="linha">Negócio dos</span> <span class="linha destaque">Gigantes</span></h1>
+      <p class="hero-frase">Grandes conexões começam dentro da nossa própria comunidade.</p>
+      <p class="hero-texto">Uma manhã exclusiva para pais e responsáveis da Dom Pedrinho apresentarem seus negócios, conhecerem outros profissionais e criarem novas oportunidades.</p>
+      <dl class="hero-info">
+        <div><dt>Data</dt><dd>17 de outubro</dd></div>
+        <div><dt>Horário</dt><dd>Das 8h30 às 11h30</dd></div>
+        <div><dt>Local</dt><dd>Dom Pedrinho</dd></div>
+      </dl>
+      <a class="btn btn-amarelo js-cta" href="#inscricao">
+        Quero participar
+        <svg class="seta" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      </a>
+      <p class="hero-nota">Evento exclusivo para pais e responsáveis de alunos da Dom Pedrinho.</p>
+    </div>
+  </section>
+
+  <!-- 2. APRESENTAÇÃO -->
+  <section class="section apresentacao" aria-labelledby="t-comunidade">
+    <div class="container grid-2">
+      <div class="texto revela">
+        <p class="eyebrow">O evento</p>
+        <h2 class="titulo-secao" id="t-comunidade">Uma comunidade que também pode crescer junta</h2>
+        <p>Dentro da comunidade Dom Pedrinho existem empresários, profissionais, prestadores de serviços e pessoas com experiências que podem gerar grandes conexões.</p>
+        <p>O Negócio dos Gigantes foi criado para aproximar essas famílias em uma manhã de apresentações, troca de experiências, indicações e construção de novas parcerias.</p>
+        <p class="forte">Mais do que divulgar empresas, queremos criar um ambiente de confiança, no qual os pais possam conhecer quem faz parte da nossa comunidade e descobrir novas possibilidades de colaboração.</p>
+      </div>
+      <div class="foto-moldura revela">
+        <img src="img/comunidade.jpg" alt="Profissionais conversando de forma descontraída em um ambiente de trabalho" loading="lazy" width="1100" height="733" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. O QUE VOCÊ ENCONTRARÁ -->
+  <section class="section encontrara" aria-labelledby="t-encontrara">
+    <div class="container">
+      <div class="cabecalho revela">
+        <p class="eyebrow">O que você encontrará</p>
+        <h2 class="titulo-secao" id="t-encontrara">Uma manhã de conexões e oportunidades</h2>
+        <p class="lead" style="margin-top:18px">Durante o encontro, você poderá:</p>
+      </div>
+      <ol class="lista-editorial revela">
+        <li><span class="num">01</span><p>Apresentar seu negócio, serviço ou atividade profissional.</p></li>
+        <li><span class="num">02</span><p>Conhecer outros empresários e profissionais da comunidade escolar.</p></li>
+        <li><span class="num">03</span><p>Encontrar possíveis clientes, parceiros e fornecedores.</p></li>
+        <li><span class="num">04</span><p>Trocar experiências e ampliar sua rede de contatos.</p></li>
+        <li><span class="num">05</span><p>Identificar oportunidades de indicação e colaboração.</p></li>
+        <li><span class="num">06</span><p>Construir relacionamentos que podem continuar depois do evento.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 4. PROGRAMAÇÃO -->
+  <section class="section programacao" aria-labelledby="t-programacao">
+    <div class="programacao-losango" aria-hidden="true"></div>
+    <div class="container wrap">
+      <div class="revela">
+        <p class="eyebrow">Programação</p>
+        <h2 class="titulo-secao" id="t-programacao">Confira o cronograma</h2>
+        <p class="sub">17 de outubro, das 8h30 às 11h30.</p>
+      </div>
+      <ol class="cronograma revela">
+        <li><time>8h30</time><span>Recepção, credenciamento e coffee de boas-vindas</span></li>
+        <li><time>8h50</time><span>Abertura institucional</span></li>
+        <li><time>9h</time><span>Apresentação dos negócios</span></li>
+        <li><time>9h45</time><span>Rodadas de conexão</span></li>
+        <li><time>10h20</time><span>Coffee break e networking livre</span></li>
+        <li><time>10h50</time><span>Mural de oportunidades</span></li>
+        <li><time>11h15</time><span>Compromisso de conexão</span></li>
+        <li><time>11h25</time><span>Encerramento e fotografia oficial</span></li>
+        <li><time>11h30</time><span>Finalização do evento</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. APRESENTAÇÃO DOS PARTICIPANTES -->
+  <section class="section pitch" aria-labelledby="t-pitch">
+    <div class="container grid-2">
+      <div class="revela">
+        <p class="eyebrow">Sua apresentação</p>
+        <h2 class="titulo-secao" id="t-pitch">Prepare a apresentação do seu negócio</h2>
+        <div class="tempo">
+          <strong>60</strong>
+          <span class="rotulo">segundos<small>Tempo de cada participante para apresentar sua empresa ou atividade profissional.</small></span>
+        </div>
+        <h3>Para aproveitar melhor esse momento, apresente:</h3>
+        <ol class="roteiro">
+          <li>Seu nome</li>
+          <li>O nome da empresa ou marca</li>
+          <li>O que você oferece</li>
+          <li>Para quem o seu negócio é indicado</li>
+          <li>Qual tipo de conexão, cliente ou parceria você procura</li>
+        </ol>
+        <p class="destaque-box">Seja claro, objetivo e mostre como o seu trabalho pode contribuir com outras pessoas da nossa comunidade.</p>
+      </div>
+      <div class="foto-moldura revela">
+        <img src="img/apresentacao.jpg" alt="Profissional apresentando seu negócio para um grupo de pessoas" loading="lazy" width="1100" height="733" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. QUEM PODE PARTICIPAR -->
+  <section class="section quem" aria-labelledby="t-quem">
+    <div class="container wrap">
+      <div class="revela">
+        <p class="eyebrow">Participação</p>
+        <h2 class="titulo-secao" id="t-quem">Quem pode participar?</h2>
+        <p class="intro">O evento é destinado aos pais e responsáveis de alunos da Dom Pedrinho que:</p>
+      </div>
+      <div class="revela">
+        <ul class="lista-check">
+          <li>Possuem uma empresa ou marca</li>
+          <li>Trabalham como profissionais autônomos</li>
+          <li>Prestam serviços</li>
+          <li>Representam alguma empresa</li>
+          <li>Desenvolvem projetos ou atividades profissionais</li>
+          <li>Desejam apresentar seu trabalho e criar novas conexões</li>
+        </ul>
+        <div class="faixa-destaque">
+          <p>Você não precisa ter uma grande empresa. <em>O mais importante é estar aberto para apresentar o que faz, conhecer outras pessoas e construir oportunidades.</em></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="faixa-foto" aria-hidden="true">
+    <img src="img/conexao.jpg" alt="" loading="lazy" width="1400" height="935" />
+  </div>
+
+  <!-- 7. INSCRIÇÃO -->
+  <section class="section inscricao" id="inscricao" aria-labelledby="t-inscricao">
+    <div class="container layout">
+      <div class="cabecalho">
+        <p class="eyebrow">Inscrição</p>
+        <h2 class="titulo-secao" id="t-inscricao">Faça sua inscrição</h2>
+        <p>Preencha as informações abaixo para confirmar sua participação no Negócio dos Gigantes.</p>
+        <p>As informações profissionais serão utilizadas para conhecer os participantes e organizar as rodadas de conexão de forma mais estratégica.</p>
+      </div>
+
+      <div class="form-wrap">
+        <form id="form-inscricao" novalidate>
+          <div class="etapas-indice" aria-hidden="true"><span data-i="1"></span><span data-i="2"></span><span data-i="3"></span><span data-i="4"></span></div>
+
+          <!-- ETAPA 1 -->
+          <fieldset class="etapa" data-etapa="1">
+            <legend class="etapa-cab"><span class="etapa-num" aria-hidden="true"><b>1</b></span><span><small>Etapa 1 de 4</small><span class="etapa-titulo">Dados do responsável</span></span></legend>
+            <div class="campos">
+              <div class="campo cheio">
+                <label for="nome">Nome completo<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="nome" name="nome" autocomplete="name" required />
+                <p class="erro-msg" id="nome-erro">Informe seu nome completo.</p>
+              </div>
+              <div class="campo">
+                <label for="whatsapp">WhatsApp<span class="obr" aria-hidden="true">*</span></label>
+                <input type="tel" id="whatsapp" name="whatsapp" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000" required data-tipo="telefone" />
+                <p class="erro-msg">Informe um WhatsApp válido, com DDD.</p>
+              </div>
+              <div class="campo">
+                <label for="email">E-mail<span class="obr" aria-hidden="true">*</span></label>
+                <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required />
+                <p class="erro-msg">Informe um e-mail válido.</p>
+              </div>
+              <div class="campo">
+                <label for="aluno">Nome do aluno<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="aluno" name="aluno" required />
+                <p class="erro-msg">Informe o nome do aluno.</p>
+              </div>
+              <div class="campo">
+                <label for="turma">Turma do aluno<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="turma" name="turma" required />
+                <p class="erro-msg">Informe a turma do aluno.</p>
+              </div>
+              <div class="campo cheio oculto" id="campo-unidade">
+                <label for="unidade">Unidade<span class="obr" aria-hidden="true">*</span></label>
+                <select id="unidade" name="unidade">
+                  <option value="">Selecione a unidade</option>
+                </select>
+                <p class="erro-msg">Selecione a unidade.</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ETAPA 2 -->
+          <fieldset class="etapa" data-etapa="2">
+            <legend class="etapa-cab"><span class="etapa-num" aria-hidden="true"><b>2</b></span><span><small>Etapa 2 de 4</small><span class="etapa-titulo">Informações profissionais</span></span></legend>
+            <div class="campos">
+              <div class="campo">
+                <label for="empresa">Nome da empresa ou marca<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="empresa" name="empresa" autocomplete="organization" required />
+                <p class="erro-msg">Informe o nome da empresa ou marca.</p>
+              </div>
+              <div class="campo">
+                <label for="cargo">Seu cargo ou função<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="cargo" name="cargo" autocomplete="organization-title" required />
+                <p class="erro-msg">Informe seu cargo ou função.</p>
+              </div>
+              <div class="campo cheio">
+                <label for="segmento">Segmento de atuação<span class="obr" aria-hidden="true">*</span></label>
+                <select id="segmento" name="segmento" required>
+                  <option value="">Selecione o segmento</option>
+                  <option>Comércio</option>
+                  <option>Educação</option>
+                  <option>Saúde</option>
+                  <option>Beleza</option>
+                  <option>Alimentação</option>
+                  <option>Tecnologia</option>
+                  <option>Construção</option>
+                  <option>Serviços profissionais</option>
+                  <option>Mercado imobiliário</option>
+                  <option>Comunicação</option>
+                  <option>Indústria</option>
+                  <option>Outro</option>
+                </select>
+                <p class="erro-msg">Selecione o segmento de atuação.</p>
+              </div>
+              <div class="campo cheio oculto" id="campo-segmento-outro">
+                <label for="segmento_outro">Qual segmento?<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="segmento_outro" name="segmento_outro" />
+                <p class="erro-msg">Informe o segmento de atuação.</p>
+              </div>
+              <div class="campo cheio">
+                <label for="frase">Em uma frase, o que seu negócio faz?<span class="obr" aria-hidden="true">*</span></label>
+                <textarea id="frase" name="frase" maxlength="180" rows="3" required aria-describedby="frase-contador"></textarea>
+                <div class="contador" id="frase-contador" aria-live="polite"><span>0</span>/180 caracteres</div>
+                <p class="erro-msg">Descreva em uma frase o que seu negócio faz.</p>
+              </div>
+              <div class="campo cheio">
+                <label for="produtos">Principais produtos ou serviços<span class="obr" aria-hidden="true">*</span></label>
+                <textarea id="produtos" name="produtos" rows="3" required></textarea>
+                <p class="erro-msg">Informe os principais produtos ou serviços.</p>
+              </div>
+              <div class="campo cheio">
+                <label for="cliente_ideal">Qual é o perfil do seu cliente ideal?<span class="obr" aria-hidden="true">*</span></label>
+                <textarea id="cliente_ideal" name="cliente_ideal" rows="3" required></textarea>
+                <p class="erro-msg">Descreva o perfil do seu cliente ideal.</p>
+              </div>
+              <div class="campo">
+                <label for="instagram">Instagram profissional <span class="opc">(opcional)</span></label>
+                <input type="text" id="instagram" name="instagram" placeholder="@suaempresa" autocapitalize="off" />
+              </div>
+              <div class="campo">
+                <label for="site">Site da empresa <span class="opc">(opcional)</span></label>
+                <input type="url" id="site" name="site" inputmode="url" placeholder="www.suaempresa.com.br" autocapitalize="off" />
+              </div>
+              <div class="campo">
+                <label for="whatsapp_comercial">WhatsApp comercial <span class="opc">(opcional)</span></label>
+                <input type="tel" id="whatsapp_comercial" name="whatsapp_comercial" inputmode="tel" placeholder="(00) 00000-0000" data-tipo="telefone" />
+                <p class="erro-msg">Informe um número válido, com DDD.</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ETAPA 3 -->
+          <fieldset class="etapa" data-etapa="3">
+            <legend class="etapa-cab"><span class="etapa-num" aria-hidden="true"><b>3</b></span><span><small>Etapa 3 de 4</small><span class="etapa-titulo">Conexões desejadas</span></span></legend>
+            <div class="campos">
+              <div class="campo cheio grupo" id="grupo-busca" role="group" aria-labelledby="busca-rotulo">
+                <span class="rotulo-grupo" id="busca-rotulo">O que você busca no evento?<span class="obr" aria-hidden="true">*</span> <span class="opc">Marque quantas opções quiser.</span></span>
+                <div class="opcoes">
+                  <div class="opcao"><input type="checkbox" id="b1" name="busca" value="Novos clientes" /><label for="b1">Novos clientes</label></div>
+                  <div class="opcao"><input type="checkbox" id="b2" name="busca" value="Parceiros comerciais" /><label for="b2">Parceiros comerciais</label></div>
+                  <div class="opcao"><input type="checkbox" id="b3" name="busca" value="Fornecedores" /><label for="b3">Fornecedores</label></div>
+                  <div class="opcao"><input type="checkbox" id="b4" name="busca" value="Indicações" /><label for="b4">Indicações</label></div>
+                  <div class="opcao"><input type="checkbox" id="b5" name="busca" value="Divulgação do negócio" /><label for="b5">Divulgação do negócio</label></div>
+                  <div class="opcao"><input type="checkbox" id="b6" name="busca" value="Troca de experiências" /><label for="b6">Troca de experiências</label></div>
+                  <div class="opcao"><input type="checkbox" id="b7" name="busca" value="Conhecer outros profissionais" /><label for="b7">Conhecer outros profissionais</label></div>
+                  <div class="opcao"><input type="checkbox" id="b8" name="busca" value="Outro" /><label for="b8">Outro</label></div>
+                </div>
+                <p class="erro-msg">Selecione pelo menos uma opção.</p>
+              </div>
+              <div class="campo cheio oculto" id="campo-busca-outro">
+                <label for="busca_outro">O que mais você busca?<span class="obr" aria-hidden="true">*</span></label>
+                <input type="text" id="busca_outro" name="busca_outro" />
+                <p class="erro-msg">Descreva o que você busca.</p>
+              </div>
+              <div class="campo cheio">
+                <label for="quem_conhecer">Que tipo de pessoa, profissional ou empresa você gostaria de conhecer?<span class="obr" aria-hidden="true">*</span></label>
+                <textarea id="quem_conhecer" name="quem_conhecer" rows="3" required></textarea>
+                <p class="erro-msg">Conte que tipo de pessoa, profissional ou empresa você gostaria de conhecer.</p>
+              </div>
+              <div class="campo cheio">
+                <label for="oferta_comunidade">O que você ou sua empresa pode oferecer para a comunidade? <span class="opc">(opcional)</span></label>
+                <textarea id="oferta_comunidade" name="oferta_comunidade" rows="3"></textarea>
+              </div>
+              <div class="campo cheio">
+                <label for="parceria">Existe alguma parceria ou oportunidade específica que você deseja construir? <span class="opc">(opcional)</span></label>
+                <textarea id="parceria" name="parceria" rows="3"></textarea>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- ETAPA 4 -->
+          <fieldset class="etapa" data-etapa="4">
+            <legend class="etapa-cab"><span class="etapa-num" aria-hidden="true"><b>4</b></span><span><small>Etapa 4 de 4</small><span class="etapa-titulo">Confirmações e autorizações</span></span></legend>
+
+            <div class="check" data-obrigatorio="true">
+              <label class="check-linha">
+                <input type="checkbox" name="confirma_disponibilidade" value="sim" />
+                <span><span class="check-tag obr">Obrigatória</span><br />Confirmo minha disponibilidade para participar do evento no dia 17 de outubro, das 8h30 às 11h30.</span>
+              </label>
+              <p class="erro-msg">Esta confirmação é obrigatória.</p>
+            </div>
+
+            <div class="check" data-obrigatorio="true">
+              <label class="check-linha">
+                <input type="checkbox" name="autoriza_dados" value="sim" />
+                <span><span class="check-tag obr">Obrigatória</span><br />Li e autorizo o uso dos dados fornecidos para comunicação, organização e realização do evento Negócio dos Gigantes.</span>
+              </label>
+              <p class="erro-msg">Esta autorização é obrigatória.</p>
+            </div>
+
+            <div class="check">
+              <label class="check-linha">
+                <input type="checkbox" name="autoriza_imagem" value="sim" />
+                <span><span class="check-tag opc">Opcional</span><br />Autorizo o uso da minha imagem em fotografias e vídeos institucionais produzidos durante o evento.</span>
+              </label>
+            </div>
+
+            <div class="check">
+              <label class="check-linha">
+                <input type="checkbox" name="autoriza_catalogo" value="sim" />
+                <span><span class="check-tag opc">Opcional</span><br />Autorizo a inclusão das minhas informações profissionais no catálogo de negócios dos participantes.</span>
+              </label>
+              <p class="check-nota">No catálogo serão divulgados somente nome, empresa, segmento, Instagram e contato comercial autorizado. O WhatsApp pessoal não será divulgado sem autorização específica.</p>
+            </div>
+
+            <div class="campos" style="margin-top:22px">
+              <div class="campo cheio">
+                <label for="restricao">Possui alguma restrição alimentar? <span class="opc">(opcional)</span></label>
+                <input type="text" id="restricao" name="restricao" />
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="envio">
+            <button type="submit" class="btn btn-amarelo" id="btn-enviar">Confirmar minha participação</button>
+            <p class="envio-nota">Após o envio, você receberá pelo WhatsApp informado a confirmação da inscrição e as orientações para o evento.</p>
+            <p class="erro-geral" id="erro-geral" role="alert"></p>
+          </div>
+        </form>
+
+        <!-- TELA DE CONFIRMAÇÃO -->
+        <div class="confirmacao" id="confirmacao" tabindex="-1" aria-live="polite">
+          <div class="confirmacao-topo">
+            <div class="selo" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#0B3552" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
+            <h2>Inscrição recebida!</h2>
+            <p>Obrigado por se inscrever no Negócio dos Gigantes.</p>
+          </div>
+          <div class="confirmacao-corpo">
+            <p>Suas informações serão utilizadas para organizar as apresentações e criar conexões mais relevantes durante o encontro.</p>
+            <p>Você receberá a confirmação e as orientações pelo WhatsApp informado.</p>
+            <div class="confirmacao-data">
+              <div><small>Data</small><strong>17 de outubro</strong></div>
+              <div><small>Horário</small><strong>Das 8h30 às 11h30</strong></div>
+            </div>
+            <p class="lembrete">Enquanto isso, prepare a apresentação de até 60 segundos sobre o seu negócio.</p>
+            <p class="final">Esperamos você!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- RODAPÉ -->
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape-grid">
+      <div>
+        <p class="rodape-titulo">Negócio dos <span>Gigantes</span></p>
+        <p class="rodape-data">17 de outubro — Das 8h30 às 11h30</p>
+        <p class="rodape-texto">Uma iniciativa Dom Pedrinho para fortalecer conexões dentro da nossa comunidade escolar.</p>
+      </div>
+      <div>
+        <div class="rodape-logo">
+          <span class="logo-slot">
+            <img src="img/logo-dom-pedrinho.png" alt="Escola Dom Pedrinho" />
+            <span class="logo-reservado" aria-hidden="true">Logomarca oficial<br />Dom Pedrinho</span>
+          </span>
+        </div>
+        <h4>Canais oficiais</h4>
+        <ul class="canais" id="canais"></ul>
+        <div class="canais-reservado" id="canais-reservado">Espaço reservado para os canais institucionais oficiais da escola.</div>
+      </div>
+    </div>
+    <p class="rodape-base">Escola Dom Pedrinho</p>
+  </div>
+</footer>
+
+<div class="cta-fixo" id="cta-fixo" aria-hidden="true">
+  <a class="btn btn-amarelo js-cta" href="#inscricao" tabindex="-1">Quero participar</a>
+</div>
+
+<script>
+  /*
+   * CONFIGURAÇÃO
+   * endpoint: URL que recebe as inscrições (ex.: Web App do Google Apps Script,
+   *           Formspree, Make, Zapier ou API própria). Recebe um POST com JSON.
+   *           Enquanto estiver vazio, a página exibe a confirmação apenas para
+   *           teste e avisa no console — NENHUM dado é enviado.
+   * unidades: lista de unidades da escola. Com mais de uma unidade, o campo
+   *           "Unidade" aparece e se torna obrigatório. Vazio = campo oculto.
+   * canais:   canais institucionais OFICIAIS, ex.:
+   *           [{ rotulo: "Instagram @...", url: "https://instagram.com/..." }]
+   */
+  window.NDG_CONFIG = {
+    endpoint: "",
+    unidades: [],
+    canais: []
+  };
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var CFG = window.NDG_CONFIG || {};
+
+  /* Logomarca: se o arquivo oficial não existir, mantém o espaço reservado */
+  document.querySelectorAll(".logo-slot img").forEach(function (img) {
+    function semArquivo() { img.closest(".logo-slot").classList.add("sem-arquivo"); }
+    if (img.complete && img.naturalWidth === 0) semArquivo();
+    img.addEventListener("error", semArquivo);
+  });
+
+  /* Canais oficiais */
+  var canais = document.getElementById("canais");
+  if (CFG.canais && CFG.canais.length) {
+    CFG.canais.forEach(function (c) {
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = c.url; a.textContent = c.rotulo; a.target = "_blank"; a.rel = "noopener";
+      li.appendChild(a); canais.appendChild(li);
+    });
+    document.getElementById("canais-reservado").remove();
+  } else {
+    canais.remove();
+  }
+
+  /* Unidades */
+  var campoUnidade = document.getElementById("campo-unidade");
+  var selUnidade = document.getElementById("unidade");
+  if (CFG.unidades && CFG.unidades.length > 1) {
+    CFG.unidades.forEach(function (u) { var o = document.createElement("option"); o.textContent = u; selUnidade.appendChild(o); });
+    campoUnidade.classList.remove("oculto");
+    selUnidade.required = true;
+  }
+
+  /* Revelação suave */
+  var revelas = document.querySelectorAll(".revela");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visto"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    revelas.forEach(function (el) { io.observe(el); });
+  } else {
+    revelas.forEach(function (el) { el.classList.add("visto"); });
+  }
+
+  /* CTA fixo no mobile: aparece depois do topo e some na área de inscrição */
+  var cta = document.getElementById("cta-fixo");
+  var hero = document.querySelector(".hero");
+  var secInscricao = document.getElementById("inscricao");
+  var heroVisivel = true, inscricaoVisivel = false;
+  function atualizaCta() {
+    var mostrar = !heroVisivel && !inscricaoVisivel;
+    cta.classList.toggle("visivel", mostrar);
+    cta.setAttribute("aria-hidden", mostrar ? "false" : "true");
+    cta.querySelector("a").tabIndex = mostrar ? 0 : -1;
+  }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (e) { heroVisivel = e[0].isIntersecting; atualizaCta(); }).observe(hero);
+    new IntersectionObserver(function (e) { inscricaoVisivel = e[0].isIntersecting; atualizaCta(); }, { threshold: 0.02 }).observe(secInscricao);
+  }
+
+  /* Leva direto à inscrição e posiciona no primeiro campo */
+  document.querySelectorAll(".js-cta").forEach(function (a) {
+    a.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      secInscricao.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      history.replaceState(null, "", "#inscricao");
+    });
+  });
+
+  /* ---------- Formulário ---------- */
+  var form = document.getElementById("form-inscricao");
+  var btn = document.getElementById("btn-enviar");
+  var erroGeral = document.getElementById("erro-geral");
+
+  /* Máscara de telefone brasileiro */
+  function mascaraTelefone(v) {
+    var d = v.replace(/\D/g, "").slice(0, 11);
+    if (d.length <= 2) return d.length ? "(" + d : "";
+    if (d.length <= 6) return "(" + d.slice(0, 2) + ") " + d.slice(2);
+    if (d.length <= 10) return "(" + d.slice(0, 2) + ") " + d.slice(2, 6) + "-" + d.slice(6);
+    return "(" + d.slice(0, 2) + ") " + d.slice(2, 7) + "-" + d.slice(7);
+  }
+  form.querySelectorAll('[data-tipo="telefone"]').forEach(function (inp) {
+    inp.addEventListener("input", function () { inp.value = mascaraTelefone(inp.value); });
+  });
+
+  /* Contador de caracteres */
+  var frase = document.getElementById("frase");
+  var contador = document.querySelector("#frase-contador span");
+  frase.addEventListener("input", function () { contador.textContent = frase.value.length; });
+
+  /* Campos "Outro" */
+  var segmento = document.getElementById("segmento");
+  var campoSegOutro = document.getElementById("campo-segmento-outro");
+  var segOutro = document.getElementById("segmento_outro");
+  segmento.addEventListener("change", function () {
+    var outro = segmento.value === "Outro";
+    campoSegOutro.classList.toggle("oculto", !outro);
+    segOutro.required = outro;
+    if (!outro) limpaErro(segOutro);
+  });
+  var buscaOutro = document.getElementById("b8");
+  var campoBuscaOutro = document.getElementById("campo-busca-outro");
+  var inpBuscaOutro = document.getElementById("busca_outro");
+  buscaOutro.addEventListener("change", function () {
+    campoBuscaOutro.classList.toggle("oculto", !buscaOutro.checked);
+    inpBuscaOutro.required = buscaOutro.checked;
+    if (!buscaOutro.checked) limpaErro(inpBuscaOutro);
+  });
+
+  /* Validação */
+  function valido(el) {
+    var v = (el.value || "").trim();
+    if (el.required && !v) return false;
+    if (!v) return true;
+    if (el.type === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+    if (el.dataset.tipo === "telefone") { var n = v.replace(/\D/g, "").length; return n === 10 || n === 11; }
+    if (el.id === "nome") return v.split(/\s+/).length >= 2;
+    return true;
+  }
+  function marcaErro(el, ok) {
+    var campo = el.closest(".campo");
+    if (!campo) return;
+    campo.classList.toggle("invalido", !ok);
+    el.setAttribute("aria-invalid", ok ? "false" : "true");
+    var msg = campo.querySelector(".erro-msg");
+    if (msg) {
+      if (!msg.id) msg.id = el.id + "-erro";
+      if (!ok) el.setAttribute("aria-describedby", msg.id); else if (el.id !== "frase") el.removeAttribute("aria-describedby");
+    }
+  }
+  function limpaErro(el) { marcaErro(el, true); }
+
+  var camposTexto = form.querySelectorAll(".campo input:not([type=checkbox]), .campo select, .campo textarea");
+  camposTexto.forEach(function (el) {
+    el.addEventListener("blur", function () { if (el.value.trim() || el.closest(".campo").classList.contains("invalido")) marcaErro(el, valido(el)); });
+    el.addEventListener("input", function () { if (el.closest(".campo").classList.contains("invalido")) marcaErro(el, valido(el)); atualizaProgresso(); });
+    el.addEventListener("change", atualizaProgresso);
+  });
+
+  var grupoBusca = document.getElementById("grupo-busca");
+  function buscaOk() { return form.querySelectorAll('input[name="busca"]:checked').length > 0; }
+  form.querySelectorAll('input[name="busca"]').forEach(function (c) {
+    c.addEventListener("change", function () { if (buscaOk()) grupoBusca.classList.remove("invalido"); atualizaProgresso(); });
+  });
+
+  form.querySelectorAll(".check").forEach(function (box) {
+    var c = box.querySelector("input");
+    c.addEventListener("change", function () {
+      box.classList.toggle("marcado", c.checked);
+      if (c.checked) box.classList.remove("invalido");
+      atualizaProgresso();
+    });
+  });
+
+  function etapaCompleta(fs) {
+    var ok = true;
+    fs.querySelectorAll(".campo input:not([type=checkbox]), .campo select, .campo textarea").forEach(function (el) {
+      if (el.closest(".oculto")) return;
+      if (!valido(el) || (el.required && !el.value.trim())) ok = false;
+    });
+    if (fs.contains(grupoBusca) && !buscaOk()) ok = false;
+    fs.querySelectorAll('.check[data-obrigatorio="true"] input').forEach(function (c) { if (!c.checked) ok = false; });
+    return ok;
+  }
+  var barras = form.querySelectorAll(".etapas-indice span");
+  function atualizaProgresso() {
+    form.querySelectorAll("fieldset.etapa").forEach(function (fs, i) { barras[i].classList.toggle("ok", etapaCompleta(fs)); });
+  }
+
+  function validaTudo() {
+    var primeiro = null;
+    camposTexto.forEach(function (el) {
+      if (el.closest(".oculto")) return;
+      var ok = valido(el);
+      marcaErro(el, ok);
+      if (!ok && !primeiro) primeiro = el;
+    });
+    if (!buscaOk()) { grupoBusca.classList.add("invalido"); if (!primeiro) primeiro = grupoBusca.querySelector("input"); }
+    form.querySelectorAll('.check[data-obrigatorio="true"]').forEach(function (box) {
+      var c = box.querySelector("input");
+      box.classList.toggle("invalido", !c.checked);
+      if (!c.checked && !primeiro) primeiro = c;
+    });
+    return primeiro;
+  }
+
+  function coletaDados() {
+    var fd = new FormData(form);
+    var dados = {};
+    fd.forEach(function (v, k) {
+      if (k === "busca") return;
+      dados[k] = typeof v === "string" ? v.trim() : v;
+    });
+    dados.busca = fd.getAll("busca").join(", ");
+    ["confirma_disponibilidade", "autoriza_dados", "autoriza_imagem", "autoriza_catalogo"].forEach(function (k) {
+      dados[k] = form.elements[k].checked ? "Sim" : "Não";
+    });
+    if (dados.segmento === "Outro" && dados.segmento_outro) dados.segmento = "Outro: " + dados.segmento_outro;
+    delete dados.segmento_outro;
+    dados.evento = "Negócio dos Gigantes";
+    dados.enviado_em = new Date().toISOString();
+    return dados;
+  }
+
+  function mostraConfirmacao() {
+    form.style.display = "none";
+    var conf = document.getElementById("confirmacao");
+    conf.classList.add("ativa");
+    conf.scrollIntoView({ behavior: "auto", block: "start" });
+    conf.focus({ preventScroll: true });
+  }
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    erroGeral.classList.remove("ativo");
+    var primeiro = validaTudo();
+    if (primeiro) {
+      var alvo = primeiro.closest(".campo, .check, .grupo") || primeiro;
+      alvo.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(function () { primeiro.focus({ preventScroll: true }); }, 350);
+      return;
+    }
+
+    var dados = coletaDados();
+    if (!CFG.endpoint) {
+      console.warn("[Negócio dos Gigantes] NDG_CONFIG.endpoint não configurado: a inscrição NÃO foi enviada.", dados);
+      mostraConfirmacao();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Enviando...";
+    fetch(CFG.endpoint, {
+      method: "POST",
+      // text/plain evita preflight de CORS (compatível com Google Apps Script)
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(dados)
+    }).then(function (r) {
+      if (!r.ok && r.type !== "opaque") throw new Error("HTTP " + r.status);
+      mostraConfirmacao();
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = "Confirmar minha participação";
+      erroGeral.textContent = "Não foi possível enviar sua inscrição agora. Verifique sua conexão e tente novamente.";
+      erroGeral.classList.add("ativo");
+    });
+  });
+})();
+</script>
+</body>
+</html>
