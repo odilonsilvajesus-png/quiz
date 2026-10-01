@@ -54,7 +54,7 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 | **Carrosséis** | Separado em **Rascunhos**, **Agendados**, **Postados** e **Descartados**. Em cada rascunho: **Postar no Instagram** (agora ou agendado), **Editar**, **Baixar** (ZIP), **Aprovar como exemplo** e **Descartar**. |
 | **Perfil e referências** | Dados do cliente, referências (Instagram e YouTube) e a **conexão para postar direto no Instagram**. |
 | **Voz e direcionamento** | Tom de voz coletado das legendas, direcionamento manual e temas/regras. |
-| **Metodologia** | A estrutura única dos carrosséis e o método do cliente (nome e primeiro passo), com prévia. |
+| **Modelos** | A biblioteca de estruturas (Metodologia Viraliza como padrão, Automático e os demais), com prévia, e a solução do cliente (nome opcional e como funciona na prática). |
 | **Identidade visual** | Estilo, imagens com IA, cores, fontes, foto e logo, com prévia ao vivo. |
 
 ### Conteúdo real das referências (não só a legenda)
@@ -89,7 +89,7 @@ Sem conexão, dá para baixar os slides, postar pelo celular e clicar em **Já p
 - **Foto do perfil:** o painel puxa sozinho a foto do Instagram de cada cliente (pela conexão do Instagram, grátis, ou pelo Apify) e mostra no menu, nos cartões e no topo do cliente, com o número de seguidores. Em **Perfil e referências** há o botão **Atualizar foto**.
 
 ### Escrita viral e revisor
-- **Metodologia única (Metodologia Viraliza):** a dor que a pessoa já sente → o caminho que ela segue não dá resultado → por que não dá → o novo caminho → o valor dele → a solução na prática → podemos ajudar. Nunca "no nosso método": o revisor reprova e o carrossel é reescrito. A solução do cliente (nome opcional e como funciona) fica na aba **Metodologia**.
+- **Metodologia Viraliza (padrão):** a dor que a pessoa já sente → o caminho que ela segue não dá resultado → por que não dá → o novo caminho → o valor dele → a solução na prática → podemos ajudar. Os outros modelos continuam disponíveis na aba **Modelos** e na hora de criar. Em nenhum deles a IA escreve "no nosso método": o revisor reprova e o carrossel é reescrito.
 - **Capa só com a headline** (uma frase) e **3 capas alternativas** em cada carrossel: em **Outras capas**, "Usar esta capa" troca sem gastar IA.
 - **Slide 2** funciona sozinho como capa. Texto dos slides no tamanho da estrutura Z4 (frases inteiras, sem limite fixo de palavras), dor específica, nada inventado, sem promessa de resultado.
 - **CTA pelo objetivo** (Alcance, Autoridade, Lead, Conversão), escolhido na hora de criar. Palavra-chave, entrega e próximo passo ficam em **Voz e direcionamento → Temas, regras e chamada para ação**.
@@ -135,8 +135,10 @@ Alguns estilos pedem um jeito de escrever diferente, e a IA recebe essas regras 
 Copie um arquivo de `templates/` (ex.: `editorial.js`), mude `info` (nome e descrição), o CSS e o HTML do slide.
 Ele aparece sozinho na aba **Identidade visual**.
 
-### Metodologia dos carrosséis
-A estrutura fica em `modelos/metodologia.json` (papel, instrução e fundo de cada slide). Os modelos antigos estão guardados em `modelos/arquivo/` e não aparecem no painel.
+### Modelos de carrossel
+Cada modelo é um arquivo em `modelos/` (papel, instrução e fundo de cada slide); um arquivo novo aparece sozinho no painel. A Metodologia Viraliza (`modelos/metodologia.json`) é o padrão.
+
+**Cores dos slides:** por padrão, só duas cores, o fundo escuro e o claro alternando (Identidade visual → "Só duas cores"). Desligando, voltam o destaque e a cor de fechamento. Nos estilos com a imagem num quadro deitado (Tweet, Editorial, Dividido), a imagem já é gerada na horizontal para não cortar.
 
 ## Como funciona o ranking
 

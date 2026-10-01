@@ -29,7 +29,7 @@ passos em português simples e dê comandos prontos para copiar.
 - `src/pipeline.js`: referência → copy (`src/copy.js`) → imagens (`src/imagens.js`) → PNGs (`src/render.js`).
 - `src/ia.js`: provedor de texto (OpenAI por padrão, Claude com `IA_PROVEDOR=anthropic`).
 - `templates/*.js`: estilos visuais. Cada um exporta `info` (nome, descricao, imagens, fontes, direcao_imagem, formato_texto, diagrama), `css()` e `slide()`. Peças comuns em `templates/_comum.js`. Um arquivo novo aparece sozinho no painel.
-- `modelos/metodologia.json`: a metodologia única dos carrosséis (dor que a pessoa já sente, caminho atual que não dá resultado, por que não dá, novo caminho, valor dele, solução na prática, podemos ajudar; nunca "no nosso método", que o revisor reprova). Modelos antigos em `modelos/arquivo/`, fora do painel. Não voltar a oferecer vários modelos: a decisão foi ter uma metodologia só.
+- `modelos/*.json`: biblioteca de modelos de carrossel (papel, instrução e fundo de cada slide). A Metodologia Viraliza (`metodologia.json`: dor que a pessoa já sente, caminho atual que não dá resultado, por que não dá, novo caminho, valor dele, solução na prática, podemos ajudar) é o padrão e a primeira da lista; o fio dela só entra no prompt quando ela é o modelo escolhido. "Automático" escolhe entre os modelos com `viral: true`. Em todos os modelos, nunca "no nosso método" (o revisor reprova).
 - `clientes/<id>/`: kit do cliente (base de conhecimento, voz, exemplos, assets). **Fica fora do Git**, exceto `clientes/_modelo/`.
 - `saida/`: carrosséis gerados (fora do Git).
 

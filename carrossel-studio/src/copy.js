@@ -3,6 +3,7 @@ import { z } from "zod";
 import { conteudoCompleto } from "./analise.js";
 import { textosDosDocumentos } from "./documentos.js";
 import { provedor, gerarEstruturado, gerarTexto } from "./ia.js";
+import { estruturasVirais } from "./modelos.js";
 
 export const temIA = () => Boolean(provedor());
 
@@ -77,8 +78,10 @@ function descreverSolucao(cliente) {
 // Expressões que viram vício quando a IA escreve o slide da solução.
 export const VICIO_METODO = /\b(aqui\s+)?n[oa]\s+noss[oa]\s+(m[ée]todo|protocolo|metodologia|processo)\b/i;
 
-// A Metodologia Viraliza: vale para todos os clientes. Regras de um cliente específico ficam nos documentos dele.
-function regrasVirais(modelo, objetivo, cliente) {
+// A Metodologia Viraliza (modelo padrão): o fio da dor até o "podemos ajudar".
+const eMetodologia = (modelo) => modelo?.id === "metodologia";
+
+function fioDaMetodologia() {
   return `<metodologia_viraliza>
 PÚBLICO: quem JÁ sente a dor e já tenta resolver do jeito comum, sem resultado. Não tente convencer que existe um problema.
 O FIO DO CARROSSEL, nesta ordem:
@@ -92,17 +95,26 @@ O FIO DO CARROSSEL, nesta ordem:
 Cada slide é consequência do anterior: é um argumento só, do começo ao fim.
 
 Antes de escrever, preencha "planejamento": quem exatamente sente a dor (ex.: "dono de clínica que sobe a verba e não vê agenda cheia"), o ganho de arrastar, a promessa no formato "X sem Y", a ÚNICA ideia central, a pergunta que a capa deixa e o fio condutor.
+</metodologia_viraliza>
+`;
+}
 
-SOLUÇÃO DO CLIENTE: ${descreverSolucao(cliente)}
+// Regras de escrita que valem para todos os clientes e todos os modelos. Regras de um cliente específico ficam nos documentos dele.
+function regrasVirais(modelo, objetivo, cliente) {
+  const metodologia = eMetodologia(modelo);
+  return `${metodologia ? fioDaMetodologia() : ""}<regras_de_escrita>
+${metodologia ? "" : "Antes de escrever, preencha \"planejamento\": para quem é (o público com nome), o ganho de arrastar, a promessa, a ÚNICA ideia central, a pergunta que a capa abre e o fio que leva de slide em slide até a resposta.\n\n"}SOLUÇÃO DO CLIENTE: ${descreverSolucao(cliente)}
 
 GANCHO (slide 1): só a headline, "subtitulo" vazio, em uma frase.
-- Toca numa dor que a pessoa já sente, no caminho que ela já tenta sem resultado ou num desejo específico. Precisa gerar identificação imediata.
+- Toca numa dor que a pessoa já sente, no caminho que ela já tenta sem resultado, numa dúvida real ou num desejo específico. Precisa gerar identificação imediata.
 - Use um destes tipos:
   • Dor direta: "Você sobe a verba e as vendas não acompanham." / "Seu WhatsApp responde rápido, mas o cliente some."
   • Caminho que não funciona: "Cortar carboidrato não está te fazendo emagrecer." / "Trocar de criativo não vai salvar sua campanha."
   • Causa escondida: "Sua dor no joelho pode não estar começando no joelho." / "O problema talvez não seja o anúncio."
   • Alerta antes da decisão: "Antes de colocar IA no seu WhatsApp, entenda isso."
   • Nem todo mundo: "Nem todo sorriso bonito começa pelas lentes de contato."
+  • Número + público + resultado: "3 coisas que não podem faltar em uma proposta de social media."
+  • Contraste: "O que seu cliente pede x o que você deve entregar."
   • Promessa: "Existe um jeito de X sem Y."
   • História (só com caso que esteja na base): "Uma paciente chegou querendo X. O problema era Y."
 - Use o termo que o público usa (o procedimento, o serviço, a situação). Marque 1 palavra de destaque com *asteriscos*.
@@ -111,25 +123,25 @@ GANCHO (slide 1): só a headline, "subtitulo" vazio, em uma frase.
 - Proibido: pergunta genérica ("Você sofre com dor nas costas?"), metáfora, trocadilho, jogo de palavras, frase de efeito que precisa ser decifrada, conselho genérico, "Conheça nossos tratamentos".
 - Em "ganchos_alternativos", 3 outras headlines de tipos DIFERENTES da capa.
 
-DESENVOLVIMENTO: siga a estrutura slide a slide. Uma ideia por slide, cada slide puxando o próximo.
+DESENVOLVIMENTO: siga a <estrutura_do_carrossel> slide a slide. Uma ideia por slide, cada slide puxando o próximo, como um argumento só.
 - O TÍTULO de cada slide carrega a informação concreta; o subtítulo continua e detalha. Quem ler apenas os títulos em sequência precisa entender o argumento inteiro.
 - Nada de aforismo ou frase de efeito no título sem dizer, no próprio título, qual é o ponto de verdade.
-- A solução é descrita pelo que acontece na prática (as etapas, o que se analisa, o que muda), com fatores concretos tirados da base do cliente.
-- NUNCA escreva "no nosso método", "aqui no nosso método", "no nosso protocolo", "na nossa metodologia" ou variações. O cliente aparece só no último slide, como quem pode ajudar ("posso te ajudar", "a gente te ajuda").
+- Soluções e dicas são descritas pelo que acontece na prática (as etapas, o que se analisa, o que muda), com fatores concretos tirados da base do cliente.
+- NUNCA escreva "no nosso método", "aqui no nosso método", "no nosso protocolo", "na nossa metodologia" ou variações. Quando o cliente aparece, é como quem pode ajudar ("posso te ajudar", "a gente te ajuda").
 
-TEXTO DOS SLIDES: cada slide é uma ideia completa, em frases inteiras, do tamanho que a ideia pedir. Pode listar itens (tentativas comuns, causas, etapas). Português do dia a dia; explique qualquer termo técnico.
-Exemplo de carrossel nesse fio (tom, ritmo e tamanho de texto; não copie):
+TEXTO DOS SLIDES: cada slide é uma ideia completa, em frases inteiras, do tamanho que a ideia pedir. Pode listar itens. Em lista ou passo a passo, numere no título. Português do dia a dia; explique qualquer termo técnico.
+${metodologia ? `Exemplo de carrossel nesse fio (tom, ritmo e tamanho de texto; não copie):
 1. "Você sobe a verba e as *vendas* não acompanham." 2. "Todo mês é igual: mais investimento, mais cliques, e o caixa no mesmo lugar." 3. "Aí você troca o criativo, testa outro público e sobe a verba de novo. E nada muda." 4. "Isso não funciona porque o anúncio quase nunca é onde a venda trava. Ela trava na oferta, na página ou no atendimento." 5. "O caminho é descobrir onde a venda trava antes de gastar mais." 6. "Assim cada real vai para o ponto que segura a venda, e o tráfego deixa de ser aposta." 7. "Na prática: analisar oferta, página, métricas e atendimento, corrigir o gargalo e só então escalar." 8. "Se você quer descobrir onde a sua venda está travando, eu posso te ajudar. Comenta ANÁLISE."
-
-CTA (último slide, "podemos ajudar"): mostra que o cliente pode ajudar e faz um convite suave, com segurança e sem pressão.
+` : ""}
+CTA (último slide): convite claro e suave, com segurança e sem pressão.
 ${regrasCta(cliente, objetivo)}
 - "cta_botao" é o texto curto do botão do último slide.
-- Legenda: 3 a 6 linhas que resumem a dor, por que o caminho atual não funciona e o novo caminho, terminando com o mesmo CTA.
+- Legenda: 3 a 6 linhas que retomam a capa e a ideia central, terminando com o mesmo CTA.
 
-CHECKLIST antes de responder: começa por uma dor que a pessoa já sente? Mostra que o caminho atual não gera resultado e explica por quê? Apresenta o novo caminho e o valor dele? A solução está descrita na prática? O final mostra que podemos ajudar, sem pressão? Nenhum "no nosso método"?
+${metodologia ? "CHECKLIST antes de responder: começa por uma dor que a pessoa já sente? Mostra que o caminho atual não gera resultado e explica por quê? Apresenta o novo caminho e o valor dele? A solução está descrita na prática? O final mostra que podemos ajudar, sem pressão? Nenhum \"no nosso método\"?" : "CHECKLIST antes de responder: a capa passa no teste de 1 segundo? Cada slide segue o papel da estrutura e puxa o próximo? Os títulos sozinhos contam o argumento? O último slide fecha a capa e faz o CTA? Nenhum \"no nosso método\"?"}
 
 PROIBIDO: promessa de resultado garantido (use "pode"); emoji nos slides; número, caso, depoimento ou antes e depois que não estejam na base; humilhar alguém; opinião partidária; slide de "conclusão" ou "obrigado por ler".
-</metodologia_viraliza>`;
+</regras_de_escrita>`;
 }
 
 function promptSistema(cliente, modelo, opcoes = {}) {
@@ -241,6 +253,29 @@ function limpar(resultado, cliente) {
 function capaSoHeadline(resultado) {
   if (resultado.slides[0]) resultado.slides[0].subtitulo = "";
   return resultado;
+}
+
+// Modo Automático: escolhe a estrutura pelo tipo do conteúdo, com um modelo barato (LEITURA_MODELO).
+export async function escolherEstrutura(cliente, referencia, { observacao } = {}) {
+  const opcoes = estruturasVirais();
+  if (!temIA()) return { modelo: opcoes[0], motivo: "Modo demonstração." };
+  const conteudo = referencia.plataforma === "sugestao" ? referencia.texto : conteudoCompleto(referencia);
+  const r = await gerarEstruturado({
+    nome: "estrutura",
+    modeloOpenAI: process.env.LEITURA_MODELO || undefined,
+    schema: z.object({
+      estrutura: z.enum(opcoes.map((m) => m.id)),
+      motivo: z.string().describe("Uma frase explicando a escolha"),
+    }),
+    sistema: `Você escolhe a estrutura de roteiro de um carrossel do Instagram pelo TIPO do conteúdo. Opções:
+${opcoes.map((m) => `- ${m.id} (${m.nome}): ${m.quando_usar}`).join("\n")}
+Na dúvida, escolha metodologia (a Metodologia Viraliza, feita para vender e gerar interessados).`,
+    usuario: `Cliente: ${cliente.nome}${cliente.descricao ? ` (${cliente.descricao})` : ""}
+
+Conteúdo que vai virar carrossel:
+${conteudo.slice(0, 6000)}${observacao ? `\n\nObservação do usuário: ${observacao}` : ""}`,
+  });
+  return { modelo: opcoes.find((m) => m.id === r.estrutura) || opcoes[0], motivo: r.motivo };
 }
 
 // opcoes.modelo: { nome, estrutura } escolhido na biblioteca de modelos (ver modelos.js).

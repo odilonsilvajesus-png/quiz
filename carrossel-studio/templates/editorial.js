@@ -1,7 +1,7 @@
 // Estilo "Editorial": número grande do slide, texto alinhado à esquerda, visual de revista.
 import { escapar, comDestaque, tamanho, subtitulo, vars, marca, rodape, cssBase } from "./_comum.js";
 
-export const info = { imagens: "capa", nome: "Editorial", descricao: "Número grande, texto à esquerda e linhas finas. Com imagem, ela fica em um quadro no topo." };
+export const info = { imagens: "capa", formato_imagem: "horizontal", nome: "Editorial", descricao: "Número grande, texto à esquerda e linhas finas. Com imagem, ela fica em um quadro no topo." };
 
 export function css(visual, fontesCss) {
   return `${cssBase(visual, fontesCss)}
@@ -11,7 +11,7 @@ export function css(visual, fontesCss) {
 .editorial .linha { height: 3px; background: var(--texto); opacity: .15; margin: 36px 0 44px; }
 .editorial h1 { font-weight: ${visual.peso_titulo || 700}; line-height: 1.1; letter-spacing: -0.025em; }
 .editorial p.sub { margin-top: 36px; font-weight: 500; line-height: 1.45; color: var(--subtexto); max-width: 860px; }
-.editorial .quadro { height: 520px; border-radius: 28px; background-size: cover; background-position: center; margin-bottom: 48px; flex: none; }
+.editorial .quadro { height: 520px; border-radius: 28px; background-size: cover; background-position: center 30%; margin-bottom: 48px; flex: none; }
 .editorial.com-foto { justify-content: flex-start; padding-top: 150px; }
 .editorial.com-foto .num { font-size: 96px; }
 .editorial.com-foto .linha { margin: 24px 0 28px; }

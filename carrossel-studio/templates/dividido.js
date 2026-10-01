@@ -1,12 +1,12 @@
 // Estilo "Dividido": imagem na metade de cima e texto na metade de baixo.
 import { escapar, comDestaque, tamanho, subtitulo, vars, marca, rodape, cssBase } from "./_comum.js";
 
-export const info = { imagens: "todas", nome: "Dividido", descricao: "Imagem em cima, texto embaixo. Sem imagem, o texto ocupa o slide todo." };
+export const info = { imagens: "todas", formato_imagem: "horizontal", nome: "Dividido", descricao: "Imagem em cima, texto embaixo. Sem imagem, o texto ocupa o slide todo." };
 
 export function css(visual, fontesCss) {
   return `${cssBase(visual, fontesCss)}
 .dividido { display: flex; flex-direction: column; }
-.dividido .imagem { height: 640px; flex: none; background-size: cover; background-position: center; position: relative; }
+.dividido .imagem { height: 640px; flex: none; background-size: cover; background-position: center 30%; position: relative; }
 .dividido .imagem::after { content: ""; position: absolute; left: 96px; bottom: -4px; width: 120px; height: 8px; border-radius: 99px; background: var(--destaque); }
 .dividido .texto { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 96px 190px; }
 .dividido.sem-foto .texto { padding-top: 150px; }

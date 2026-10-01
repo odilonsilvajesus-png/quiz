@@ -116,6 +116,7 @@ function detalheCliente(id) {
       tem_foto_pessoa: Boolean(c.visual.foto_pessoa),
       template: c.visual.template,
       imagens: c.visual.imagens,
+      duas_cores: c.visual.duas_cores !== false,
       alternar_fundos: c.visual.alternar_fundos !== false,
       usar_fechamento: c.visual.usar_fechamento !== false,
     },
@@ -147,6 +148,7 @@ async function previa(id, dados) {
       fonte: FONTES.includes(dados.fonte) ? dados.fonte : c.visual.fonte,
       assinatura: dados.assinatura ?? c.visual.assinatura,
       cta_final: dados.cta_final ?? c.visual.cta_final,
+      duas_cores: dados.duas_cores ?? c.visual.duas_cores,
       alternar_fundos: dados.alternar_fundos ?? c.visual.alternar_fundos,
       usar_fechamento: dados.usar_fechamento ?? c.visual.usar_fechamento,
       rodape: { ...c.visual.rodape, texto_arraste: dados.texto_arraste ?? c.visual.rodape?.texto_arraste },
@@ -154,7 +156,9 @@ async function previa(id, dados) {
   };
   const infoEstilo = (await listarEstilos()).find((e) => e.id === (dados.template || c.visual.template));
   const modoImagens = resolverModo(dados.imagens?.modo || c.visual.imagens?.modo, infoEstilo);
-  const modelo = resolverModelo(c);
+  // No Automático, a prévia mostra a Metodologia Viraliza.
+  const escolhido = resolverModelo(c, dados.modelo);
+  const modelo = escolhido.automatico ? resolverModelo(c, "metodologia") : escolhido;
   const comImagem = new Set(slidesComImagem(modoImagens, modelo.estrutura.length));
   const estilo = dados.template || c.visual.template;
   const exemplo = c.exemplosCarrossel.find((e) => e.slides.length === modelo.estrutura.length);

@@ -7,6 +7,8 @@ const MODELO = () => process.env.IMAGEM_MODELO || "gpt-image-2";
 const QUALIDADE = () => process.env.IMAGEM_QUALIDADE || "medium";
 // Proporção 4:5 do carrossel do Instagram (1080x1350), com lados múltiplos de 16 como o modelo exige.
 const TAMANHO = "1088x1360";
+// Estilos com a imagem num quadro horizontal (Tweet, Editorial, Dividido) pedem a imagem já deitada, para não cortar.
+const TAMANHO_HORIZONTAL = "1536x1024";
 
 export const temGeradorImagem = () => Boolean(process.env.OPENAI_API_KEY);
 
@@ -21,7 +23,7 @@ export function slidesComImagem(modo, total) {
   return [];
 }
 
-function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia, comPessoa, regras, observacao }) {
+function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comReferencia, comPessoa, regras, observacao, horizontal }) {
   return [
     comPessoa
       ? "A PRIMEIRA imagem de referência é uma foto real da pessoa: ela é a protagonista. Mantenha o rosto, os traços, o tom de pele e o cabelo idênticos; mude roupa, pose, cenário e luz conforme a cena. Não altere a identidade da pessoa."
@@ -37,7 +39,9 @@ function montarPrompt({ descricao, direcao, direcaoEstilo, estilo, paleta, comRe
     estilo ? `Preferência visual: ${estilo}.` : "",
     "Fotografia realista e natural, com emoção verdadeira, sem aparência de banco de imagens.",
     paleta ? `Harmonize com as cores da marca: ${[paleta.escura, paleta.clara, paleta.destaque].join(", ")}.` : "",
-    "Imagem vertical para post de Instagram.",
+    horizontal
+      ? "Imagem horizontal. Enquadre o assunto principal inteiro e centralizado, com folga em volta da cabeça e do rosto: nada importante encostado nas bordas."
+      : "Imagem vertical para post de Instagram.",
     "Não escreva nenhum texto, letra, número, logotipo ou marca d'água na imagem.",
     "Deixe áreas mais calmas na imagem para receber texto por cima.",
   ].filter(Boolean).join(" ");
@@ -48,10 +52,10 @@ const paraUpload = (arquivo, nome) => toFile(fs.createReadStream(arquivo), nome,
 
 // `fotoPessoa`: foto real do cliente, que vira a protagonista (edição de imagem com alta fidelidade).
 // `referencia`: imagem já gerada do carrossel, para manter cenário e luz. Se a edição falhar, gera do zero.
-export async function gerarImagem({ descricao, direcao, direcaoEstilo, estilo, paleta, referencia, fotoPessoa, regras, observacao, destino }) {
+export async function gerarImagem({ descricao, direcao, direcaoEstilo, estilo, paleta, referencia, fotoPessoa, regras, observacao, destino, horizontal }) {
   const client = new OpenAI();
-  const base = { model: MODELO(), size: TAMANHO, quality: QUALIDADE(), output_format: "jpeg", n: 1 };
-  const comum = { descricao, direcao, direcaoEstilo, estilo, paleta, regras, observacao };
+  const base = { model: MODELO(), size: horizontal ? TAMANHO_HORIZONTAL : TAMANHO, quality: QUALIDADE(), output_format: "jpeg", n: 1 };
+  const comum = { descricao, direcao, direcaoEstilo, estilo, paleta, regras, observacao, horizontal };
   let resposta;
   const entradas = [fotoPessoa, referencia].filter(Boolean);
   if (entradas.length) {

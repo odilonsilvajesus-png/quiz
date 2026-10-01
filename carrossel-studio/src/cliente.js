@@ -94,6 +94,7 @@ function normalizar(config) {
   }
   c.visual.paleta.fechamento = corDeFechamento(c.visual.paleta);
   c.visual.fundos = { ...f, ...fundosDaPaleta(c.visual.paleta) };
+  c.visual.duas_cores ??= true;
   c.visual.alternar_fundos ??= true;
   c.visual.usar_fechamento ??= true;
   c.visual.largura ??= 1080;
@@ -104,7 +105,7 @@ function normalizar(config) {
   c.visual.imagens ??= { modo: "auto", estilo: "" };
   c.conteudo.limites ??= { titulo_max_caracteres: 110, subtitulo_max_caracteres: 220 };
   c.conteudo.angulos ??= [];
-  c.conteudo.modelo_padrao ??= c.conteudo.estrutura?.length ? "proprio" : "auto";
+  c.conteudo.modelo_padrao ??= "metodologia";
   c.conteudo.cta = { palavra_chave: "", entrega: "", conversao: "", objetivo_padrao: "auto", ...c.conteudo.cta };
   return c;
 }
@@ -266,6 +267,7 @@ export function salvarVisual(id, v) {
       };
     }
     if (v.assinatura !== undefined) c.visual.assinatura = v.assinatura;
+    if (v.duas_cores !== undefined) c.visual.duas_cores = Boolean(v.duas_cores);
     if (v.alternar_fundos !== undefined) c.visual.alternar_fundos = Boolean(v.alternar_fundos);
     if (v.usar_fechamento !== undefined) c.visual.usar_fechamento = Boolean(v.usar_fechamento);
     if (v.cta_final !== undefined) c.visual.cta_final = v.cta_final;

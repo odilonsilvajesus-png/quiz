@@ -5,7 +5,7 @@ import { pastaSaida, caminhoFoto } from "./cliente.js";
 import { coletar, ultimaColeta, salvarColeta } from "./coleta/index.js";
 import { aprofundar } from "./analise.js";
 import { ranquear } from "./ranking.js";
-import { escreverCarrossel } from "./copy.js";
+import { escreverCarrossel, escolherEstrutura } from "./copy.js";
 import { revisarCarrossel } from "./revisor.js";
 import { renderizar } from "./render.js";
 import { resolverModelo } from "./modelos.js";
@@ -51,10 +51,15 @@ export function gerarCarrossel(cliente, referencia, opcoes = {}) {
 }
 
 async function montarCarrossel(cliente, referencia, opcoes) {
-  const { angulo, estilo, indice = 0, log = console.log } = opcoes;
+  const { angulo, modelo: modeloId, estilo, indice = 0, log = console.log } = opcoes;
   const recentes = historico(cliente.id).slice(-10).map((h) => h.angulo);
   const observacao = (opcoes.observacao || "").trim();
-  const modelo = resolverModelo(cliente);
+  let modelo = resolverModelo(cliente, modeloId);
+  let motivoEstrutura;
+  if (modelo.automatico) {
+    log("Escolhendo a estrutura pelo tipo do conteúdo...");
+    ({ modelo, motivo: motivoEstrutura } = await escolherEstrutura(cliente, referencia, { observacao }));
+  }
   // Objetivo automático: com palavra-chave, o final pede o comentário (gera interessados); senão, o próximo passo comercial.
   const ctaCliente = cliente.conteudo.cta || {};
   let objetivoEscolhido = opcoes.objetivo || ctaCliente.objetivo_padrao || "auto";
@@ -89,7 +94,7 @@ async function montarCarrossel(cliente, referencia, opcoes) {
       trecho: referencia.texto.slice(0, 300),
       outlier: referencia.ranking?.outlier ?? null,
     },
-    modelo: { id: modelo.id, nome: modelo.nome },
+    modelo: { id: modelo.id, nome: modelo.nome, ...(motivoEstrutura ? { automatico: true, motivo: motivoEstrutura } : {}) },
     objetivo: objetivoEscolhido,
     estilo: estiloFinal,
     ...copy,
@@ -100,7 +105,7 @@ async function montarCarrossel(cliente, referencia, opcoes) {
   const pasta = pastaSaida(cliente.id, "carrosseis", `${carimbo}-${slug(copy.angulo)}`);
   if (obsImagem) carrossel.observacao_imagens = obsImagem;
   await gerarImagensDoCarrossel(cliente, carrossel, pasta, {
-    modo: modoImagens, estilo: estiloImagem, direcaoEstilo: infoEstilo?.direcao_imagem, fotoPessoa, obsImagem, log,
+    modo: modoImagens, estilo: estiloImagem, direcaoEstilo: infoEstilo?.direcao_imagem, horizontal: infoEstilo?.formato_imagem === "horizontal", fotoPessoa, obsImagem, log,
   });
   log(`Renderizando ${copy.slides.length} slides...`);
   const render = await renderizar(cliente, carrossel, pasta);
@@ -137,7 +142,7 @@ async function revisarComReescrita(cliente, referencia, copy, modelo, opcoesCopy
 }
 
 // Gera as imagens dos slides escolhidos. Uma falha não derruba o carrossel: vira pendência.
-async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo, direcaoEstilo, fotoPessoa, obsImagem, log }) {
+async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo, direcaoEstilo, horizontal, fotoPessoa, obsImagem, log }) {
   // A IA devolve a descrição em "imagem"; o campo passa a guardar só o arquivo gerado.
   for (const s of carrossel.slides) {
     if (s.imagem) s.imagem_descricao = s.imagem;
@@ -158,6 +163,7 @@ async function gerarImagensDoCarrossel(cliente, carrossel, pasta, { modo, estilo
       descricao: s.imagem_descricao || `${s.titulo.replace(/\*/g, "")}. ${s.subtitulo}`,
       direcao: carrossel.direcao_de_arte,
       direcaoEstilo,
+      horizontal,
       estilo,
       paleta: cliente.visual.paleta,
       referencia,

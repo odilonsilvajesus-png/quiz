@@ -724,6 +724,8 @@ async function modalNovoCliente() {
       <label class="rotulo" for="nNome">Nome</label><input id="nNome" class="campo" placeholder="Ex.: Maria Silva">
       <label class="rotulo" for="nInsta">Instagram do cliente</label><input id="nInsta" class="campo" placeholder="@perfil ou link">
       <label class="rotulo" for="nDesc">Profissão, nicho e método</label><input id="nDesc" class="campo" placeholder="Ex.: Nutricionista comportamental, mulheres 30+">
+      <label class="rotulo" for="nModelo">Modelo de carrossel padrão</label>
+      <select id="nModelo" class="campo">${modelos.map((x) => `<option value="${x.id}">${esc(x.nome)}</option>`).join("").replace("</option>", "</option><option value=\"auto\">Automático (a IA escolhe a estrutura)</option>")}</select>
       <label class="rotulo">Cores principais</label>
       <div class="cores-rapidas">
         <label class="cor-rapida"><input type="color" id="nEscura" value="#1A1A1A">Fundo escuro</label>
@@ -736,7 +738,7 @@ async function modalNovoCliente() {
   m.querySelector("#criar").onclick = (e) => acao(e.currentTarget, $("msgNovo"), async () => {
     const escura = $("nEscura").value, clara = $("nClara").value, destaque = $("nDestaque").value;
     const { id } = await post("/api/clientes", {
-      nome: $("nNome").value, instagram: $("nInsta").value, descricao: $("nDesc").value,
+      nome: $("nNome").value, instagram: $("nInsta").value, descricao: $("nDesc").value, modelo: $("nModelo").value,
       paleta: { escura, clara, destaque, destaque2: escurecer(destaque), texto_claro: "#FFFFFF", texto_escuro: escura },
     });
     fecharModal();
@@ -756,7 +758,7 @@ const ABAS = [
   ["carrosseis", "Carrosséis", ICONES.camadas],
   ["perfil", "Perfil e referências", ICONES.alvo],
   ["voz", "Voz e direcionamento", ICONES.voz],
-  ["modelos", "Metodologia", ICONES.modelo],
+  ["modelos", "Modelos", ICONES.modelo],
   ["visual", "Identidade visual", ICONES.paleta],
 ];
 
@@ -1044,6 +1046,8 @@ function modalCriar(refIds) {
     corpo: `
       <div class="resumo-ref">${resumo}</div>
       <div class="escolhas">
+        <div><label class="rotulo" for="gModelo">Modelo (estrutura)</label>
+          <select id="gModelo" class="campo">${opt(c.modelos.map((x) => [x.id, x.nome]), sugestaoUnica?.modelo || c.conteudo.modelo_padrao)}</select></div>
         <div><label class="rotulo" for="gEstilo">Estilo visual</label>
           <select id="gEstilo" class="campo">${opt(status.estilos.map((x) => [x.id, x.nome]), c.visual.template)}</select></div>
         <div><label class="rotulo" for="gTema">Tema</label>
@@ -1073,7 +1077,7 @@ function modalCriar(refIds) {
   avisarLead();
   m.querySelector("#gerar").onclick = async () => {
     const opcoes = {
-      estilo: $("gEstilo").value, angulo: $("gTema").value, imagens: $("gImagens").value,
+      modelo: $("gModelo").value, estilo: $("gEstilo").value, angulo: $("gTema").value, imagens: $("gImagens").value,
       observacao: $("gObs").value, obsImagem: $("gObsImg").value, objetivo: $("gObjetivo").value,
       fotoPessoa: m.querySelector('input[name="gFoto"]:checked')?.value || "",
     };
@@ -1583,9 +1587,11 @@ function abaVoz() {
 
 // ---------- aba modelos ----------
 // Mesmas regras do src/render.js: sem cor repetida em slides seguidos e cor própria no último.
-function sequenciaDeFundos(nomes, { alternar = true, fechamento = true } = {}) {
+function sequenciaDeFundos(nomes, { alternar = true, fechamento = true, duasCores = true } = {}) {
   const lista = nomes.map((n) => (n === "gradiente" ? "destaque" : n || "escuro"));
   if (lista.every((n) => n === lista[0])) return lista;
+  // Duas cores: só o fundo escuro e o claro, alternando slide a slide (a capa no escuro).
+  if (duasCores) return lista.map((_, i) => (i % 2 ? "claro" : "escuro"));
   const n = lista.length;
   if (alternar) {
     for (let i = 1; i < n; i++) {
@@ -1613,43 +1619,61 @@ function corDoFundo(fundo, p) {
   return { bg: p.escura, fg: p.texto_claro };
 }
 
-// A metodologia única dos carrosséis e a solução do cliente, que ela usa no slide da solução.
+// Biblioteca de modelos (Metodologia Viraliza primeiro) e a solução do cliente, usada no slide da solução.
 function abaModelos() {
   const c = cliente;
-  const m = c.modelos[0];
   const metodo = c.conteudo.metodo || {};
+  const tira = (m) => `<div class="tira">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false, duasCores: c.visual.duas_cores !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>`;
   $("aba").innerHTML = `
-    <div class="duas">
-      <div>
-        <div class="cartao">
-          <h2>${esc(m.nome)}</h2>
-          <p class="sub">${esc(m.descricao)}</p>
-          <div class="tira" style="margin-top:14px">${sequenciaDeFundos(m.estrutura.map((s) => s.fundo), { alternar: c.visual.alternar_fundos !== false, fechamento: c.visual.usar_fechamento !== false }).map((f, i) => [f, m.estrutura[i]]).map(([fundo, s]) => { const k = corDoFundo(fundo, c.paleta); return `<span style="background:${k.bg};color:${k.fg}" title="${esc(s.papel)}">${esc(s.papel)}</span>`; }).join("")}</div>
-          <ol class="passos-metodo">${m.estrutura.map((s) => `<li><b>${esc(s.papel)}</b><span>${esc(s.instrucao)}</span></li>`).join("")}</ol>
-          <div class="ajuda">O fio: <i>dor que a pessoa já sente → o caminho que ela segue não dá resultado → por quê → o novo caminho → o valor dele → a solução → podemos ajudar.</i></div>
-        </div>
-        <div class="cartao">
-          <h2>Solução de ${esc(c.nome)}</h2>
-          <p class="sub">Entra no slide da solução, descrita pelo que acontece na prática (sem "no nosso método"). Sem isso, a IA usa o que estiver na base de conhecimento.</p>
-          <label class="rotulo" for="metodoNome">Nome do método ou serviço (opcional)</label>
-          <input id="metodoNome" class="campo" placeholder="Ex.: Protocolo Face Natural" value="${esc(metodo.nome || "")}">
-          <label class="rotulo" for="metodoPasso">Como funciona na prática</label>
-          <textarea id="metodoPasso" class="campo" rows="3" placeholder="Ex.: avaliação facial completa: proporção, estrutura óssea, qualidade da pele, grau de flacidez e expectativa da paciente">${esc(metodo.primeiro_passo || "")}</textarea>
-          <div class="acoes"><button class="btn primario" id="salvarMetodo">${ICONES.ok} Salvar solução</button><button class="btn" id="verPrevia">${ICONES.olho} Ver prévia</button><span class="msg" id="msgMetodo"></span></div>
-        </div>
-      </div>
-      <div class="coluna-fixa" id="areaPrevia" hidden>
-        <h2 style="margin-bottom:10px">Prévia no visual de ${esc(c.nome)}</h2>
-        <iframe class="previa" id="previaModelo" title="Prévia da metodologia"></iframe>
-      </div>
+    <div class="barra"><div><h2>Modelos de carrossel</h2><p class="sub">A estrutura do texto, slide a slide. Escolha o padrão deste cliente; dá para trocar em cada carrossel.</p></div></div>
+    <div class="grade" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr))">
+      ${c.modelos.map((m) => `
+        <div class="cartao modelo ${m.id === c.conteudo.modelo_padrao ? "padrao" : ""}">
+          <div class="cabecalho-cartao" style="margin:0"><h3>${esc(m.nome)}</h3>${m.id === c.conteudo.modelo_padrao ? '<span class="etiqueta marca">Padrão</span>' : ""}</div>
+          <div class="sub" style="margin:0;font-size:13px">${esc(m.descricao)}</div>
+          ${m.automatico ? `<div class="chips">${c.modelos.filter((x) => x.viral).map((x) => `<span class="etiqueta marca">${esc(x.nome)}</span>`).join("")}</div>
+          <div class="ajuda" style="margin:0">A cada carrossel, a IA lê o conteúdo e escolhe a estrutura certa. A escolhida aparece no carrossel.</div>` : `${tira(m)}
+          <details><summary>${m.estrutura.length} slides</summary><ol>${m.estrutura.map((s) => `<li><b>${esc(s.papel)}:</b> ${esc(s.instrucao)}</li>`).join("")}</ol></details>`}
+          <div class="acoes" style="margin-top:auto">
+            ${m.id === c.conteudo.modelo_padrao ? "" : `<button class="btn escuro pequeno" data-padrao="${m.id}">Usar como padrão</button>`}
+            ${m.automatico ? "" : `<button class="btn pequeno" data-ver="${m.id}">${ICONES.olho} Ver prévia</button>`}
+          </div>
+        </div>`).join("")}
+    </div>
+    <div id="areaPrevia" style="margin-top:22px" hidden>
+      <h2 id="tituloPrevia" style="margin-bottom:10px"></h2>
+      <iframe class="previa" id="previaModelo" title="Prévia do modelo"></iframe>
+    </div>
+    <div class="cartao" style="margin-top:22px;max-width:720px">
+      <h2>Solução de ${esc(c.nome)}</h2>
+      <p class="sub">Entra no slide da solução, descrita pelo que acontece na prática (sem "no nosso método"). Sem isso, a IA usa o que estiver na base de conhecimento.</p>
+      <label class="rotulo" for="metodoNome">Nome do método ou serviço (opcional)</label>
+      <input id="metodoNome" class="campo" placeholder="Ex.: Protocolo Face Natural" value="${esc(metodo.nome || "")}">
+      <label class="rotulo" for="metodoPasso">Como funciona na prática</label>
+      <textarea id="metodoPasso" class="campo" rows="3" placeholder="Ex.: avaliação facial completa: proporção, estrutura óssea, qualidade da pele, grau de flacidez e expectativa da paciente">${esc(metodo.primeiro_passo || "")}</textarea>
+      <div class="acoes"><button class="btn primario" id="salvarMetodo">${ICONES.ok} Salvar solução</button><span class="msg" id="msgMetodo"></span></div>
     </div>`;
 
   $("salvarMetodo").onclick = (e) => acao(e.currentTarget, $("msgMetodo"), async () => {
     cliente = await put(`/api/clientes/${c.id}/conteudo`, { metodo: { nome: $("metodoNome").value, primeiro_passo: $("metodoPasso").value } });
   });
-  $("verPrevia").onclick = async () => {
-    $("areaPrevia").hidden = false;
-    $("previaModelo").srcdoc = await post(`/api/clientes/${c.id}/previa`, {});
+  $("aba").onclick = async (e) => {
+    const alvo = e.target.closest("[data-padrao],[data-ver]");
+    if (!alvo) return;
+    if (alvo.dataset.padrao) {
+      await acao(alvo, null, async () => {
+        cliente = await put(`/api/clientes/${c.id}/conteudo`, { modelo_padrao: alvo.dataset.padrao });
+        abaModelos();
+        toast("Modelo padrão atualizado.");
+      });
+    }
+    if (alvo.dataset.ver) {
+      const m = c.modelos.find((x) => x.id === alvo.dataset.ver);
+      $("areaPrevia").hidden = false;
+      $("tituloPrevia").textContent = `Prévia: ${m.nome}`;
+      $("previaModelo").srcdoc = await post(`/api/clientes/${c.id}/previa`, { modelo: m.id });
+      $("areaPrevia").scrollIntoView({ behavior: "smooth" });
+    }
   };
 }
 
@@ -1718,9 +1742,10 @@ function abaVisual() {
           <label class="rotulo">Paleta do cliente</label>
           ${CAMPOS_COR.map(([k, n]) => `<div class="cor"><span>${n}</span><input type="color" data-cor="${k}"><input class="campo" data-hex="${k}" maxlength="7"></div>`).join("")}
           <label class="linha" style="margin-top:10px;font-weight:500"><input type="checkbox" id="gradiente"> Slides de destaque com gradiente</label>
+          <label class="linha" style="margin-top:8px;font-weight:500"><input type="checkbox" id="duasCores"> Só duas cores (escuro e claro alternando)</label>
           <label class="linha" style="margin-top:8px;font-weight:500"><input type="checkbox" id="alternarFundos"> Não repetir a mesma cor em dois slides seguidos</label>
           <label class="linha" style="margin-top:8px;font-weight:500"><input type="checkbox" id="usarFechamento"> Último slide com a cor de fechamento</label>
-          <p class="ajuda">Modelos feitos todos na mesma cor (como Reflexão e Provocação) ficam como estão.</p>
+          <p class="ajuda">Com "só duas cores" ligado, as outras opções de cor não valem. Modelos feitos todos na mesma cor (como Reflexão e Provocação) ficam como estão.</p>
         </div>
         <div class="cartao">
           <h2>Texto e marca</h2>
@@ -1752,6 +1777,7 @@ function abaVisual() {
       document.querySelector(`[data-hex="${k}"]`).value = v.paleta[k].toUpperCase();
     }
     $("gradiente").checked = v.paleta.gradiente !== false;
+    $("duasCores").checked = v.duas_cores !== false;
     $("alternarFundos").checked = v.alternar_fundos !== false;
     $("usarFechamento").checked = v.usar_fechamento !== false;
     document.querySelectorAll("[data-estilo]").forEach((b) => b.classList.toggle("ativo", b.dataset.estilo === v.template));
@@ -1766,13 +1792,17 @@ function abaVisual() {
   const dadosVisual = () => ({
     template: v.template, imagens: { modo: $("modoImagens").value, estilo: $("estiloImagens").value, regras: $("regrasImagens").value },
     paleta: v.paleta, fonte: $("fonte").value, assinatura: $("assinatura").value,
-    alternar_fundos: $("alternarFundos").checked, usar_fechamento: $("usarFechamento").checked,
+    duas_cores: $("duasCores").checked, alternar_fundos: $("alternarFundos").checked, usar_fechamento: $("usarFechamento").checked,
     cta_final: $("ctaFinal").value, texto_arraste: $("arraste").value,
   });
   let timer;
   const atualizarPrevia = () => {
     clearTimeout(timer);
-    timer = setTimeout(async () => { $("previa").srcdoc = await post(`/api/clientes/${c.id}/previa`, dadosVisual()); }, 250);
+    timer = setTimeout(async () => {
+      if (!$("previa") || !$("duasCores")) return; // saiu da aba antes da prévia
+      const html = await post(`/api/clientes/${c.id}/previa`, dadosVisual());
+      if ($("previa")) $("previa").srcdoc = html;
+    }, 250);
   };
   preencher();
   atualizarPrevia();
@@ -1786,6 +1816,7 @@ function abaVisual() {
       document.querySelector(`[data-cor="${d.hex}"]`).value = e.target.value;
     }
     if (e.target.id === "gradiente") v.paleta.gradiente = e.target.checked;
+    if (e.target.id === "duasCores") v.duas_cores = e.target.checked;
     if (e.target.id === "alternarFundos") v.alternar_fundos = e.target.checked;
     if (e.target.id === "usarFechamento") v.usar_fechamento = e.target.checked;
     if (e.target.type === "file") return;

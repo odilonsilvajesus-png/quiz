@@ -2,6 +2,9 @@
   "id": "metodologia",
   "nome": "Metodologia Viraliza",
   "descricao": "Uma estrutura só, feita para vender e gerar interessados: parte de uma dor que a pessoa já sente, mostra que o caminho que ela segue não traz resultado e por quê, apresenta o novo caminho, o valor dele, a solução na prática e que podemos ajudar.",
+  "viral": true,
+  "ordem": -10,
+  "quando_usar": "Conteúdo para vender e gerar interessados: parte de uma dor que o público já sente e leva até a solução do cliente. É a escolha padrão; use outra só quando o conteúdo for claramente de outro tipo.",
   "estrutura": [
     {
       "papel": "Gancho",

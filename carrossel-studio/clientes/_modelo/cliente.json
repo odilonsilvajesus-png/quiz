@@ -13,7 +13,7 @@
   },
   "conteudo": {
     "formato": "carrossel",
-    "modelo_padrao": "auto",
+    "modelo_padrao": "metodologia",
     "regra_de_ouro": "1 tema por carrossel.",
     "proibir_travessao": false,
     "limites": {
