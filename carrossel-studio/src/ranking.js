@@ -11,7 +11,15 @@ const mediana = (valores) => {
 // Comentário pesa mais que curtida: exige mais esforço e indica conversa.
 const interacoes = (m) => m.curtidas + 2 * m.comentarios;
 
-export function ranquear(posts, { limite = 20 } = {}) {
+// Ordens da lista de ideias: "melhores" (acima da média do próprio perfil), "visualizados", "recentes", "engajados".
+export const ORDENS = {
+  melhores: (a, b) => b.ranking.outlier - a.ranking.outlier || b.ranking.interacoes - a.ranking.interacoes,
+  visualizados: (a, b) => (b.metricas.visualizacoes || 0) - (a.metricas.visualizacoes || 0) || b.ranking.interacoes - a.ranking.interacoes,
+  recentes: (a, b) => (Date.parse(b.publicado_em) || 0) - (Date.parse(a.publicado_em) || 0),
+  engajados: (a, b) => b.ranking.interacoes - a.ranking.interacoes,
+};
+
+export function ranquear(posts, { limite = 20, ordem = "melhores" } = {}) {
   const porPerfil = new Map();
   for (const p of posts) {
     if (!porPerfil.has(p.perfil)) porPerfil.set(p.perfil, []);
@@ -47,7 +55,7 @@ export function ranquear(posts, { limite = 20 } = {}) {
   // a não ser que a análise mostre que o conteúdo real é diferente.
   const vistos = new Set();
   return ranqueados
-    .sort((a, b) => b.ranking.outlier - a.ranking.outlier || b.ranking.interacoes - a.ranking.interacoes)
+    .sort(ORDENS.melhores)
     .filter((p) => {
       // Enquanto o conteúdo real não foi analisado, posts com mídia contam como diferentes (mesma legenda,
       // reels diferentes). Depois da análise, a comparação usa a fala/texto dos slides.
@@ -58,5 +66,6 @@ export function ranquear(posts, { limite = 20 } = {}) {
       vistos.add(chave);
       return true;
     })
+    .sort(ORDENS[ordem] || ORDENS.melhores)
     .slice(0, limite);
 }

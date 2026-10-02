@@ -804,7 +804,7 @@ async function telaCliente(id, aba, subaba) {
 // ---------- aba criar (ideias das referências e sugestões da IA) ----------
 let ideias = [];
 let sugestoes = [];
-const filtro = { fonte: "referencias", plataforma: "todas", formato: "todos", perfis: new Set(), esconderUsadas: false, avisos: [] };
+const filtro = { fonte: "referencias", ordem: "melhores", plataforma: "todas", formato: "todos", perfis: new Set(), esconderUsadas: false, avisos: [] };
 const selecionadas = new Set();
 
 function limparCriar() {
@@ -837,7 +837,7 @@ async function abaCriar(_sub, recoletar = false) {
     const estado = await api(`/api/clientes/${c.id}/coleta`);
     if (estado.rodando) return acompanharColeta(c);
     const [dados, lista, sugs] = await Promise.all([
-      api(`/api/clientes/${c.id}/referencias`),
+      api(`/api/clientes/${c.id}/referencias?ordem=${filtro.ordem}`),
       api(`/api/clientes/${c.id}/carrosseis`),
       api(`/api/clientes/${c.id}/sugestoes`),
     ]);
@@ -885,6 +885,21 @@ function ideiasFiltradas() {
 }
 
 const NOME_FORMATO = { reels: "Reels", carrossel: "Carrossel", imagem: "Imagem", video: "Vídeo" };
+const ORDENS_IDEIAS = [
+  ["melhores", "Melhores (acima da média do perfil)", "melhores"],
+  ["visualizados", "Mais visualizados", "mais visualizadas"],
+  ["recentes", "Mais recentes", "mais recentes"],
+  ["engajados", "Mais engajados", "mais engajadas"],
+];
+// "hoje", "há 3 dias", "há 2 meses"
+function haQuanto(data) {
+  const dias = Math.floor((Date.now() - Date.parse(data)) / 864e5);
+  if (!Number.isFinite(dias)) return "";
+  if (dias < 1) return "hoje";
+  if (dias < 31) return dias === 1 ? "ontem" : `há ${dias} dias`;
+  const meses = Math.round(dias / 30);
+  return meses < 12 ? `há ${meses} ${meses === 1 ? "mês" : "meses"}` : `há ${Math.round(meses / 12)} ano(s)`;
+}
 
 function desenharCriar() {
   const c = cliente;
@@ -947,13 +962,16 @@ function desenharCriar() {
   $("aba").innerHTML = cabecalho + `
     ${semReferencias ? `<div class="aviso">${ICONES.alerta}<span>Nenhuma referência cadastrada para ${esc(c.nome)}. <a href="#/c/${c.id}/perfil">Cadastrar referências</a></span></div>` : ""}
     ${filtro.avisos.map((a) => `<div class="aviso">${ICONES.alerta}<span>${esc(a)}</span></div>`).join("")}
-    ${filtro.resumo ? `<p class="ajuda">Última coleta em ${new Date(filtro.resumo.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}, posts dos últimos ${filtro.resumo.periodo} dias: ${Object.entries(filtro.resumo.por_perfil).map(([p, n]) => `${esc(p)} ${n}`).join(" · ")}. Mostrando as ${ideias.length} melhores.</p>` : ""}
+    ${filtro.resumo ? `<p class="ajuda">Última coleta em ${new Date(filtro.resumo.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}, posts dos últimos ${filtro.resumo.periodo} dias: ${Object.entries(filtro.resumo.por_perfil).map(([p, n]) => `${esc(p)} ${n}`).join(" · ")}. Mostrando as ${ideias.length} ${(ORDENS_IDEIAS.find((o) => o[0] === filtro.ordem) || ORDENS_IDEIAS[0])[2]}.</p>` : ""}
     ${status.analise ? "" : `<div class="aviso">${ICONES.alerta}<span>Sem OPENAI_API_KEY as ideias usam só a legenda. Com a chave, o sistema transcreve a fala dos reels e lê o texto dos carrosséis.</span></div>`}
     <div class="cartao filtros-cartao">
       <div class="linha" style="flex-wrap:wrap;gap:10px">
         <div class="filtros">
           ${[["todas", "Todas"], ["instagram", "Instagram"], ["youtube", "YouTube"]].map(([k, n]) => `<button class="${filtro.plataforma === k ? "ativo" : ""}" data-plataforma="${k}">${ICONES[k] || ""}${n}</button>`).join("")}
         </div>
+        <select class="campo" style="width:auto;flex:none" id="ordemIdeias" title="Ordem das ideias">
+          ${ORDENS_IDEIAS.map(([k, n]) => `<option value="${k}" ${filtro.ordem === k ? "selected" : ""}>Ordenar: ${n}</option>`).join("")}
+        </select>
         <select class="campo" style="width:auto;flex:none" id="filtroFormato">
           <option value="todos">Todos os formatos</option>
           ${formatos.map((f) => `<option value="${esc(f)}" ${filtro.formato === f ? "selected" : ""}>${esc(NOME_FORMATO[f] || f)}</option>`).join("")}
@@ -977,6 +995,7 @@ function desenharCriar() {
           ${p.analise?.slides ? '<span class="etiqueta ok">slides lidos</span>' : ""}
           ${p.analise?.erro ? `<span class="etiqueta aviso-e" title="${esc(p.analise.erro)}">só legenda</span>` : ""}
           ${usadas.has(p.id) ? '<span class="etiqueta marca">usada</span>' : ""}
+          ${p.publicado_em ? `<span class="etiqueta" title="${esc(new Date(p.publicado_em).toLocaleString("pt-BR"))}">${haQuanto(p.publicado_em)}</span>` : ""}
         </div>
         <p>${esc(resumo)}</p>
         <div class="metricas">
@@ -992,6 +1011,7 @@ function desenharCriar() {
       </div>`;
     }).join("")}</div>` : `<div class="cartao vazio">${ICONES.vazio}<div>Nenhuma ideia com esses filtros. <button class="btn pequeno" data-limpar-criar>Limpar filtros</button></div></div>`}
     ${barraSelecao()}`;
+  $("ordemIdeias").onchange = (e) => { filtro.ordem = e.target.value; abaCriar(); };
   $("filtroFormato").onchange = (e) => { filtro.formato = e.target.value; desenharCriar(); };
   $("esconderUsadas").onchange = (e) => { filtro.esconderUsadas = e.target.checked; desenharCriar(); };
 }

@@ -13,7 +13,7 @@ import { aprofundar, podeAnalisar } from "./analise.js";
 import { listarDocumentos, adicionarDocumento, removerDocumento, guardarTexto } from "./documentos.js";
 import { lerMapaDaMarca, podeLerMapa } from "./marca.js";
 import { gerarCarrossel, atualizarColeta } from "./pipeline.js";
-import { ultimaColeta } from "./coleta/index.js";
+import { ultimaColeta, salvarColeta } from "./coleta/index.js";
 import { ranquear } from "./ranking.js";
 import { iniciarTarefa, estadoTarefa } from "./tarefas.js";
 import { atualizarFotoPerfil, buscarFotoSeFaltar, temFotoPerfil } from "./perfil.js";
@@ -241,11 +241,23 @@ async function publicar(id, nomePasta, { legenda } = {}) {
 }
 
 // Ideias da última coleta, sem coletar nem analisar nada aqui (isso é tarefa da coleta em segundo plano).
-function ideias(id) {
+function ideias(id, ordem = "melhores") {
   carregarCliente(id);
   const coleta = ultimaColeta(id);
   if (!coleta) return { sem_coleta: true, avisos: [], posts: [] };
-  return { ...coleta, posts: ranquear(coleta.posts, { limite: 60 }) };
+  return { ...coleta, ordem, posts: ranquear(coleta.posts, { limite: 60, ordem }) };
+}
+
+// Post da coleta pelo id (em qualquer ordem). Se o conteúdo real ainda não foi lido (fala do reels, texto dos
+// slides), lê agora, só deste post, e guarda na coleta.
+async function referenciaDaColeta(id, refId) {
+  const coleta = ultimaColeta(id);
+  const ref = coleta && ranquear(coleta.posts, { limite: Infinity }).find((p) => p.id === refId);
+  if (ref && !ref.analise && (await aprofundar([ref], { limite: 1 }))) {
+    const original = coleta.posts.find((p) => p.id === refId);
+    if (original) { original.analise = ref.analise; salvarColeta(id, coleta); }
+  }
+  return ref;
 }
 
 // Tom de voz a partir dos posts reais do cliente: fala dos reels, texto dos carrosséis e legendas.
@@ -335,7 +347,7 @@ const rotas = [
   rota("GET", "/api/clientes/:id/voz/gerar", (m) => estadoTarefa(`voz:${m[1]}`)),
   rota("PUT", "/api/clientes/:id/direcionamento", async (m, _u, req) => (salvarDirecionamento(m[1], (await corpo(req)).texto), { ok: true })),
   rota("POST", "/api/clientes/:id/previa", async (m, _u, req) => previa(m[1], await corpo(req))),
-  rota("GET", "/api/clientes/:id/referencias", (m) => ideias(m[1])),
+  rota("GET", "/api/clientes/:id/referencias", (m, url) => ideias(m[1], url.searchParams.get("ordem") || undefined)),
   rota("POST", "/api/clientes/:id/coleta", (m) => {
     const cliente = carregarCliente(m[1]);
     return iniciarTarefa(`coleta:${cliente.id}`, async (log) => {
@@ -354,7 +366,7 @@ const rotas = [
       const sugestao = listarSugestoes(cliente.id).find((s) => s.id === refId);
       ref = sugestao && sugestaoComoReferencia(sugestao);
     } else {
-      ref = ideias(cliente.id).posts.find((p) => p.id === refId);
+      ref = await referenciaDaColeta(cliente.id, refId);
     }
     if (!ref) throw new Error("Referência não encontrada. Atualize a coleta.");
     await gerarCarrossel(cliente, ref, {

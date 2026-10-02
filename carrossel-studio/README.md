@@ -50,7 +50,7 @@ Cada cliente tem o próprio endereço (ex.: `http://localhost:3333/#/c/camila`) 
 
 | Aba | Para quê |
 |---|---|
-| **Criar** | **Das referências:** ideias que mais engajaram, com o conteúdo real (fala transcrita dos reels e texto lido dos carrosséis). Filtros por plataforma, formato e perfil de referência, seleção de várias ideias para criar em lote e **Limpar seleção**. **Sugestões da IA:** pautas criadas a partir do conhecimento do próprio cliente. |
+| **Criar** | **Das referências:** ideias que mais engajaram, com o conteúdo real (fala transcrita dos reels e texto lido dos carrosséis). Ordem: **melhores** (acima da média do perfil), **mais visualizados**, **mais recentes** ou **mais engajados** (curtidas + 2× comentários), com a data de cada post. Filtros por plataforma, formato e perfil de referência, seleção de várias ideias para criar em lote e **Limpar seleção**. **Sugestões da IA:** pautas criadas a partir do conhecimento do próprio cliente. |
 | **Carrosséis** | Separado em **Rascunhos**, **Agendados**, **Postados** e **Descartados**. Em cada rascunho: **Postar no Instagram** (agora ou agendado), **Editar**, **Baixar** (ZIP), **Aprovar como exemplo** e **Descartar**. |
 | **Perfil e referências** | Dados do cliente, referências (Instagram e YouTube) e a **conexão para postar direto no Instagram**. |
 | **Voz e direcionamento** | Tom de voz coletado das legendas, direcionamento manual e temas/regras. |
