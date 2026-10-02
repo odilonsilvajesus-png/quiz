@@ -804,7 +804,7 @@ async function telaCliente(id, aba, subaba) {
 // ---------- aba criar (ideias das referências e sugestões da IA) ----------
 let ideias = [];
 let sugestoes = [];
-const filtro = { fonte: "referencias", ordem: "melhores", plataforma: "todas", formato: "todos", perfis: new Set(), esconderUsadas: false, avisos: [] };
+const filtro = { fonte: "referencias", ordem: ["melhores"], plataforma: "todas", formato: "todos", perfis: new Set(), esconderUsadas: false, avisos: [] };
 const selecionadas = new Set();
 
 function limparCriar() {
@@ -837,7 +837,7 @@ async function abaCriar(_sub, recoletar = false) {
     const estado = await api(`/api/clientes/${c.id}/coleta`);
     if (estado.rodando) return acompanharColeta(c);
     const [dados, lista, sugs] = await Promise.all([
-      api(`/api/clientes/${c.id}/referencias?ordem=${filtro.ordem}`),
+      api(`/api/clientes/${c.id}/referencias?ordem=${filtro.ordem.join(",")}`),
       api(`/api/clientes/${c.id}/carrosseis`),
       api(`/api/clientes/${c.id}/sugestoes`),
     ]);
@@ -886,11 +886,13 @@ function ideiasFiltradas() {
 
 const NOME_FORMATO = { reels: "Reels", carrossel: "Carrossel", imagem: "Imagem", video: "Vídeo" };
 const ORDENS_IDEIAS = [
-  ["melhores", "Melhores (acima da média do perfil)", "melhores"],
-  ["visualizados", "Mais visualizados", "mais visualizadas"],
-  ["recentes", "Mais recentes", "mais recentes"],
-  ["engajados", "Mais engajados", "mais engajadas"],
+  ["melhores", "Melhores", "melhores", "O que performou acima da média do próprio perfil"],
+  ["visualizados", "Mais vistos", "mais vistas", "Mais visualizações (reels e vídeos)"],
+  ["recentes", "Mais recentes", "mais recentes", "Publicados há menos tempo"],
+  ["engajados", "Mais engajados", "mais engajadas", "Curtidas + 2× comentários"],
+  ["comentados", "Mais comentados", "mais comentadas", "Mais comentários"],
 ];
+const nomeOrdem = () => filtro.ordem.map((k) => (ORDENS_IDEIAS.find((o) => o[0] === k) || ORDENS_IDEIAS[0])[2]).join(" + ");
 // "hoje", "há 3 dias", "há 2 meses"
 function haQuanto(data) {
   const dias = Math.floor((Date.now() - Date.parse(data)) / 864e5);
@@ -962,22 +964,20 @@ function desenharCriar() {
   $("aba").innerHTML = cabecalho + `
     ${semReferencias ? `<div class="aviso">${ICONES.alerta}<span>Nenhuma referência cadastrada para ${esc(c.nome)}. <a href="#/c/${c.id}/perfil">Cadastrar referências</a></span></div>` : ""}
     ${filtro.avisos.map((a) => `<div class="aviso">${ICONES.alerta}<span>${esc(a)}</span></div>`).join("")}
-    ${filtro.resumo ? `<p class="ajuda">Última coleta em ${new Date(filtro.resumo.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}, posts dos últimos ${filtro.resumo.periodo} dias: ${Object.entries(filtro.resumo.por_perfil).map(([p, n]) => `${esc(p)} ${n}`).join(" · ")}. Mostrando as ${ideias.length} ${(ORDENS_IDEIAS.find((o) => o[0] === filtro.ordem) || ORDENS_IDEIAS[0])[2]}.</p>` : ""}
+    ${filtro.resumo ? `<p class="ajuda">Última coleta em ${new Date(filtro.resumo.em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}, posts dos últimos ${filtro.resumo.periodo} dias: ${Object.entries(filtro.resumo.por_perfil).map(([p, n]) => `${esc(p)} ${n}`).join(" · ")}. Mostrando as ${ideias.length} ${nomeOrdem()}.</p>` : ""}
     ${status.analise ? "" : `<div class="aviso">${ICONES.alerta}<span>Sem OPENAI_API_KEY as ideias usam só a legenda. Com a chave, o sistema transcreve a fala dos reels e lê o texto dos carrosséis.</span></div>`}
     <div class="cartao filtros-cartao">
       <div class="linha" style="flex-wrap:wrap;gap:10px">
         <div class="filtros">
           ${[["todas", "Todas"], ["instagram", "Instagram"], ["youtube", "YouTube"]].map(([k, n]) => `<button class="${filtro.plataforma === k ? "ativo" : ""}" data-plataforma="${k}">${ICONES[k] || ""}${n}</button>`).join("")}
         </div>
-        <select class="campo" style="width:auto;flex:none" id="ordemIdeias" title="Ordem das ideias">
-          ${ORDENS_IDEIAS.map(([k, n]) => `<option value="${k}" ${filtro.ordem === k ? "selected" : ""}>Ordenar: ${n}</option>`).join("")}
-        </select>
         <select class="campo" style="width:auto;flex:none" id="filtroFormato">
           <option value="todos">Todos os formatos</option>
           ${formatos.map((f) => `<option value="${esc(f)}" ${filtro.formato === f ? "selected" : ""}>${esc(NOME_FORMATO[f] || f)}</option>`).join("")}
         </select>
         <label class="linha" style="font-size:13px;font-weight:500"><input type="checkbox" id="esconderUsadas" ${filtro.esconderUsadas ? "checked" : ""}> Esconder as já usadas</label>
       </div>
+      <div class="chips-perfis"><span class="ajuda" style="margin:0" title="Escolha uma ou mais. Com mais de uma, o sistema junta as ordens (ex.: mais vistos + mais recentes = vistos e recentes ao mesmo tempo).">Ordenar por:</span>${ORDENS_IDEIAS.map(([k, n, , dica]) => `<button class="${filtro.ordem.includes(k) ? "ativo" : ""}" data-ordem="${k}" title="${esc(dica)}">${esc(n)}</button>`).join("")}</div>
       ${perfis.length > 1 ? `<div class="chips-perfis"><span class="ajuda" style="margin:0">Referências:</span>${perfis.map((p) => `<button class="${filtro.perfis.has(p) ? "ativo" : ""}" data-perfil="${esc(p)}">${esc(p)}</button>`).join("")}</div>` : ""}
     </div>
     ${lista.length ? `<div class="grade">${lista.map((p) => {
@@ -1011,7 +1011,6 @@ function desenharCriar() {
       </div>`;
     }).join("")}</div>` : `<div class="cartao vazio">${ICONES.vazio}<div>Nenhuma ideia com esses filtros. <button class="btn pequeno" data-limpar-criar>Limpar filtros</button></div></div>`}
     ${barraSelecao()}`;
-  $("ordemIdeias").onchange = (e) => { filtro.ordem = e.target.value; abaCriar(); };
   $("filtroFormato").onchange = (e) => { filtro.formato = e.target.value; desenharCriar(); };
   $("esconderUsadas").onchange = (e) => { filtro.esconderUsadas = e.target.checked; desenharCriar(); };
 }
@@ -1927,7 +1926,7 @@ document.addEventListener("click", async (e) => {
   const alvo = e.target.closest([
     "[data-novo-cliente]", "[data-criar]", "[data-estado]", "[data-ver-slide]", "[data-detalhe]", "[data-copiar]", "[data-publicar]",
     "[data-editar]", "[data-salvar-edicao]", "[data-aprovar]", "[data-descartar]", "[data-restaurar]", "[data-cancelar-agendamento]",
-    "[data-fonte]", "[data-recoletar]", "[data-limpar-criar]", "[data-plataforma]", "[data-perfil]", "[data-selecionar]",
+    "[data-fonte]", "[data-recoletar]", "[data-limpar-criar]", "[data-plataforma]", "[data-ordem]", "[data-perfil]", "[data-selecionar]",
     "[data-ver-conteudo]", "[data-criar-selecionadas]", "[data-limpar-selecao]", "[data-custos]", "[data-usar-gancho]", "[data-ir]",
   ].join(","));
   if (!alvo) return;
@@ -1941,6 +1940,13 @@ document.addEventListener("click", async (e) => {
   if (d.recoletar !== undefined) return abaCriar(null, true);
   if (d.limparCriar !== undefined) return limparCriar();
   if (d.plataforma) { filtro.plataforma = d.plataforma; return desenharCriar(); }
+  if (d.ordem) {
+    // Liga e desliga; sempre fica pelo menos uma ordem.
+    const atual = filtro.ordem.filter((o) => o !== d.ordem);
+    filtro.ordem = atual.length === filtro.ordem.length ? [...atual, d.ordem] : atual.length ? atual : ["melhores"];
+    if (filtro.ordem.length > 1) filtro.ordem = filtro.ordem.filter((o) => o !== "melhores" || d.ordem === "melhores");
+    return abaCriar();
+  }
   if (d.perfil) { filtro.perfis.has(d.perfil) ? filtro.perfis.delete(d.perfil) : filtro.perfis.add(d.perfil); return desenharCriar(); }
   if (d.selecionar) { alvo.checked ? selecionadas.add(d.selecionar) : selecionadas.delete(d.selecionar); return desenharCriar(); }
   if (d.verConteudo) return verConteudo(d.verConteudo);

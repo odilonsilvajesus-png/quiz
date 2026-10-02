@@ -11,13 +11,25 @@ const mediana = (valores) => {
 // Comentário pesa mais que curtida: exige mais esforço e indica conversa.
 const interacoes = (m) => m.curtidas + 2 * m.comentarios;
 
-// Ordens da lista de ideias: "melhores" (acima da média do próprio perfil), "visualizados", "recentes", "engajados".
+// Ordens da lista de ideias: "melhores" (acima da média do próprio perfil), "visualizados", "recentes", "engajados", "comentados".
 export const ORDENS = {
   melhores: (a, b) => b.ranking.outlier - a.ranking.outlier || b.ranking.interacoes - a.ranking.interacoes,
   visualizados: (a, b) => (b.metricas.visualizacoes || 0) - (a.metricas.visualizacoes || 0) || b.ranking.interacoes - a.ranking.interacoes,
   recentes: (a, b) => (Date.parse(b.publicado_em) || 0) - (Date.parse(a.publicado_em) || 0),
   engajados: (a, b) => b.ranking.interacoes - a.ranking.interacoes,
+  comentados: (a, b) => b.metricas.comentarios - a.metricas.comentarios || b.ranking.interacoes - a.ranking.interacoes,
 };
+
+// Várias ordens juntas (ex.: mais vistos + mais recentes): cada post soma a posição que tem em cada ordem
+// e quem tem a menor soma vem primeiro. Empate: vale a primeira ordem escolhida.
+function ordenar(lista, ordens) {
+  const validas = [...new Set(ordens)].filter((o) => ORDENS[o]);
+  if (!validas.length) return lista.sort(ORDENS.melhores);
+  if (validas.length === 1) return lista.sort(ORDENS[validas[0]]);
+  const soma = new Map(lista.map((p) => [p, 0]));
+  for (const o of validas) [...lista].sort(ORDENS[o]).forEach((p, i) => soma.set(p, soma.get(p) + i));
+  return lista.sort((a, b) => soma.get(a) - soma.get(b) || ORDENS[validas[0]](a, b));
+}
 
 export function ranquear(posts, { limite = 20, ordem = "melhores" } = {}) {
   const porPerfil = new Map();
@@ -54,7 +66,7 @@ export function ranquear(posts, { limite = 20, ordem = "melhores" } = {}) {
   // Perfis que repetem a mesma legenda em vários posts: fica só o de melhor desempenho,
   // a não ser que a análise mostre que o conteúdo real é diferente.
   const vistos = new Set();
-  return ranqueados
+  const unicos = ranqueados
     .sort(ORDENS.melhores)
     .filter((p) => {
       // Enquanto o conteúdo real não foi analisado, posts com mídia contam como diferentes (mesma legenda,
@@ -65,7 +77,6 @@ export function ranquear(posts, { limite = 20, ordem = "melhores" } = {}) {
       if (vistos.has(chave)) return false;
       vistos.add(chave);
       return true;
-    })
-    .sort(ORDENS[ordem] || ORDENS.melhores)
-    .slice(0, limite);
+    });
+  return ordenar(unicos, [ordem].flat()).slice(0, limite);
 }

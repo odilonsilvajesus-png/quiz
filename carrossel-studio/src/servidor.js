@@ -241,7 +241,9 @@ async function publicar(id, nomePasta, { legenda } = {}) {
 }
 
 // Ideias da última coleta, sem coletar nem analisar nada aqui (isso é tarefa da coleta em segundo plano).
+// ordem: uma ou mais, separadas por vírgula (ex.: "visualizados,recentes").
 function ideias(id, ordem = "melhores") {
+  ordem = String(ordem).split(",").filter(Boolean);
   carregarCliente(id);
   const coleta = ultimaColeta(id);
   if (!coleta) return { sem_coleta: true, avisos: [], posts: [] };
