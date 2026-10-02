@@ -134,6 +134,7 @@ Antes de começar, **escolha de 1 a 3 empresas reais** para acompanhar a formaç
 
 | Material | Uso |
 |---|---|
+| [Cronograma](cronograma.md) | Plano semana a semana, com carga horária de cada módulo |
 | [Glossário](glossario.md) | Todos os termos técnicos explicados em português simples |
 | [Empresa fictícia](empresa-ficticia.md) | Casa Aurora, para praticar se não tiver empresa real |
 | [Templates](templates/README.md) | Modelos prontos: diagnóstico, business case, especificação, runbook, política de IA, checklists, proposta |
