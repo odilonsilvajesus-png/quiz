@@ -1,0 +1,39 @@
+{
+  "titulo": "Especialista em Finanças para Pequenos Negócios",
+  "marca": "Formação Finanças",
+  "submarca": "para Pequenos Negócios",
+  "slug": "financas-pme",
+  "eyebrow": "Formação prática · 16 semanas",
+  "intro": "Do zero até montar, analisar e apresentar o financeiro de uma empresa real.",
+  "aplicar": "A tarefa prática na empresa-laboratório.",
+  "horas": 140,
+  "guia": "README.md",
+  "glossario": "glossario.md",
+  "grupos": [
+    {
+      "nome": "Fase 1 · Fundamentos",
+      "modulos": [
+        {"arquivo": "modulo-01-conceitos-financeiros.md", "sigla": "M1"},
+        {"arquivo": "modulo-02-fluxo-de-caixa.md", "sigla": "M2"}
+      ]
+    },
+    {
+      "nome": "Fase 2 · Análise",
+      "modulos": [
+        {"arquivo": "modulo-03-dre-e-margens.md", "sigla": "M3"},
+        {"arquivo": "modulo-04-precificacao.md", "sigla": "M4"}
+      ]
+    },
+    {
+      "nome": "Fase 3 · Aplicação",
+      "modulos": [
+        {"arquivo": "trilha-apresentacao-ao-dono.md", "sigla": "Trilha"},
+        {"arquivo": "projeto-final.md", "sigla": "Final"}
+      ]
+    }
+  ],
+  "modelos": [
+    "templates/planilha-fluxo-de-caixa.md",
+    "templates/relatorio-mensal.md"
+  ]
+}
