@@ -1,0 +1,63 @@
+{
+  "titulo": "Do Zero ao Sistema em Produção com Claude",
+  "marca": "Formação Sistemas",
+  "submarca": "com Claude, nível sênior",
+  "slug": "sistemas-com-claude",
+  "eyebrow": "Formação prática · 38 semanas",
+  "intro": "Da ideia ao sistema estruturado, seguro e no ar: aprenda a conduzir o Claude como um programador sênior, proteger os dados do cliente, manter o sistema de pé e cobrar o preço certo.",
+  "aplicar": "A tarefa de campo no Gestor (o projeto-guia) ou em um cliente real.",
+  "horas": 420,
+  "guia": "README.md",
+  "glossario": "glossario.md",
+  "grupos": [
+    {"nome": "Fase 1 · Fundamentos e método", "modulos": [
+      {"arquivo": "modulo-01-como-um-sistema-funciona.md", "sigla": "M1"},
+      {"arquivo": "modulo-02-ambiente-profissional.md", "sigla": "M2"},
+      {"arquivo": "modulo-03-programar-com-claude.md", "sigla": "M3"}
+    ]},
+    {"nome": "Fase 2 · Da ideia ao projeto", "modulos": [
+      {"arquivo": "modulo-04-ideia-a-especificacao.md", "sigla": "M4"},
+      {"arquivo": "modulo-05-banco-de-dados.md", "sigla": "M5"},
+      {"arquivo": "modulo-06-arquitetura-e-stack.md", "sigla": "M6"}
+    ]},
+    {"nome": "Fase 3 · Construindo o sistema", "modulos": [
+      {"arquivo": "modulo-07-backend-e-apis.md", "sigla": "M7"},
+      {"arquivo": "modulo-08-frontend.md", "sigla": "M8"},
+      {"arquivo": "modulo-09-login-permissoes-multitenant.md", "sigla": "M9"},
+      {"arquivo": "modulo-10-pagamentos-e-assinaturas.md", "sigla": "M10"},
+      {"arquivo": "modulo-11-integracoes.md", "sigla": "M11"}
+    ]},
+    {"nome": "Fase 4 · Produção blindada", "modulos": [
+      {"arquivo": "modulo-12-hospedagem-e-deploy.md", "sigla": "M12"},
+      {"arquivo": "modulo-13-proteger-a-aplicacao.md", "sigla": "M13"},
+      {"arquivo": "modulo-14-proteger-dados-servidor-lgpd.md", "sigla": "M14"},
+      {"arquivo": "modulo-15-confiabilidade.md", "sigla": "M15"}
+    ]},
+    {"nome": "Fase 5 · O negócio de sistemas", "modulos": [
+      {"arquivo": "modulo-16-manutencao-e-suporte.md", "sigla": "M16"},
+      {"arquivo": "modulo-17-precificar-vender-confianca.md", "sigla": "M17"}
+    ]},
+    {"nome": "Trilhas e projeto final", "modulos": [
+      {"arquivo": "trilha-seguranca-desde-o-dia-1.md", "sigla": "T1"},
+      {"arquivo": "trilha-portfolio-e-decisoes.md", "sigla": "T2"},
+      {"arquivo": "projeto-final.md", "sigla": "Final"}
+    ]}
+  ],
+  "modelos": [
+    "templates/claude-md.md",
+    "templates/especificacao.md",
+    "templates/adr.md",
+    "templates/checklist-seguranca.md",
+    "templates/checklist-deploy.md",
+    "templates/checklist-entrega.md",
+    "templates/dossie-de-confianca.md",
+    "templates/perguntas-dificeis-do-cliente.md",
+    "templates/plano-de-incidente.md",
+    "templates/runbook.md",
+    "templates/planos-de-manutencao.md",
+    "templates/sla.md",
+    "templates/calculadora-de-preco.md",
+    "templates/proposta-comercial.md",
+    "templates/contrato.md"
+  ]
+}
