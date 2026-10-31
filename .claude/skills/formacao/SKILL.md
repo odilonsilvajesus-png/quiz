@@ -1,9 +1,9 @@
 ---
-name: criar-formacao
+name: formacao
 description: Cria formações completas de estudo (cursos práticos com módulos, aulas, esquemas visuais, exercícios, tarefas práticas, entregáveis, autoavaliações com gabarito, glossário e modelos) sobre qualquer tema, e entrega como um site navegável publicado em um link. Pergunta o tema e o objetivo, monta o sumário, pede confirmação e só então escreve tudo. Use sempre que a pessoa pedir para criar um curso, formação, trilha de estudos, plano de estudos completo, material didático, apostila, programa de capacitação ou treinamento sobre um assunto, ou disser coisas como "quero aprender X de verdade", "monte uma formação sobre Y", "crie um curso para eu estudar Z", "preciso virar especialista em W", mesmo que não fale em "site" ou "skill". Também vale para pedidos em inglês, como "create a course / curriculum / study program / learning path about X".
 ---
 
-# Criar formação
+# Formação
 
 Esta skill transforma um tema em uma **formação de verdade**: o tipo de material com que alguém consegue sair do zero e chegar a fazer algo concreto, com um site navegável para estudar aula por aula.
 
