@@ -520,7 +520,6 @@ Os clientes não ficaram felizes, mas viram: detecção, contenção em 6 minuto
 > - Plano escrito, com contatos e modelos, ensaiado pelo menos uma vez por ano.
 
 ### Para ir além
-- [Incidente de segurança (ANPD)](https://www.gov.br/anpd/pt-br/assuntos/incidente-de-seguranca)
 - [Comunicado de incidente de segurança (ANPD)](https://www.gov.br/anpd/pt-br/canais_atendimento/agente-de-tratamento/comunicado-de-incidente-de-seguranca-cis)
 
 ---
@@ -636,5 +635,5 @@ Meta: 8 de 10.
 |---|---|---|
 | [Lei 13.709/2018 (LGPD)](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm) | Lei, em português | Leia os artigos 5º, 6º, 7º, 11, 18, 37 a 39, 46 a 49 |
 | [ANPD](https://www.gov.br/anpd/pt-br) | Portal, em português | Guias orientativos e regulamentos |
-| [Incidente de segurança (ANPD)](https://www.gov.br/anpd/pt-br/assuntos/incidente-de-seguranca) | Página oficial, em português | Quando e como comunicar |
+| [Comunicado de incidente de segurança (ANPD)](https://www.gov.br/anpd/pt-br/canais_atendimento/agente-de-tratamento/comunicado-de-incidente-de-seguranca-cis) | Página oficial, em português | Quando e como comunicar |
 | [Backup no PostgreSQL](https://www.postgresql.org/docs/current/backup.html) | Texto, em inglês | Dumps, arquivamento contínuo e PITR |

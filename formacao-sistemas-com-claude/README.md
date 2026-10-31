@@ -1,6 +1,6 @@
 # Guia da formação
 
-**Do Zero ao Sistema em Produção com Claude** · 38 semanas · cerca de 420 horas
+**Do Zero ao Sistema em Produção com Claude** · 38 semanas · cerca de 430 horas
 
 ## Para que serve esta formação
 

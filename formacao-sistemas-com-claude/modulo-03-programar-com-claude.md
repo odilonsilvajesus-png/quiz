@@ -116,7 +116,7 @@ A diferença não é o tamanho do texto. É que **as decisões de negócio foram
 > - Um bom pedido tem contexto, objetivo, regras, restrições e critério de pronto.
 
 ### Para ir além
-- [Boas práticas do Claude Code (Anthropic, em inglês)](https://www.anthropic.com/engineering/claude-code-best-practices)
+- [Boas práticas do Claude Code (Anthropic, em inglês)](https://code.claude.com/docs/en/best-practices)
 
 ---
 

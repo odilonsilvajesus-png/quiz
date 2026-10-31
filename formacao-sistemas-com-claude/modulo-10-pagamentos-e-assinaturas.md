@@ -171,7 +171,7 @@ Decisão (ADR 0004): **Asaas como principal** para o mercado brasileiro, com a i
 
 ### Para ir além
 - [Documentação do Asaas (em português)](https://docs.asaas.com/)
-- [Documentação do Mercado Pago (em português)](https://www.mercadopago.com.br/developers/pt/docs)
+- [Documentação do Mercado Pago (em português)](https://www.mercadopago.com.br/developers/pt)
 - [Assinaturas no Stripe (em inglês)](https://docs.stripe.com/billing/subscriptions/overview)
 
 ---
@@ -641,7 +641,7 @@ Repita para Mercado Pago e Stripe. Ao final, troque `PAGAMENTOS_PROVEDOR` e veja
 
 ### Para ir além
 - [Assinaturas no Asaas (em português)](https://docs.asaas.com/docs/assinaturas)
-- [Assinaturas no Mercado Pago (em português)](https://www.mercadopago.com.br/developers/pt/docs/subscriptions/landing)
+- [Assinaturas no Mercado Pago (em português)](https://www.mercadopago.com.br/developers/pt/docs/subscriptions/overview)
 - [Ambiente de testes do Stripe (em inglês)](https://docs.stripe.com/testing)
 
 ---
@@ -744,6 +744,6 @@ Meta: 8 de 10.
 | Material | Formato | Por que vale |
 |---|---|---|
 | [Documentação do Asaas](https://docs.asaas.com/) | Texto, em português | Referência completa de cobranças e assinaturas |
-| [Documentação do Mercado Pago](https://www.mercadopago.com.br/developers/pt/docs) | Texto, em português | Pagamentos, assinaturas e notificações |
+| [Documentação do Mercado Pago](https://www.mercadopago.com.br/developers/pt) | Texto, em português | Pagamentos, assinaturas e notificações |
 | [Billing do Stripe](https://docs.stripe.com/billing/subscriptions/overview) | Texto, em inglês | O modelo de assinaturas mais completo do mercado, ótimo para aprender os conceitos |
 | [Requisições idempotentes no Stripe](https://docs.stripe.com/api/idempotent_requests) | Texto, em inglês | Como evitar cobranças duplicadas |

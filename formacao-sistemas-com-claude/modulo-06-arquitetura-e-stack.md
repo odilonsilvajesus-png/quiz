@@ -193,7 +193,7 @@ Note que a resposta fala de **riscos do cliente** (erros, dependência), não de
 > - Troque de stack só com motivo concreto; profundidade vale mais que variedade.
 
 ### Para ir além
-- [Documentação do Better Auth (em inglês)](https://www.better-auth.com/docs/introduction)
+- [Documentação do Better Auth (em inglês)](https://better-auth.com/docs/introduction)
 - [Row Level Security no Supabase (em inglês)](https://supabase.com/docs/guides/database/postgres/row-level-security)
 
 ---

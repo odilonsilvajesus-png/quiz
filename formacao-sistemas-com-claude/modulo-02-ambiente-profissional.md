@@ -326,9 +326,9 @@ Seu GitHub vai guardar o código de sistemas de clientes. Se alguém invadir a s
 > - Repositórios de clientes são sempre privados.
 
 ### Para ir além
-- [Documentação do GitHub em português](https://docs.github.com/pt/get-started/start-your-journey/hello-world)
-- [Sobre o secret scanning (GitHub, em português)](https://docs.github.com/pt/code-security/secret-scanning/introduction/about-secret-scanning)
-- [Dependabot (GitHub, em português)](https://docs.github.com/pt/code-security/dependabot)
+- [Documentação do GitHub em português](https://docs.github.com/pt/get-started/using-github/hello-world)
+- [Sobre o secret scanning (GitHub, em português)](https://docs.github.com/pt/code-security/concepts/secret-security/secret-scanning)
+- [Dependabot (GitHub, em português)](https://docs.github.com/pt/code-security/how-tos/secure-your-supply-chain)
 
 ---
 

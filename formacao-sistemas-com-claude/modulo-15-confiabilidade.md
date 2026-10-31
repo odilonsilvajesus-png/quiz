@@ -534,7 +534,7 @@ Nenhuma ligação de cliente. Esse é o objetivo.
 
 ### Para ir além
 - [Status da Anthropic (exemplo de página de status)](https://status.claude.com)
-- [Statuspage (em inglês)](https://www.statuspage.io/): um dos serviços de página de status.
+- [Statuspage (em inglês)](https://www.atlassian.com/software/statuspage): um dos serviços de página de status.
 
 ---
 

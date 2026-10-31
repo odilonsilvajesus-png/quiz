@@ -156,8 +156,8 @@ Esse texto é parte do Dossiê de Confiança (Módulo 17). E repare: cada frase 
 > - Use a lista como roteiro de revisão e como base do discurso de segurança, sempre com controles e testes reais por trás.
 
 ### Para ir além
-- [OWASP Top 10 edição 2025 (em inglês)](https://owasp.org/Top10/2025/)
-- [OWASP ASVS: padrão de verificação de segurança de aplicações (em inglês)](https://owasp.org/www-project-application-security-verification-standard/)
+- [OWASP Top 10 edição 2025 (em inglês)](https://top10.owasp.org/2025/)
+- [OWASP ASVS: padrão de verificação de segurança de aplicações (em inglês)](https://asvs.owasp.org/)
 
 ---
 
@@ -335,8 +335,8 @@ O relatório desses verificadores vai para a auditoria e para o Dossiê de Confi
 
 ### Para ir além
 - [Guia de cabeçalhos HTTP de segurança da OWASP (em inglês)](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html)
-- [CORS (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/CORS)
-- [Mozilla Observatory](https://observatory.mozilla.org/) e [SSL Labs](https://www.ssllabs.com/ssltest/): verificadores públicos.
+- [CORS (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/CORS)
+- [Mozilla Observatory](https://developer.mozilla.org/en-US/observatory) e [SSL Labs](https://www.ssllabs.com/ssltest/): verificadores públicos.
 
 ---
 
@@ -405,7 +405,7 @@ O Dependabot abre um alerta: vulnerabilidade de gravidade alta na biblioteca que
 > - Atualizações de segurança em dias; as demais com método, mensalmente.
 
 ### Para ir além
-- [Dependabot (GitHub, em português)](https://docs.github.com/pt/code-security/dependabot)
+- [Dependabot (GitHub, em português)](https://docs.github.com/pt/code-security/how-tos/secure-your-supply-chain)
 - [Versionamento semântico (em português)](https://semver.org/lang/pt-BR/)
 
 ---
@@ -489,7 +489,7 @@ Esse documento é a base técnica do seu Dossiê de Confiança, e você vai repe
 
 ### Para ir além
 - [Segurança no Claude Code (em inglês)](https://code.claude.com/docs/en/security)
-- [OWASP ASVS (em inglês)](https://owasp.org/www-project-application-security-verification-standard/): o padrão usado por auditores, ótimo para aprofundar o checklist.
+- [OWASP ASVS (em inglês)](https://asvs.owasp.org/): o padrão usado por auditores, ótimo para aprofundar o checklist.
 
 ---
 
@@ -598,7 +598,7 @@ Meta: 8 de 10.
 
 | Material | Formato | Por que vale |
 |---|---|---|
-| [OWASP Top 10 2025](https://owasp.org/Top10/2025/) | Texto, em inglês | A lista oficial com exemplos e referências |
+| [OWASP Top 10 2025](https://top10.owasp.org/2025/) | Texto, em inglês | A lista oficial com exemplos e referências |
 | [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/) | Texto, em inglês | Guias práticos por assunto |
-| [OWASP ASVS](https://owasp.org/www-project-application-security-verification-standard/) | Padrão, em inglês | Checklist profissional de verificação |
-| [Mozilla Observatory](https://observatory.mozilla.org/) | Ferramenta | Verificação externa de cabeçalhos |
+| [OWASP ASVS](https://asvs.owasp.org/) | Padrão, em inglês | Checklist profissional de verificação |
+| [Mozilla Observatory](https://developer.mozilla.org/en-US/observatory) | Ferramenta | Verificação externa de cabeçalhos |

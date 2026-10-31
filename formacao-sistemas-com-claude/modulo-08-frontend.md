@@ -495,7 +495,7 @@ Liste os problemas por arquivo, com gravidade. Não altere nada.
 
 ### Para ir além
 - [web.dev: acessibilidade (em inglês)](https://web.dev/learn/accessibility)
-- [Content Security Policy (MDN, em inglês)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
+- [Content Security Policy (MDN, em inglês)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy)
 
 ---
 

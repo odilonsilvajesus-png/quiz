@@ -108,6 +108,6 @@ Toda semana, reserve uma hora para:
 ---
 
 ## Para ir além
-- [OWASP Top 10](https://owasp.org/Top10/): a lista dos riscos mais críticos em aplicações web (em inglês).
+- [OWASP Top 10](https://top10.owasp.org/): a lista dos riscos mais críticos em aplicações web (em inglês).
 - [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/): guias práticos por assunto (em inglês).
 - [ANPD, Autoridade Nacional de Proteção de Dados](https://www.gov.br/anpd/pt-br)

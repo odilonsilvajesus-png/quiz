@@ -329,7 +329,7 @@ O terceiro teste (que confere que toda permissão declarada é usada por alguma 
 > - Menor privilégio: na dúvida, não permita.
 
 ### Para ir além
-- [OWASP Top 10 (em inglês)](https://owasp.org/Top10/): leia o item A01, Broken Access Control.
+- [OWASP Top 10 (em inglês)](https://top10.owasp.org/): leia o item A01, Broken Access Control.
 
 ---
 
@@ -747,7 +747,7 @@ Meta: 8 de 10.
 
 | Material | Formato | Por que vale |
 |---|---|---|
-| [OWASP Top 10: Broken Access Control](https://owasp.org/Top10/) | Texto, em inglês | O risco número 1 de aplicações web |
+| [OWASP Top 10: Broken Access Control](https://top10.owasp.org/) | Texto, em inglês | O risco número 1 de aplicações web |
 | [Guia multi-tenant da OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html) | Texto, em inglês | Checklist específico de SaaS |
-| [Documentação do Better Auth](https://www.better-auth.com/docs/introduction) | Texto, em inglês | 2FA, organizações e sessões |
+| [Documentação do Better Auth](https://better-auth.com/docs/introduction) | Texto, em inglês | 2FA, organizações e sessões |
 | [NIST SP 800-63B](https://pages.nist.gov/800-63-4/sp800-63b.html) | Norma, em inglês | A referência de regras de senha e autenticação |

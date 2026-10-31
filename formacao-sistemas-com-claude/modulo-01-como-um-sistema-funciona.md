@@ -101,8 +101,8 @@ Para começar, frontend e backend podem morar **no mesmo projeto** e ser publica
 > - Serviços externos são dependências que podem falhar e precisam de plano B.
 
 ### Para ir além
-- [Visão geral do HTTP (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Overview)
-- [Como a internet funciona (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Learn/Common_questions/Web_mechanics/How_does_the_Internet_work)
+- [Visão geral do HTTP (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Overview)
+- [Como a internet funciona (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Howto/Web_mechanics/How_does_the_Internet_work)
 
 ---
 
@@ -203,7 +203,7 @@ Em 3 minutos você sabe em qual "andar do prédio" está o problema. No Módulo 
 ### Para ir além
 - [O que é DNS (Cloudflare, em português)](https://www.cloudflare.com/pt-br/learning/dns/what-is-dns/)
 - [Como o Let's Encrypt funciona (em português)](https://letsencrypt.org/pt-br/how-it-works/)
-- [Cookies HTTP (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Cookies)
+- [Cookies HTTP (MDN, em português)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Cookies)
 
 ---
 
@@ -461,7 +461,7 @@ flowchart LR
 > - Ao publicar, identifique no mapa onde roda cada parte.
 
 ### Para ir além
-- [Hello World no GitHub (documentação oficial, em português)](https://docs.github.com/pt/get-started/start-your-journey/hello-world)
+- [Hello World no GitHub (documentação oficial, em português)](https://docs.github.com/pt/get-started/using-github/hello-world)
 
 ---
 
@@ -599,6 +599,6 @@ Responda sem consultar. Meta: 8 de 10.
 
 | Material | Formato | Por que vale |
 |---|---|---|
-| [Visão geral do HTTP (MDN)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Overview) | Texto, em português | A referência mais confiável sobre HTTP |
+| [Visão geral do HTTP (MDN)](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Overview) | Texto, em português | A referência mais confiável sobre HTTP |
 | [The Twelve-Factor App](https://12factor.net/pt_br/) | Texto, em português | Princípios usados por quase toda plataforma moderna de hospedagem |
 | [O que é HTTPS (Cloudflare)](https://www.cloudflare.com/pt-br/learning/ssl/what-is-https/) | Texto, em português | Explicação visual do cadeado |

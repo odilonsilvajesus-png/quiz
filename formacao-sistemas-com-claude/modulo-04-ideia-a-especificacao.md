@@ -127,7 +127,7 @@ A última frase é essencial: sem ela, o Claude preenche as lacunas com suposiç
 > - Use o Claude para organizar as anotações, marcando o que é suposição.
 
 ### Para ir além
-- [Sebrae](https://sebrae.com.br/sites/PortalSebrae): conteúdos sobre gestão de pequenas empresas, úteis para entender a realidade dos seus clientes.
+- [Sebrae](https://sebrae.com.br/empreendedores): conteúdos sobre gestão de pequenas empresas, úteis para entender a realidade dos seus clientes.
 
 ---
 
