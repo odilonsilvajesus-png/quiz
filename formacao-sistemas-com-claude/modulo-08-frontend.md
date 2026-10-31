@@ -188,7 +188,7 @@ Excluir, cancelar, estornar: essas ações precisam de **confirmação que faz p
 
 | Ruim | Bom |
 |---|---|
-| "Erro de validação" | "Informe um e-mail no formato nome@empresa.com.br" |
+| "Erro de validação" | "Informe um e-mail no formato `nome@empresa.com.br`" |
 | "Erro 409" | "Já existe um cliente com este CPF: Maria Souza. Abrir cadastro?" |
 | "Erro interno" | "Não conseguimos salvar agora. Tente de novo em instantes. Se continuar, informe o código req_8f2a1c ao suporte." |
 | "Operação não permitida" | "Somente gerentes podem dar desconto acima de 10%." |

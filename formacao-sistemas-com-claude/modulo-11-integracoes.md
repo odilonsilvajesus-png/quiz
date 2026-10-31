@@ -328,7 +328,7 @@ flowchart LR
 
 ### Boas práticas de e-mail transacional
 
-- **Remetente reconhecível:** "Gestor <noreply@notificacoes.gestor.com.br>", com resposta para um endereço que alguém lê.
+- **Remetente reconhecível:** `Gestor <noreply@notificacoes.gestor.com.br>`, com resposta para um endereço que alguém lê.
 - **Conteúdo mínimo de dados pessoais:** "Sua fatura de novembro está disponível. Acessar", em vez de listar valores e documentos no corpo.
 - **Links seguros:** sempre HTTPS, sempre para o seu domínio; tokens de uso único e curtos (recuperação de senha, convites).
 - **Envio em segundo plano**, com nova tentativa e idempotência (Aula 7.5).
